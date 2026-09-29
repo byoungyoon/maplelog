@@ -3,7 +3,6 @@ import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { useBook } from "../_state/useBook";
 import { useAppState } from "../_state/useAppState";
 import { useCommand } from "../_action/useCommand";
-import { SyncResults } from "@/features/bosses/_component/SyncResults";
 import { periodLabel, timeLabel } from "@/domain/period";
 export function ReportHeader({
   title,
@@ -15,15 +14,7 @@ export function ReportHeader({
   compact?: boolean;
 }) {
   const { data } = useBook();
-  const {
-    offset,
-    setOffset,
-    character,
-    setCharacter,
-    notify,
-    cycle,
-    setCycle,
-  } = useAppState();
+  const { offset, setOffset, notify, cycle, setCycle } = useAppState();
   const cmd = useCommand();
   return (
     <>
@@ -34,23 +25,6 @@ export function ReportHeader({
             <h1>{title}</h1>
             <p>{subtitle}</p>
           </div>
-          <label className="character-select">
-            <span className="sr-only">캐릭터 선택</span>
-            <select
-              aria-label="캐릭터 선택"
-              value={character}
-              onChange={(e) => setCharacter(e.target.value)}
-            >
-              <option value="all">전체 캐릭터</option>
-              {data?.book.characters
-                .filter((c) => c.managed)
-                .map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-            </select>
-          </label>
         </div>
       )}
       <div className={`report-toolbar ${compact ? "compact-toolbar" : ""}`}>
@@ -102,7 +76,9 @@ export function ReportHeader({
           )}
           <button
             className="text-button"
-            disabled={cmd.isPending}
+            disabled={
+              cmd.isPending || !data?.book.characters.length
+            }
             onClick={() =>
               cmd.mutate(
                 { type: "sync", scenario: "refresh" },
@@ -121,53 +97,13 @@ export function ReportHeader({
             />
             {cmd.isPending ? "보스 조회 중…" : "새로고침"}
           </button>
-          {!compact && (
-            <>
-              <span className="toolbar-divider" />
-              <label className="focus-control">
-                집중 추적
-                <input
-                  type="checkbox"
-                  role="switch"
-                  checked={
-                    !!data?.book.sync.focusUntil &&
-                    new Date(data.book.sync.focusUntil) > new Date()
-                  }
-                  disabled={cmd.isPending}
-                  onChange={(e) => {
-                    const c =
-                      character === "all"
-                        ? data?.book.characters.find((c) => c.managed)?.id
-                        : character;
-                    if (e.target.checked && c)
-                      cmd.mutate({ type: "focus", characterId: c });
-                    else cmd.mutate({ type: "focus", characterId: null });
-                  }}
-                />
-              </label>
-            </>
-          )}
         </div>
       </div>
-      {data && !compact && <SyncResults book={data.book} />}
       {data?.book.sync.error && (
         <div className="notice warning" role="alert">
           {data.book.sync.error}
         </div>
       )}
-      {!compact &&
-        data?.book.sync.focusUntil &&
-        new Date(data.book.sync.focusUntil) > new Date() && (
-          <div className="notice">
-            {
-              data.book.characters.find(
-                (c) => c.id === data.book.sync.focusCharacter,
-              )?.name
-            }{" "}
-            · {timeLabel(data.book.sync.focusUntil)}까지 집중 추적 설정 · 워커
-            실행 중에는 2분마다 이 캐릭터를 조회해요.
-          </div>
-        )}
     </>
   );
 }

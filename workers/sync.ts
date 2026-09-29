@@ -23,7 +23,12 @@ async function tick() {
       })
       .immediate();
     const book = readBook("live");
-    if (!connectionStatus().connected || !book.settings.setupDone) return;
+    if (
+      !connectionStatus().connected ||
+      !book.settings.setupDone ||
+      !book.characters.length
+    )
+      return;
     await syncReferencePrices().catch(() => {});
     const focus =
       !!book.sync.focusUntil && Date.parse(book.sync.focusUntil) > now;

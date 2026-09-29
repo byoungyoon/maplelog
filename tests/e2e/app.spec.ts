@@ -88,10 +88,11 @@ test("클라이언트의 가짜 성공 응답만으로 장부에 진입할 수 �
   await page.goto("/");
   await expect(page).toHaveURL(/\/setup$/);
 });
-test("서버 검증 완료 fixture → 캐릭터 선택 → 장부 → 해제", async ({
+test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → 해제", async ({
   page,
   request,
 }) => {
+  test.setTimeout(90_000);
   // Seed ONLY the isolated test server through the same connection service. No production bypass exists.
   process.env.DATA_DIR = process.env.MESOLOG_E2E_DATA_DIR;
   const { connectKey } = await import("../../src/server/connection");
@@ -106,19 +107,24 @@ test("서버 검증 완료 fixture → 캐릭터 선택 → 장부 → 해제", 
     }),
   );
   await page.goto("/setup");
-  await page.getByRole("button", { name: "연결된 캐릭터 선택" }).click();
+  await expect(page.getByText("캐릭터 선택", { exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "보스 화면 열기" }).click();
+  await expect(page).toHaveURL(origin + "/bosses");
+  await expect(page.getByRole("link", { name: "설정" })).toHaveCount(0);
+  await page.getByLabel("캐릭터 검색").fill("테스트캐릭터");
   await expect(page.getByText("테스트캐릭터")).toBeVisible();
-  await page.getByRole("checkbox").click();
-  await expect(page.getByRole("checkbox")).toBeChecked();
-  await page.getByRole("button", { name: "선택 완료" }).click();
-  await page.getByRole("button", { name: "내 장부 시작하기" }).click();
-  await expect(page).toHaveURL(origin + "/");
+  await page.getByRole("button", { name: "보스 조회", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "테스트캐릭터" }),
+  ).toBeVisible();
+  const { readBook, writeBook } = await import("../../src/server/db");
+  expect(readBook("live").characters[0]?.managed).toBe(false);
+  await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "전체 캐릭터 정산" }),
   ).toBeVisible();
   await page.reload();
   await expect(page).toHaveURL(origin + "/");
-  const { readBook, writeBook } = await import("../../src/server/db");
   const { mergeScheduler } = await import("../../src/server/nexon/normalize");
   const fixtureBook = readBook("live");
   mergeScheduler(fixtureBook, "test-ocid", {
@@ -140,6 +146,7 @@ test("서버 검증 완료 fixture → 캐릭터 선택 → 장부 → 해제", 
     ...fixtureBook.characters[0],
     id: "test-ocid-two",
     name: "두번째캐릭터",
+    managed: true,
     order: 1,
   });
   mergeScheduler(fixtureBook, "test-ocid-two", {
@@ -161,18 +168,22 @@ test("서버 검증 완료 fixture → 캐릭터 선택 → 장부 → 해제", 
   writeBook(fixtureBook);
   await page.reload();
   const cards = page.getByRole("article");
-  await expect(cards).toHaveCount(2);
+  await expect(cards).toHaveCount(1);
   const firstCard = page.getByRole("article", {
-    name: "테스트캐릭터 루시드 정산",
+    name: "루시드 정산",
     exact: true,
   });
-  const belt = firstCard.getByRole("button", {
+  await expect(firstCard.getByText("2명", { exact: true })).toBeVisible();
+  await expect(firstCard.getByText(/1억 1,940만/)).toBeVisible();
+  await firstCard.getByLabel("테스트캐릭터 정산 상세").click();
+  const firstCharacter = firstCard.locator(".settlement-character").first();
+  const belt = firstCharacter.getByRole("button", {
     name: "몽환의 벨트 획득",
     exact: true,
   });
   await expect(belt).toBeVisible();
   expect(
-    await firstCard.locator(".quick-drop-toggle").count(),
+    await firstCharacter.locator(".quick-drop-toggle").count(),
   ).toBeLessThanOrEqual(5);
   await belt.click();
   await expect(belt).toHaveAttribute("aria-pressed", "true");
@@ -180,11 +191,11 @@ test("서버 검증 완료 fixture → 캐릭터 선택 → 장부 → 해제", 
   await expect(belt).toHaveAttribute("aria-pressed", "false");
   await belt.click();
   await expect(belt).toHaveAttribute("aria-pressed", "true");
-  await firstCard
+  await firstCharacter
     .getByRole("button", { name: "결정석 정산", exact: true })
     .click();
   await expect(
-    firstCard.getByRole("button", { name: "정산 완료", exact: true }),
+    firstCharacter.getByRole("button", { name: "정산 완료", exact: true }),
   ).toBeDisabled();
   const updated = readBook("live");
   expect(updated.completions[0].crystal).toBe("59700000");
@@ -193,18 +204,24 @@ test("서버 검증 완료 fixture → 캐릭터 선택 → 장부 → 해제", 
   expect(updated.drops[0].quantity).toBe(1);
   expect(updated.drops[0].unitPrice).toBe("3800000000");
   await page.getByRole("link", { name: "보스", exact: true }).click();
-  await page
-    .getByLabel("캐릭터 선택", { exact: true })
-    .selectOption("test-ocid");
-  await expect(page.locator(".boss-record")).toHaveCount(1);
-  await page.getByLabel("보스 또는 캐릭터 검색").fill("없는보스");
+  await expect(page.getByLabel("캐릭터 선택", { exact: true })).toHaveCount(0);
   await expect(page.locator(".boss-record")).toHaveCount(0);
-  await page.getByLabel("보스 또는 캐릭터 검색").fill("루시드");
+  await page.getByLabel("캐릭터 검색").fill("테스트캐릭터");
+  await page.getByRole("button", { name: "상세보기" }).click();
+  await expect(page.locator(".boss-record")).toHaveCount(1);
+  await expect(page.locator(".boss-record .quick-settlement")).toHaveCount(0);
+  await page.getByRole("button", { name: "다른 캐릭터 검색" }).click();
+  await page.getByLabel("캐릭터 검색").fill("없는캐릭터");
+  await expect(page.getByRole("button", { name: "상세보기" })).toHaveCount(0);
+  await expect(page.locator(".boss-record")).toHaveCount(0);
+  await page.getByLabel("캐릭터 검색").fill("두번째캐릭터");
+  await page.getByRole("button", { name: "상세보기" }).click();
   await expect(page.locator(".boss-record")).toHaveCount(1);
   await page.getByRole("link", { name: "정산", exact: true }).click();
-  await expect(page.getByRole("article")).toHaveCount(2);
+  await expect(page.getByRole("article")).toHaveCount(1);
   await expect(page.getByLabel("캐릭터 선택", { exact: true })).toHaveCount(0);
-  await firstCard.getByRole("button", { name: "루시드 드랍 상세" }).click();
+  await firstCard.getByLabel("테스트캐릭터 정산 상세").click();
+  await firstCharacter.getByRole("button", { name: "루시드 드랍 상세" }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await expect(page.getByLabel("결정석 분배 인원")).toHaveCount(0);
   await page
@@ -250,6 +267,14 @@ test("서버 검증 완료 fixture → 캐릭터 선택 → 장부 → 해제", 
       page.locator("video").evaluate((el: HTMLVideoElement) => el.currentTime),
     )
     .toBeGreaterThan(0);
+  expect(
+    await page
+      .locator("video")
+      .evaluate((el: HTMLVideoElement) => el.playbackRate),
+  ).toBe(1);
+  expect(
+    await page.locator("video").evaluate((el: HTMLVideoElement) => el.duration),
+  ).toBeGreaterThan(40);
   await page.getByRole("button", { name: "배경 움직임 끄기" }).click();
   await expect
     .poll(() =>

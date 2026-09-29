@@ -56,18 +56,23 @@ export default function LedgerAction() {
     <>
       <ReportHeader
         title="수익 기록"
-        subtitle="예상 수익부터 실제 정산까지, 모든 기록을 한곳에."
+        subtitle="전체 캐릭터의 예상 수익과 실제 정산을 한곳에 모았어요."
       />
       <div className="ledger-summary">
         <ReceiptText size={24} />
         <div>
           <span>
-            {basis === "record" ? "기록 기준 합계" : "정산일 기준 순수령"}
+            {basis === "record" ? "전체 캐릭터 수익 합계 · 예상 포함" : "정산일 기준 순수령"}
           </span>
           <strong>
-            {formatMeso(summary.total)}
+            {formatMeso(basis === "record" ? report.projectedTotal : summary.total)}
             <small> 메소</small>
           </strong>
+          {basis === "record" && (
+            <span>
+              실제 정산 {formatMeso(report.summary.actual)} · 완료 보스 미정산 예상 {formatMeso(report.summary.expected)} · 남은 보스 예상 {formatMeso(report.remainingKnownAmount)}
+            </span>
+          )}
         </div>
         <a href={`/api/export?mode=${mode}&format=csv`} className="button">
           <Download size={16} />

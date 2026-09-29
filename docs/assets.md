@@ -6,7 +6,7 @@
 - 원본: [Maciej Cisowski — Clouds Moving over Meadow / Pexels](https://www.pexels.com/video/clouds-moving-over-meadow-13732087/).
 - [Pexels 라이선스](https://www.pexels.com/license/).
 - 원경의 숲·초원·노을 하늘을 담은 촬영 영상입니다. 웹용 무음 1080p로 변환했고 포스터는 영상 첫 프레임에서 추출했습니다. 별도의 화면 스크린샷이 아닙니다.
-- 0.65배 재생, 배경 정지, 시스템 reduced-motion 및 비활성 탭 정지를 지원합니다. 첫 장부 진입에만 2.6초의 접근·빛·카드 등장 효과를 적용합니다. 입장 효과를 건너뛸 수 있습니다.
+- 영상 자체를 0.3배 속도와 30fps로 변환해 부드럽게 재생합니다. 배경 정지, 시스템 reduced-motion 및 비활성 탭 정지를 지원합니다. 첫 장부 진입에만 2.6초의 접근·빛·카드 등장 효과를 적용합니다. 입장 효과를 건너뛸 수 있습니다.
 
 ## 로고
 

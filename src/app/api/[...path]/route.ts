@@ -1,5 +1,5 @@
 import { syncReferencePrices } from "@/server/catalog/sync-prices";
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { authorize, assertOrigin, login, session } from "@/server/auth";
@@ -15,6 +15,7 @@ import { credentialForRequest } from "@/server/connection";
 import { nexonContract, priceProvider } from "@/server/nexon/adapter";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 const ok = (data: unknown) =>
   NextResponse.json(
     { ok: true, data },
@@ -48,7 +49,15 @@ async function handle(req: NextRequest) {
       const body = z
         .object({ key: z.string().trim().min(1).max(512) })
         .parse(await req.json());
-      return ok(await connectKey(body.key));
+      const connection = await connectKey(body.key);
+      after(async () => {
+        try {
+          await syncAccount();
+        } catch (error) {
+          console.error("전체 캐릭터 첫 조회 실패:", error);
+        }
+      });
+      return ok(connection);
     }
     if (req.method === "POST" && route === "connection/disconnect") {
       disconnect();
@@ -70,8 +79,13 @@ async function handle(req: NextRequest) {
         usage: usageCount(`nexon:${credentialForRequest().fingerprint}`),
       });
     }
-    if (req.method === "POST" && route === "sync/request")
-      return ok(await syncAccount());
+    if (req.method === "POST" && route === "sync/request") {
+      const raw = await req.text();
+      const body = z
+        .object({ characterId: z.string().min(1).max(200).optional() })
+        .parse(raw ? JSON.parse(raw) : {});
+      return ok(await syncAccount({ characterId: body.characterId }));
+    }
     if (req.method === "GET" && route === "sync/status")
       return ok(readBook(mode).sync);
     if (req.method === "POST" && route === "command") {

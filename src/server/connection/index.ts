@@ -79,6 +79,7 @@ export async function connectKey(key: string, fetcher: typeof fetch = fetch) {
           .filter((c) => !fresh.some((n) => n.id === c.id))
           .map((c) => ({ ...c, managed: false })),
       ];
+      book.settings.setupDone = true;
       book.revision++;
       audit(book, "API 키 연결", "본인 캐릭터 목록 확인");
       writeBook(book);

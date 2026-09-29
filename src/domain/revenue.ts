@@ -96,3 +96,26 @@ export function summarize(rows: Entry[]) {
     unknown: rows.filter((x) => x.unknown).length,
   };
 }
+
+export function bossEarnings(s: Ledger, completions: Completion[]) {
+  const groups = new Map<string, Completion[]>();
+  for (const completion of completions) {
+    if (completion.excluded) continue;
+    groups.set(completion.group, [
+      ...(groups.get(completion.group) ?? []),
+      completion,
+    ]);
+  }
+  return [...groups].map(([group, records]) => {
+    const boss = s.bosses.find((item) => item.id === records[0].bossId)!;
+    const summary = summarize(entries(s, records));
+    return {
+      group,
+      boss,
+      records,
+      characterCount: new Set(records.map((record) => record.characterId)).size,
+      difficulties: [...new Set(records.map((record) => record.difficulty ?? "확인 필요"))],
+      ...summary,
+    };
+  });
+}

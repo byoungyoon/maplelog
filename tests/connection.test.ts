@@ -54,6 +54,7 @@ describe("실제 키 연결 서비스 (외부 HTTP 응답은 테스트 fixture)"
       id: "test-ocid",
       managed: false,
     });
+    expect(database.readBook("live").settings.setupDone).toBe(true);
   });
   it("GCM nonce를 재사용하지 않고 암호문 변조를 거절한다", () => {
     const a = crypto.encryptCredential("test-only"),

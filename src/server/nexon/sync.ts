@@ -38,10 +38,9 @@ export async function syncAccount(
   try {
     const initial = readBook("live");
     const characters = initial.characters.filter(
-      (c) =>
-        c.managed && (!options.characterId || c.id === options.characterId),
+      (c) => !options.characterId || c.id === options.characterId,
     );
-    ensure(characters.length, "관리 캐릭터를 먼저 선택해 주세요.");
+    ensure(characters.length, "조회할 캐릭터가 없어요.");
     for (const char of characters) {
       ensure(
         credentialIsCurrent(credential.generation),
@@ -66,7 +65,7 @@ export async function syncAccount(
               409,
             );
             const book = readBook("live");
-            if (!book.characters.some((c) => c.id === char.id && c.managed))
+            if (!book.characters.some((c) => c.id === char.id))
               return;
             mergeScheduler(book, char.id, data);
             book.sync.lastSuccess = new Date().toISOString();

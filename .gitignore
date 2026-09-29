@@ -10,5 +10,6 @@ playwright-report/
 .DS_Store
 
 .next-e2e/
+.next-build-check/
 
 .local-secrets/

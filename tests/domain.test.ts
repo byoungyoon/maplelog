@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { seed } from "./fixtures/ledger";
 import { applyCommand, observe } from "@/domain/commands";
 import { validateLedger } from "@/domain/model";
-import { entries, summarize } from "@/domain/revenue";
+import { bossEarnings, entries, summarize } from "@/domain/revenue";
 import { estimate, formatMeso, csvCell } from "@/domain/money";
 import { periodAt } from "@/domain/period";
 import { report } from "@/server/report";
@@ -325,4 +325,50 @@ it("3월 말에서 이전 월 조회는 2월이며 월말을 넘기지 않는다
   );
   expect(r.period.start).toBe("2026-01-31T15:00:00.000Z");
   expect(r.period.end).toBe("2026-02-28T15:00:00.000Z");
+});
+
+it("정산 보고서는 캐릭터 쿼리와 관계없이 전체를 합산한다", () => {
+  const s = setup();
+  const now = new Date(NOW);
+  expect(report(s, new URL("http://local/?character=c1"), now)).toEqual(
+    report(s, new URL("http://local/"), now),
+  );
+});
+
+it("보스 카드에는 완료 캐릭터 수와 실제·예상 수익을 합산한다", () => {
+  const s = setup();
+  const second = observe(s, "c2-b1", NOW)!;
+  let group = bossEarnings(s, s.completions).find((item) => item.group === "g1")!;
+  expect(group.characterCount).toBe(2);
+  expect(group.total).toBe("56000000");
+  applyCommand(s, {
+    type: "settle",
+    targetId: second.id,
+    kind: "crystal",
+    quantity: 1,
+    net: "25000000",
+    settledAt: NOW,
+  });
+  group = bossEarnings(s, s.completions).find((item) => item.group === "g1")!;
+  expect(group.actual).toBe("25000000");
+  expect(group.expected).toBe("28000000");
+  expect(group.total).toBe("53000000");
+  second.excluded = true;
+  group = bossEarnings(s, s.completions).find((item) => item.group === "g1")!;
+  expect(group.characterCount).toBe(1);
+  expect(group.total).toBe("28000000");
+});
+
+it("완료 기록이 제외되어도 다른 캐릭터의 남은 보스 예상액을 보여준다", () => {
+  const s = setup();
+  s.characters.forEach((character) => (character.managed = false));
+  s.completions = [];
+  s.drops = [];
+  s.settlements = [];
+  observe(s, "c1-b1", NOW)!.excluded = true;
+  const result = report(s, new URL("http://local/?cycle=weekly"), new Date(NOW));
+  expect(result.summary.total).toBe("0");
+  expect(result.remaining).toBe(11);
+  expect(result.remainingKnownAmount).toBe("236000000");
+  expect(result.projectedTotal).toBe("236000000");
 });

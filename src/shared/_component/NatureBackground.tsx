@@ -8,7 +8,6 @@ export function NatureBackground() {
   useEffect(() => {
     const element = video.current;
     if (!element) return;
-    element.playbackRate = 0.65;
     const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => {
       if (moving && !reduced.matches && !document.hidden) {

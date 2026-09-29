@@ -180,12 +180,36 @@ it("동시 동기화 요청은 외부 요청 한 번으로 합쳐진다", async 
   expect(fetcher).toHaveBeenCalledTimes(1);
   expect(database.readBook("live").completions).toHaveLength(1);
 });
-it("부분 실패는 정상 캐릭터 결과를 보존하고 캐릭터별 오류를 남긴다", async () => {
+it("검색한 캐릭터의 보스만 조회한다", async () => {
+  await connection.connectKey("test-search-key", async () =>
+    Response.json(characterListFixture),
+  );
+  const book = fresh();
+  book.characters.push({ ...book.characters[0], id: "second-ocid" });
+  book.characters.forEach((c) => (c.imageUpdatedAt = new Date().toISOString()));
+  database.writeBook(book);
+  const requested: string[] = [];
+  const fetcher: typeof fetch = async (url) => {
+    requested.push(String(url));
+    return Response.json(sample());
+  };
+  const result = await sync.syncAccount({
+    characterId: "second-ocid",
+    fetcher,
+  });
+  expect(result.success).toBe(1);
+  expect(requested).toHaveLength(1);
+  expect(requested[0]).toContain("second-ocid");
+  expect(database.readBook("live").completions[0].characterId).toBe(
+    "second-ocid",
+  );
+});
+it("전체 조회는 선택하지 않은 캐릭터도 포함하고 부분 실패를 보존한다", async () => {
   await connection.connectKey("test-partial-key", async () =>
     Response.json(characterListFixture),
   );
   const b = fresh();
-  b.characters.push({ ...b.characters[0], id: "second-ocid" });
+  b.characters.push({ ...b.characters[0], id: "second-ocid", managed: false });
   b.characters.forEach((c) => (c.imageUpdatedAt = new Date().toISOString()));
   database.writeBook(b);
   const fetcher: typeof fetch = async (url) =>

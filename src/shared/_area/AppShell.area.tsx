@@ -8,7 +8,6 @@ import {
   Swords,
   ReceiptText,
   ChartNoAxesCombined,
-  Settings,
   X,
 } from "lucide-react";
 import { NatureBackground } from "../_component/NatureBackground";
@@ -18,7 +17,6 @@ const nav = [
   { href: "/bosses", name: "보스", icon: Swords },
   { href: "/ledger", name: "기록", icon: ReceiptText },
   { href: "/prices", name: "시세", icon: ChartNoAxesCombined },
-  { href: "/settings", name: "설정", icon: Settings },
 ];
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
