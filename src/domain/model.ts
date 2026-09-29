@@ -115,6 +115,12 @@ export const auditSchema = z.object({
   targetId: id,
 });
 export const ledgerSchema = z.object({
+  priceSync: z
+    .object({
+      checkedAt: stamp.nullable(),
+      error: z.string().max(200).nullable(),
+    })
+    .optional(),
   schemaVersion: z.literal(1),
   mode: z.enum(["demo", "live"]),
   revision: z.number().int().min(0),

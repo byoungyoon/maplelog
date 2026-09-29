@@ -22,7 +22,6 @@ export default function LedgerAction() {
   const [gross, setGross] = useState(false);
   const [fee, setFee] = useState(0);
   const [cost, setCost] = useState("0");
-  const [share, setShare] = useState(1);
   const [editingId, setEditingId] = useState<string | undefined>();
   if (q.isPending) return <Loading />;
   if (q.error) return <ErrorState error={q.error} retry={() => q.refetch()} />;
@@ -50,7 +49,7 @@ export default function LedgerAction() {
   const parsed =
     /^(0|[1-9]\d{0,39})$/.test(net) && /^(0|[1-9]\d{0,39})$/.test(cost)
       ? gross
-        ? estimate(net, 1, fee, cost, share)?.toString()
+        ? estimate(net, 1, fee, cost, 1)?.toString()
         : net
       : null;
   return (
@@ -252,19 +251,8 @@ export default function LedgerAction() {
                       onChange={(e) => setCost(e.target.value)}
                     />
                   </label>
-                  <label>
-                    내 몫 (1 / 인원)
-                    <select
-                      value={share}
-                      onChange={(e) => setShare(Number(e.target.value))}
-                    >
-                      {[1, 2, 3, 4, 5, 6].map((x) => (
-                        <option key={x}>{x}</option>
-                      ))}
-                    </select>
-                  </label>
                   <div className="notice">
-                    차감·분배 후 순수령 {formatMeso(parsed ?? null)} 메소
+                    1인 기준 차감 후 순수령 {formatMeso(parsed ?? null)} 메소
                     <br />
                     총판매가 − 수수료(내림) − 비용 → 인원으로 나눔(내림)
                   </div>

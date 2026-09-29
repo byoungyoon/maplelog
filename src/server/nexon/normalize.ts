@@ -86,7 +86,7 @@ export function mergeScheduler(
         enabled: rows.some(
           (r) => r.registration_flag === "true" || r.complete_flag === "true",
         ),
-        party: null,
+        party: 1,
         difficulty: boss.difficulty,
       };
       book.plans.push(plan);

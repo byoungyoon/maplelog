@@ -3,6 +3,7 @@ import { ensure, money, type Ledger, type Completion } from "./model";
 import { periodAt } from "./period";
 const id = z.string().min(1).max(200);
 export const commandSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("prices-refresh") }),
   z.object({
     type: z.literal("item-create"),
     bossId: id,
@@ -18,6 +19,7 @@ export const commandSchema = z.discriminatedUnion("type", [
     price: money.nullable(),
   }),
   z.object({ type: z.literal("complete"), planId: id }),
+  z.object({ type: z.literal("crystal-settle"), id }),
   z.object({
     type: z.literal("completion-confirm"),
     id,
@@ -190,10 +192,12 @@ export function observe(
           : "api",
     status: "complete",
     difficulty: p.difficulty,
-    party: p.party,
+    party: s.mode === "live" ? 1 : p.party,
     crystal:
-      p.party && p.difficulty && b.crystal
-        ? (BigInt(b.crystal) / BigInt(p.party)).toString()
+      p.difficulty && b.crystal && (s.mode === "live" || p.party)
+        ? (
+            BigInt(b.crystal) / BigInt(s.mode === "live" ? 1 : p.party!)
+          ).toString()
         : null,
     review: "pending",
     excluded: false,
@@ -279,17 +283,48 @@ export function applyCommand(
         ),
         "결정석 정산을 먼저 취소해 주세요.",
       );
-      c.party = cmd.party;
+      c.party = s.mode === "live" ? 1 : cmd.party;
       c.difficulty = cmd.difficulty;
       c.status = "complete";
       c.crystal = b.crystal
-        ? (BigInt(b.crystal) / BigInt(cmd.party)).toString()
+        ? (BigInt(b.crystal) / BigInt(c.party)).toString()
         : null;
       audit(
         s,
         "완료 조건 확인",
-        `${cmd.difficulty} · 사용자 설정 ${cmd.party}인 분배`,
+        `${cmd.difficulty} · 사용자 설정 ${c.party}인 분배`,
         c.id,
+        now,
+      );
+      break;
+    }
+    case "crystal-settle": {
+      const c = s.completions.find((c) => c.id === cmd.id);
+      ensure(c && !c.excluded, "정산할 완료 기록을 찾을 수 없어요.");
+      ensure(
+        c.status === "complete" && c.difficulty,
+        "보스 완료 정보를 먼저 확인해 주세요.",
+      );
+      const boss = s.bosses.find((b) => b.id === c.bossId)!;
+      const crystal =
+        c.party === 1
+          ? c.crystal
+          : c.crystal && c.party
+            ? (BigInt(c.crystal) * BigInt(c.party)).toString()
+            : boss.crystal;
+      ensure(crystal !== null, "결정석 기준 가격을 먼저 입력해 주세요.");
+      c.party = 1;
+      c.crystal = crystal;
+      applyCommand(
+        s,
+        {
+          type: "settle",
+          kind: "crystal",
+          targetId: c.id,
+          quantity: 1,
+          net: crystal,
+          settledAt: now,
+        },
         now,
       );
       break;
@@ -349,8 +384,8 @@ export function applyCommand(
       Object.assign(d, {
         tradable: cmd.tradable,
         tradeConfirmed: true,
-        shared: cmd.shared,
-        share: cmd.share,
+        shared: s.mode === "live" ? false : cmd.shared,
+        share: s.mode === "live" ? 1 : cmd.share,
         feeBps: cmd.feeBps,
         cost: cmd.cost,
         used: cmd.used,
@@ -515,7 +550,7 @@ export function applyCommand(
       const p = s.plans.find((p) => p.id === cmd.id);
       ensure(p, "계획이 없어요.");
       p.enabled = cmd.enabled;
-      p.party = cmd.party;
+      p.party = s.mode === "live" ? 1 : cmd.party;
       if (cmd.difficulty) {
         const boss = s.bosses.find((b) => b.id === p.bossId)!;
         const variant = s.bosses.find(

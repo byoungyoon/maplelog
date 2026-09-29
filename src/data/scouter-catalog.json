@@ -1,0 +1,2252 @@
+{
+  "source": "https://maplescouter.com/ko/boss-data",
+  "priceSource": "https://maplescouter.com/ko/boss-income",
+  "checkedAt": "2026-09-29",
+  "priceVersion": "2026-09-17",
+  "bosses": [
+    {
+      "key": "jupiter_hard",
+      "name": "유피테르",
+      "difficulty": "하드",
+      "crystalBefore": "4845000000",
+      "crystal": "4845000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_jupiter.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_jupiter.png",
+      "rewards": [
+        {
+          "name": "오만의 원죄",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "4단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "신념의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "갈망의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "뒤틀린 갈망의 편린",
+          "personal": true,
+          "suggestedQuantity": 2
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 360
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 750
+        }
+      ]
+    },
+    {
+      "key": "jupiter_normal",
+      "name": "유피테르",
+      "difficulty": "노멀",
+      "crystalBefore": "1615000000",
+      "crystal": "1560000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_jupiter.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_jupiter.png",
+      "rewards": [
+        {
+          "name": "4단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "신념의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "뒤틀린 갈망의 편린",
+          "personal": true,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 45
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 450
+        }
+      ]
+    },
+    {
+      "key": "bellona_easy",
+      "name": "벨로나",
+      "difficulty": "이지",
+      "crystalBefore": "440000000",
+      "crystal": "396000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/easy_bellona.png",
+      "imageSource": "https://maplescouter.com/bossIcon/easy_bellona.png",
+      "rewards": [
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 200
+        }
+      ]
+    },
+    {
+      "key": "bellona_normal",
+      "name": "벨로나",
+      "difficulty": "노멀",
+      "crystalBefore": "850000000",
+      "crystal": "824000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_bellona.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_bellona.png",
+      "rewards": [
+        {
+          "name": "2단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "저주받은 원혼의 잔재",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 290
+        }
+      ]
+    },
+    {
+      "key": "bellona_hard",
+      "name": "벨로나",
+      "difficulty": "하드",
+      "crystalBefore": "2950000000",
+      "crystal": "2950000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_bellona.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_bellona.png",
+      "rewards": [
+        {
+          "name": "굶주리는 핏빛 원혼",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "2단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "광기의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "신념의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "저주받은 원혼의 잔재",
+          "personal": false,
+          "suggestedQuantity": 2
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 590
+        }
+      ]
+    },
+    {
+      "key": "adversary_extreme",
+      "name": "최초의 대적자",
+      "difficulty": "익스트림",
+      "crystalBefore": "4712000000",
+      "crystal": "4712000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/extreme_adversary.png",
+      "imageSource": "https://maplescouter.com/bossIcon/extreme_adversary.png",
+      "rewards": [
+        {
+          "name": "익셉셔널 해머(훈장)",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "불멸의 유산",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "1단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "고대의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "이어진 고대의 결의",
+          "personal": false,
+          "suggestedQuantity": 16
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 240
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 750
+        }
+      ]
+    },
+    {
+      "key": "adversary_hard",
+      "name": "최초의 대적자",
+      "difficulty": "하드",
+      "crystalBefore": "1435000000",
+      "crystal": "1390000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_adversary.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_adversary.png",
+      "rewards": [
+        {
+          "name": "불멸의 유산",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "1단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "고대의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "이어진 고대의 결의",
+          "personal": false,
+          "suggestedQuantity": 6
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 30
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 450
+        }
+      ]
+    },
+    {
+      "key": "adversary_normal",
+      "name": "최초의 대적자",
+      "difficulty": "노멀",
+      "crystalBefore": "560000000",
+      "crystal": "532000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_adversary.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_adversary.png",
+      "rewards": [
+        {
+          "name": "1단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "이어진 고대의 결의 조각",
+          "personal": false,
+          "suggestedQuantity": 4
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 280
+        }
+      ]
+    },
+    {
+      "key": "adversary_easy",
+      "name": "최초의 대적자",
+      "difficulty": "이지",
+      "crystalBefore": "308000000",
+      "crystal": "261000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/easy_adversary.png",
+      "imageSource": "https://maplescouter.com/bossIcon/easy_adversary.png",
+      "rewards": [
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 200
+        }
+      ]
+    },
+    {
+      "key": "bardrix_hard",
+      "name": "발드릭스",
+      "difficulty": "하드",
+      "crystalBefore": "3078000000",
+      "crystal": "3078000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_bardrix.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_bardrix.png",
+      "rewards": [
+        {
+          "name": "죽음의 맹세",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "3단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "맹세의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "신념의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 120
+        },
+        {
+          "name": "영원한 충성의 흔적",
+          "personal": true,
+          "suggestedQuantity": 2
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 650
+        }
+      ]
+    },
+    {
+      "key": "bardrix_normal",
+      "name": "발드릭스",
+      "difficulty": "노멀",
+      "crystalBefore": "1368000000",
+      "crystal": "1320000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_bardrix.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_bardrix.png",
+      "rewards": [
+        {
+          "name": "3단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "신념의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "영원한 충성의 흔적",
+          "personal": true,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 450
+        }
+      ]
+    },
+    {
+      "key": "limbo_hard",
+      "name": "림보",
+      "difficulty": "하드",
+      "crystalBefore": "2385000000",
+      "crystal": "2385000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_limbo.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_limbo.png",
+      "rewards": [
+        {
+          "name": "근원의 속삭임",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "3단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "욕망의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "신념의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 60
+        },
+        {
+          "name": "왜곡된 욕망의 결정",
+          "personal": true,
+          "suggestedQuantity": 2
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 600
+        }
+      ]
+    },
+    {
+      "key": "limbo_normal",
+      "name": "림보",
+      "difficulty": "노멀",
+      "crystalBefore": "1026000000",
+      "crystal": "995000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_limbo.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_limbo.png",
+      "rewards": [
+        {
+          "name": "3단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "신념의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "왜곡된 욕망의 결정",
+          "personal": true,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 400
+        }
+      ]
+    },
+    {
+      "key": "maleficStar_hard",
+      "name": "찬란한 흉성",
+      "difficulty": "하드",
+      "crystalBefore": "2678000000",
+      "crystal": "2678000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_maleficStar.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_maleficStar.png",
+      "rewards": [
+        {
+          "name": "황홀한 악몽",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "2단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "환상의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "신념의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "황홀한 환상의 단편",
+          "personal": false,
+          "suggestedQuantity": 18
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 90
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 550
+        }
+      ]
+    },
+    {
+      "key": "maleficStar_normal",
+      "name": "찬란한 흉성",
+      "difficulty": "노멀",
+      "crystalBefore": "625000000",
+      "crystal": "576000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_maleficStar.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_maleficStar.png",
+      "rewards": [
+        {
+          "name": "2단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "황홀한 환상의 단편 조각",
+          "personal": false,
+          "suggestedQuantity": 6
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 380
+        }
+      ]
+    },
+    {
+      "key": "kaling_extreme",
+      "name": "카링",
+      "difficulty": "익스트림",
+      "crystalBefore": "5387000000",
+      "crystal": "5387000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/extreme_kaling.png",
+      "imageSource": "https://maplescouter.com/bossIcon/extreme_kaling.png",
+      "rewards": [
+        {
+          "name": "1단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "익셉셔널 해머(귀고리)",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "흉수의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "신념의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "뒤엉킨 흉수의 고리",
+          "personal": false,
+          "suggestedQuantity": 18
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 480
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 800
+        }
+      ]
+    },
+    {
+      "key": "kaling_hard",
+      "name": "카링",
+      "difficulty": "하드",
+      "crystalBefore": "1739000000",
+      "crystal": "1560000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_kaling.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_kaling.png",
+      "rewards": [
+        {
+          "name": "1단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "흉수의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "신념의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "뒤엉킨 흉수의 고리",
+          "personal": false,
+          "suggestedQuantity": 7
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 60
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 500
+        }
+      ]
+    },
+    {
+      "key": "kaling_normal",
+      "name": "카링",
+      "difficulty": "노멀",
+      "crystalBefore": "678000000",
+      "crystal": "593000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_kaling.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_kaling.png",
+      "rewards": [
+        {
+          "name": "1단계 소울 에테르",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "혼돈의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "뒤엉킨 흉수의 고리 조각",
+          "personal": false,
+          "suggestedQuantity": 5
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 300
+        }
+      ]
+    },
+    {
+      "key": "kaling_easy",
+      "name": "카링",
+      "difficulty": "이지",
+      "crystalBefore": "377000000",
+      "crystal": "320000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/easy_kaling.png",
+      "imageSource": "https://maplescouter.com/bossIcon/easy_kaling.png",
+      "rewards": [
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "뒤엉킨 흉수의 고리 조각",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 200
+        }
+      ]
+    },
+    {
+      "key": "kalos_extreme",
+      "name": "감시자 칼로스",
+      "difficulty": "익스트림",
+      "crystalBefore": "4104000000",
+      "crystal": "4104000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/extreme_kalos.png",
+      "imageSource": "https://maplescouter.com/bossIcon/extreme_kalos.png",
+      "rewards": [
+        {
+          "name": "익셉셔널 해머(눈장식)",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "의지의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "남겨진 칼로스의 의지",
+          "personal": false,
+          "suggestedQuantity": 14
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 180
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 700
+        }
+      ]
+    },
+    {
+      "key": "kalos_chaos",
+      "name": "감시자 칼로스",
+      "difficulty": "카오스",
+      "crystalBefore": "1273000000",
+      "crystal": "1230000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/chaos_kalos.png",
+      "imageSource": "https://maplescouter.com/bossIcon/chaos_kalos.png",
+      "rewards": [
+        {
+          "name": "의지의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "생명의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "남겨진 칼로스의 의지",
+          "personal": false,
+          "suggestedQuantity": 5
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 400
+        }
+      ]
+    },
+    {
+      "key": "kalos_normal",
+      "name": "감시자 칼로스",
+      "difficulty": "노멀",
+      "crystalBefore": "505000000",
+      "crystal": "479000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_kalos.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_kalos.png",
+      "rewards": [
+        {
+          "name": "생명의 연마석",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "남겨진 칼로스의 의지 조각",
+          "personal": false,
+          "suggestedQuantity": 3
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 250
+        }
+      ]
+    },
+    {
+      "key": "kalos_easy",
+      "name": "감시자 칼로스",
+      "difficulty": "이지",
+      "crystalBefore": "280000000",
+      "crystal": "238000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/easy_kalos.png",
+      "imageSource": "https://maplescouter.com/bossIcon/easy_kalos.png",
+      "rewards": [
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 200
+        }
+      ]
+    },
+    {
+      "key": "seren_extreme",
+      "name": "선택받은 세렌",
+      "difficulty": "익스트림",
+      "crystalBefore": "2835000000",
+      "crystal": "1840000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/extreme_seren.png",
+      "imageSource": "https://maplescouter.com/bossIcon/extreme_seren.png",
+      "rewards": [
+        {
+          "name": "익셉셔널 해머(얼굴장식)",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "미트라의 분노 선택 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "데이브레이크 펜던트",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "미트라의 코어 젬스톤",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "에리온의 조각",
+          "personal": false,
+          "suggestedQuantity": 30
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 560
+        }
+      ]
+    },
+    {
+      "key": "seren_hard",
+      "name": "선택받은 세렌",
+      "difficulty": "하드",
+      "crystalBefore": "356000000",
+      "crystal": "302000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_seren.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_seren.png",
+      "rewards": [
+        {
+          "name": "미트라의 분노 선택 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "데이브레이크 펜던트",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "미트라의 코어 젬스톤",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 220
+        }
+      ]
+    },
+    {
+      "key": "seren_normal",
+      "name": "선택받은 세렌",
+      "difficulty": "노멀",
+      "crystalBefore": "239000000",
+      "crystal": "167000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_seren.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_seren.png",
+      "rewards": [
+        {
+          "name": "흑옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "데이브레이크 펜던트",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 150
+        }
+      ]
+    },
+    {
+      "key": "blackMage_extreme",
+      "name": "검은 마법사",
+      "difficulty": "익스트림",
+      "crystalBefore": "8740000000",
+      "crystal": "5680000000",
+      "effectiveAt": "2026-09-30T15:00:00.000Z",
+      "image": "/catalog/bosses/extreme_blackMage.png",
+      "imageSource": "https://maplescouter.com/bossIcon/extreme_blackMage.png",
+      "rewards": [
+        {
+          "name": "익셉셔널 해머(벨트)",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "창세의 뱃지",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 600
+        }
+      ]
+    },
+    {
+      "key": "blackMage_hard",
+      "name": "검은 마법사",
+      "difficulty": "하드",
+      "crystalBefore": "665000000",
+      "crystal": "465000000",
+      "effectiveAt": "2026-09-30T15:00:00.000Z",
+      "image": "/catalog/bosses/hard_blackMage.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_blackMage.png",
+      "rewards": [
+        {
+          "name": "창세의 뱃지",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 300
+        }
+      ]
+    },
+    {
+      "key": "kai_hard",
+      "name": "카이",
+      "difficulty": "하드",
+      "crystalBefore": "600000000",
+      "crystal": "600000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_kai.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_kai.png",
+      "rewards": [
+        {
+          "name": "카이의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "카이의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "시간의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "불안정한 시간의 파편",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "카이의 상급 솔 에르다 조각 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        }
+      ]
+    },
+    {
+      "key": "kai_normal",
+      "name": "카이",
+      "difficulty": "노멀",
+      "crystalBefore": "300000000",
+      "crystal": "300000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_kai.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_kai.png",
+      "rewards": [
+        {
+          "name": "카이의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "카이의 하급 솔 에르다 조각 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        }
+      ]
+    },
+    {
+      "key": "maerin_hard",
+      "name": "메이린",
+      "difficulty": "하드",
+      "crystalBefore": "600000000",
+      "crystal": "600000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_maerin.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_maerin.png",
+      "rewards": [
+        {
+          "name": "메이린의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "메이린의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "변화하는 운명의 파편",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "운명의 에테르넬 방어구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "메이린의 상급 솔 에르다 조각 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        }
+      ]
+    },
+    {
+      "key": "maerin_normal",
+      "name": "메이린",
+      "difficulty": "노멀",
+      "crystalBefore": "300000000",
+      "crystal": "300000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_maerin.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_maerin.png",
+      "rewards": [
+        {
+          "name": "메이린의 칠흑 장신구 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "메이린의 하급 솔 에르다 조각 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        }
+      ]
+    },
+    {
+      "key": "verusHilla_hard",
+      "name": "진 힐라",
+      "difficulty": "하드",
+      "crystalBefore": "106000000",
+      "crystal": "100000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_verusHilla.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_verusHilla.png",
+      "rewards": [
+        {
+          "name": "고통의 근원",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "흑옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "데이브레이크 펜던트",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 120
+        }
+      ]
+    },
+    {
+      "key": "verusHilla_normal",
+      "name": "진 힐라",
+      "difficulty": "노멀",
+      "crystalBefore": "71200000",
+      "crystal": "67600000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_verusHilla.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_verusHilla.png",
+      "rewards": [
+        {
+          "name": "홍옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "데이브레이크 펜던트",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 70
+        }
+      ]
+    },
+    {
+      "key": "darknell_hard",
+      "name": "듄켈",
+      "difficulty": "하드",
+      "crystalBefore": "94400000",
+      "crystal": "89600000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_darknell.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_darknell.png",
+      "rewards": [
+        {
+          "name": "커맨더 포스 이어링",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "흑옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "에스텔라 이어링",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 120
+        }
+      ]
+    },
+    {
+      "key": "darknell_normal",
+      "name": "듄켈",
+      "difficulty": "노멀",
+      "crystalBefore": "47500000",
+      "crystal": "23700000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_darknell.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_darknell.png",
+      "rewards": [
+        {
+          "name": "에스텔라 이어링",
+          "personal": false,
+          "suggestedQuantity": 1
+        }
+      ]
+    },
+    {
+      "key": "gloom_chaos",
+      "name": "더스크",
+      "difficulty": "카오스",
+      "crystalBefore": "69800000",
+      "crystal": "66300000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/chaos_gloom.png",
+      "imageSource": "https://maplescouter.com/bossIcon/chaos_gloom.png",
+      "rewards": [
+        {
+          "name": "거대한 공포",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "흑옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "에스텔라 이어링",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 100
+        }
+      ]
+    },
+    {
+      "key": "gloom_normal",
+      "name": "더스크",
+      "difficulty": "노멀",
+      "crystalBefore": "44000000",
+      "crystal": "22000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_gloom.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_gloom.png",
+      "rewards": [
+        {
+          "name": "에스텔라 이어링",
+          "personal": false,
+          "suggestedQuantity": 1
+        }
+      ]
+    },
+    {
+      "key": "slime_chaos",
+      "name": "가디언 엔젤 슬라임",
+      "difficulty": "카오스",
+      "crystalBefore": "75100000",
+      "crystal": "71300000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/chaos_slime.png",
+      "imageSource": "https://maplescouter.com/bossIcon/chaos_slime.png",
+      "rewards": [
+        {
+          "name": "흑옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "가디언 엔젤 링",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 70
+        }
+      ]
+    },
+    {
+      "key": "slime_normal",
+      "name": "가디언 엔젤 슬라임",
+      "difficulty": "노멀",
+      "crystalBefore": "25500000",
+      "crystal": "12700000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_slime.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_slime.png",
+      "rewards": []
+    },
+    {
+      "key": "will_hard",
+      "name": "윌",
+      "difficulty": "하드",
+      "crystalBefore": "77100000",
+      "crystal": "73200000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_will.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_will.png",
+      "rewards": [
+        {
+          "name": "저주받은 마도서 선택 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "홍옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "트와일라이트 마크",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "거울세계의 코어 젬스톤",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 50
+        }
+      ]
+    },
+    {
+      "key": "will_normal",
+      "name": "윌",
+      "difficulty": "노멀",
+      "crystalBefore": "41100000",
+      "crystal": "20500000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_will.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_will.png",
+      "rewards": [
+        {
+          "name": "트와일라이트 마크",
+          "personal": false,
+          "suggestedQuantity": 1
+        }
+      ]
+    },
+    {
+      "key": "will_easy",
+      "name": "윌",
+      "difficulty": "이지",
+      "crystalBefore": "32300000",
+      "crystal": "16100000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/easy_will.png",
+      "imageSource": "https://maplescouter.com/bossIcon/easy_will.png",
+      "rewards": []
+    },
+    {
+      "key": "lucid_hard",
+      "name": "루시드",
+      "difficulty": "하드",
+      "crystalBefore": "62900000",
+      "crystal": "59700000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_lucid.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_lucid.png",
+      "rewards": [
+        {
+          "name": "몽환의 벨트",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "홍옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "트와일라이트 마크",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 50
+        }
+      ]
+    },
+    {
+      "key": "lucid_normal",
+      "name": "루시드",
+      "difficulty": "노멀",
+      "crystalBefore": "35600000",
+      "crystal": "17800000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_lucid.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_lucid.png",
+      "rewards": [
+        {
+          "name": "트와일라이트 마크",
+          "personal": false,
+          "suggestedQuantity": 1
+        }
+      ]
+    },
+    {
+      "key": "lucid_easy",
+      "name": "루시드",
+      "difficulty": "이지",
+      "crystalBefore": "29800000",
+      "crystal": "14900000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/easy_lucid.png",
+      "imageSource": "https://maplescouter.com/bossIcon/easy_lucid.png",
+      "rewards": []
+    },
+    {
+      "key": "damien_hard",
+      "name": "데미안",
+      "difficulty": "하드",
+      "crystalBefore": "48900000",
+      "crystal": "46400000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_damien.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_damien.png",
+      "rewards": [
+        {
+          "name": "마력이 깃든 안대",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "홍옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "루인 포스실드",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 50
+        }
+      ]
+    },
+    {
+      "key": "damien_normal",
+      "name": "데미안",
+      "difficulty": "노멀",
+      "crystalBefore": "17500000",
+      "crystal": "8750000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_damien.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_damien.png",
+      "rewards": []
+    },
+    {
+      "key": "lotus_extreme",
+      "name": "스우",
+      "difficulty": "익스트림",
+      "crystalBefore": "574000000",
+      "crystal": "545000000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/extreme_lotus.png",
+      "imageSource": "https://maplescouter.com/bossIcon/extreme_lotus.png",
+      "rewards": [
+        {
+          "name": "컴플리트 언더컨트롤",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "루즈 컨트롤 머신 마크",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "백옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 280
+        }
+      ]
+    },
+    {
+      "key": "lotus_hard",
+      "name": "스우",
+      "difficulty": "하드",
+      "crystalBefore": "51500000",
+      "crystal": "48900000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/hard_lotus.png",
+      "imageSource": "https://maplescouter.com/bossIcon/hard_lotus.png",
+      "rewards": [
+        {
+          "name": "루즈 컨트롤 머신 마크",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "홍옥의 보스 반지 상자",
+          "personal": false,
+          "suggestedQuantity": 1
+        },
+        {
+          "name": "솔 에르다 기운",
+          "personal": true,
+          "suggestedQuantity": 50
+        }
+      ]
+    },
+    {
+      "key": "lotus_normal",
+      "name": "스우",
+      "difficulty": "노멀",
+      "crystalBefore": "16700000",
+      "crystal": "8350000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": "/catalog/bosses/normal_lotus.png",
+      "imageSource": "https://maplescouter.com/bossIcon/normal_lotus.png",
+      "rewards": []
+    },
+    {
+      "key": "papulatus_chaos",
+      "name": "파풀라투스",
+      "difficulty": "카오스",
+      "crystalBefore": "13100000",
+      "crystal": "6550000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": null,
+      "imageSource": "https://maplescouter.com/bossIcon/chaos_papulatus.png",
+      "rewards": []
+    },
+    {
+      "key": "velum_chaos",
+      "name": "벨룸",
+      "difficulty": "카오스",
+      "crystalBefore": "9280000",
+      "crystal": "4640000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": null,
+      "imageSource": "https://maplescouter.com/bossIcon/chaos_velum.png",
+      "rewards": []
+    },
+    {
+      "key": "bloodyQueen_chaos",
+      "name": "블러디퀸",
+      "difficulty": "카오스",
+      "crystalBefore": "8140000",
+      "crystal": "4070000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": null,
+      "imageSource": "https://maplescouter.com/bossIcon/chaos_bloodyQueen.png",
+      "rewards": []
+    },
+    {
+      "key": "pierre_chaos",
+      "name": "피에르",
+      "difficulty": "카오스",
+      "crystalBefore": "8170000",
+      "crystal": "4080000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": null,
+      "imageSource": "https://maplescouter.com/bossIcon/chaos_pierre.png",
+      "rewards": []
+    },
+    {
+      "key": "vonbon_chaos",
+      "name": "반반",
+      "difficulty": "카오스",
+      "crystalBefore": "8150000",
+      "crystal": "4070000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": null,
+      "imageSource": "https://maplescouter.com/bossIcon/chaos_vonbon.png",
+      "rewards": []
+    },
+    {
+      "key": "magnus_hard",
+      "name": "매그너스",
+      "difficulty": "하드",
+      "crystalBefore": "8560000",
+      "crystal": "4280000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": null,
+      "imageSource": "https://maplescouter.com/bossIcon/hard_magnus.png",
+      "rewards": []
+    },
+    {
+      "key": "zakum_chaos",
+      "name": "자쿰",
+      "difficulty": "카오스",
+      "crystalBefore": "8080000",
+      "crystal": "4040000",
+      "effectiveAt": "2026-09-17T01:00:00.000Z",
+      "image": null,
+      "imageSource": "https://maplescouter.com/bossIcon/chaos_zakum.png",
+      "rewards": []
+    }
+  ],
+  "items": [
+    {
+      "name": "1단계 소울 에테르",
+      "image": "/catalog/reward/soulEther_1.png",
+      "imageSource": "https://maplescouter.com/reward/soulEther_1.png",
+      "description": "소울 1단계 증폭 재료"
+    },
+    {
+      "name": "2단계 소울 에테르",
+      "image": "/catalog/reward/soulEther_2.png",
+      "imageSource": "https://maplescouter.com/reward/soulEther_2.png",
+      "description": "소울 2단계 증폭 재료"
+    },
+    {
+      "name": "3단계 소울 에테르",
+      "image": "/catalog/reward/soulEther_3.png",
+      "imageSource": "https://maplescouter.com/reward/soulEther_3.png",
+      "description": "소울 3단계 증폭 재료"
+    },
+    {
+      "name": "4단계 소울 에테르",
+      "image": "/catalog/reward/soulEther_4.png",
+      "imageSource": "https://maplescouter.com/reward/soulEther_4.png",
+      "description": "소울 4단계 증폭 재료"
+    },
+    {
+      "name": "신념의 연마석",
+      "image": "/catalog/reward/whetstone_faith.png",
+      "imageSource": "https://maplescouter.com/reward/whetstone_faith.png",
+      "description": "6레벨 시드링 재료"
+    },
+    {
+      "name": "생명의 연마석",
+      "image": "/catalog/reward/whetstone_life.png",
+      "imageSource": "https://maplescouter.com/reward/whetstone_life.png",
+      "description": "5레벨 시드링 재료"
+    },
+    {
+      "name": "죽음의 맹세",
+      "image": "/catalog/reward/bright_boss_pendant.png",
+      "imageSource": "https://maplescouter.com/reward/bright_boss_pendant.png",
+      "description": ""
+    },
+    {
+      "name": "근원의 속삭임",
+      "image": "/catalog/reward/bright_boss_ring.png",
+      "imageSource": "https://maplescouter.com/reward/bright_boss_ring.png",
+      "description": ""
+    },
+    {
+      "name": "불멸의 유산",
+      "image": "/catalog/reward/bright_boss_merit.png",
+      "imageSource": "https://maplescouter.com/reward/bright_boss_merit.png",
+      "description": ""
+    },
+    {
+      "name": "황홀한 악몽",
+      "image": "/catalog/reward/bright_boss_ring2.png",
+      "imageSource": "https://maplescouter.com/reward/bright_boss_ring2.png",
+      "description": ""
+    },
+    {
+      "name": "오만의 원죄",
+      "image": "/catalog/reward/bright_boss_face_acc.png",
+      "imageSource": "https://maplescouter.com/reward/bright_boss_face_acc.png",
+      "description": ""
+    },
+    {
+      "name": "굶주리는 핏빛 원혼",
+      "image": "/catalog/reward/bright_boss_eye_acc.png",
+      "imageSource": "https://maplescouter.com/reward/bright_boss_eye_acc.png",
+      "description": ""
+    },
+    {
+      "name": "의지의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/box_eternel_kalos.png",
+      "imageSource": "https://maplescouter.com/reward/box_eternel_kalos.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 획득 가능"
+    },
+    {
+      "name": "흉수의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/box_eternel_kaling.png",
+      "imageSource": "https://maplescouter.com/reward/box_eternel_kaling.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 획득 가능"
+    },
+    {
+      "name": "고대의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/box_eternel_adversary.png",
+      "imageSource": "https://maplescouter.com/reward/box_eternel_adversary.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 획득 가능"
+    },
+    {
+      "name": "환상의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/box_eternel_maleficStar.png",
+      "imageSource": "https://maplescouter.com/reward/box_eternel_maleficStar.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 획득 가능"
+    },
+    {
+      "name": "욕망의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/box_eternel_limbo.png",
+      "imageSource": "https://maplescouter.com/reward/box_eternel_limbo.png",
+      "description": "[파티보상] 에테르넬 장갑/신발/망토 획득 가능"
+    },
+    {
+      "name": "광기의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/box_eternel_bellona.png",
+      "imageSource": "https://maplescouter.com/reward/box_eternel_bellona.png",
+      "description": "[파티보상] 에테르넬 장갑/신발/망토 획득 가능"
+    },
+    {
+      "name": "맹세의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/box_eternel_bardrix.png",
+      "imageSource": "https://maplescouter.com/reward/box_eternel_bardrix.png",
+      "description": "[파티보상] 에테르넬 장갑/신발/망토 획득 가능"
+    },
+    {
+      "name": "갈망의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/box_eternel_jupiter.png",
+      "imageSource": "https://maplescouter.com/reward/box_eternel_jupiter.png",
+      "description": "[파티보상] 에테르넬 장갑/신발/망토 획득 가능"
+    },
+    {
+      "name": "이어진 고대의 결의",
+      "image": "/catalog/reward/frag_eternel_adversary.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_adversary.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 뽑기 재료"
+    },
+    {
+      "name": "이어진 고대의 결의 조각",
+      "image": "/catalog/reward/frag_eternel_adversary_half.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_adversary_half.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 뽑기 재료"
+    },
+    {
+      "name": "뒤틀린 갈망의 편린",
+      "image": "/catalog/reward/frag_eternel_jupiter.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_jupiter.png",
+      "description": "[개인보상] 에테르넬 신발/장갑/망토 뽑기 재료"
+    },
+    {
+      "name": "영원한 충성의 흔적",
+      "image": "/catalog/reward/frag_eternel_bardrix.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_bardrix.png",
+      "description": "[개인보상] 에테르넬 신발/장갑/망토 뽑기 재료"
+    },
+    {
+      "name": "왜곡된 욕망의 결정",
+      "image": "/catalog/reward/frag_eternel_limbo.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_limbo.png",
+      "description": "[개인보상] 에테르넬 신발/장갑/망토 뽑기 재료"
+    },
+    {
+      "name": "저주받은 원혼의 잔재",
+      "image": "/catalog/reward/frag_eternel_bellona.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_bellona.png",
+      "description": "[개인보상] 에테르넬 신발/장갑/망토 뽑기 재료"
+    },
+    {
+      "name": "황홀한 환상의 단편",
+      "image": "/catalog/reward/frag_eternel_maleficStar.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_maleficStar.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 뽑기 재료"
+    },
+    {
+      "name": "황홀한 환상의 단편 조각",
+      "image": "/catalog/reward/frag_eternel_maleficStar_half.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_maleficStar_half.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 뽑기 재료"
+    },
+    {
+      "name": "뒤엉킨 흉수의 고리",
+      "image": "/catalog/reward/frag_eternel_kaling.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_kaling.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 뽑기 재료"
+    },
+    {
+      "name": "뒤엉킨 흉수의 고리 조각",
+      "image": "/catalog/reward/frag_eternel_kaling_half.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_kaling_half.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 뽑기 재료"
+    },
+    {
+      "name": "남겨진 칼로스의 의지",
+      "image": "/catalog/reward/frag_eternel_kalos.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_kalos.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 뽑기 재료"
+    },
+    {
+      "name": "남겨진 칼로스의 의지 조각",
+      "image": "/catalog/reward/frag_eternel_kalos_half.png",
+      "imageSource": "https://maplescouter.com/reward/frag_eternel_kalos_half.png",
+      "description": "[파티보상] 에테르넬 모자/상의/하의/어깨 뽑기 재료"
+    },
+    {
+      "name": "희미한 솔 에르다의 기운",
+      "image": "/catalog/reward/sole_10.png",
+      "imageSource": "https://maplescouter.com/reward/sole_10.png",
+      "description": "보스 처치 시 획득 가능"
+    },
+    {
+      "name": "솔 에르다의 기운",
+      "image": "/catalog/reward/sole_200.png",
+      "imageSource": "https://maplescouter.com/reward/sole_200.png",
+      "description": "보스 처치 시 획득 가능"
+    },
+    {
+      "name": "짙은 솔 에르다의 기운",
+      "image": "/catalog/reward/sole_500.png",
+      "imageSource": "https://maplescouter.com/reward/sole_500.png",
+      "description": "보스 처치 시 획득 가능"
+    },
+    {
+      "name": "에리온의 조각",
+      "image": "/catalog/reward/erion_piece.png",
+      "imageSource": "https://maplescouter.com/reward/erion_piece.png",
+      "description": "보스 처치 시 획득 가능"
+    },
+    {
+      "name": "익셉셔널 해머(귀고리)",
+      "image": "/catalog/reward/except_earring.png",
+      "imageSource": "https://maplescouter.com/reward/except_earring.png",
+      "description": "커맨더 포스 이어링 익셉셔널 강화"
+    },
+    {
+      "name": "익셉셔널 해머(눈장식)",
+      "image": "/catalog/reward/except_eye_acc.png",
+      "imageSource": "https://maplescouter.com/reward/except_eye_acc.png",
+      "description": "마력이 깃든 안대 익셉셔널 강화"
+    },
+    {
+      "name": "익셉셔널 해머(얼굴장식)",
+      "image": "/catalog/reward/except_face_acc.png",
+      "imageSource": "https://maplescouter.com/reward/except_face_acc.png",
+      "description": "루즈 컨트롤 머신 마크 익셉셔널 강화"
+    },
+    {
+      "name": "익셉셔널 해머(벨트)",
+      "image": "/catalog/reward/except_belt.png",
+      "imageSource": "https://maplescouter.com/reward/except_belt.png",
+      "description": "몽환의 벨트 익셉셔널 강화"
+    },
+    {
+      "name": "익셉셔널 해머(훈장)",
+      "image": "/catalog/reward/except_merit.png",
+      "imageSource": "https://maplescouter.com/reward/except_merit.png",
+      "description": "불멸의 유산 익셉셔널 강화"
+    },
+    {
+      "name": "혼돈의 칠흑 장신구 상자",
+      "image": "/catalog/reward/dark_boss_box.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_box.png",
+      "description": ""
+    },
+    {
+      "name": "미트라의 분노 선택 상자",
+      "image": "/catalog/reward/dark_boss_emblem.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_emblem.png",
+      "description": "전사/도적/궁수/마법사/해적 선택 가능"
+    },
+    {
+      "name": "컴플리트 언더컨트롤",
+      "image": "/catalog/reward/dark_boss_complete_heart.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_complete_heart.png",
+      "description": ""
+    },
+    {
+      "name": "창세의 뱃지",
+      "image": "/catalog/reward/dark_boss_badge.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_badge.png",
+      "description": ""
+    },
+    {
+      "name": "거대한 공포",
+      "image": "/catalog/reward/dark_boss_ring.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_ring.png",
+      "description": ""
+    },
+    {
+      "name": "고통의 근원",
+      "image": "/catalog/reward/dark_boss_pendant.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_pendant.png",
+      "description": ""
+    },
+    {
+      "name": "커맨더 포스 이어링",
+      "image": "/catalog/reward/dark_boss_earring.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_earring.png",
+      "description": ""
+    },
+    {
+      "name": "저주받은 마도서 선택 상자",
+      "image": "/catalog/reward/dark_boss_pocket.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_pocket.png",
+      "description": "적/녹/황/청 마도서 선택 가능"
+    },
+    {
+      "name": "몽환의 벨트",
+      "image": "/catalog/reward/dark_boss_belt.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_belt.png",
+      "description": ""
+    },
+    {
+      "name": "마력이 깃든 안대",
+      "image": "/catalog/reward/dark_boss_eye_acc.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_eye_acc.png",
+      "description": ""
+    },
+    {
+      "name": "루즈 컨트롤 머신 마크",
+      "image": "/catalog/reward/dark_boss_face_acc.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_face_acc.png",
+      "description": ""
+    },
+    {
+      "name": "손상된 블랙 하트",
+      "image": "/catalog/reward/dark_boss_black_heart.png",
+      "imageSource": "https://maplescouter.com/reward/dark_boss_black_heart.png",
+      "description": "[단종] 손상된 블랙하트를 헤이븐에서 교환해서 획득 가능"
+    },
+    {
+      "name": "생명의 보스 반지 상자",
+      "image": "/catalog/reward/boss_ring_box_life.png",
+      "imageSource": "https://maplescouter.com/reward/boss_ring_box_life.png",
+      "description": "3-4레벨 반지, 4레벨 70%, 생명의 연마석 획득 가능"
+    },
+    {
+      "name": "백옥의 보스 반지 상자",
+      "image": "/catalog/reward/boss_ring_box_white.png",
+      "imageSource": "https://maplescouter.com/reward/boss_ring_box_white.png",
+      "description": "3-4레벨 반지 획득 가능, 4레벨 35%, 리레/컨티 확률 소폭 상향"
+    },
+    {
+      "name": "흑옥의 보스 반지 상자",
+      "image": "/catalog/reward/boss_ring_box_black.png",
+      "imageSource": "https://maplescouter.com/reward/boss_ring_box_black.png",
+      "description": "1-4레벨 반지 획득 가능, 4레벨 20%, 하급 반지 등장하지 않음."
+    },
+    {
+      "name": "홍옥의 보스 반지 상자",
+      "image": "/catalog/reward/boss_ring_box_red.png",
+      "imageSource": "https://maplescouter.com/reward/boss_ring_box_red.png",
+      "description": "1-4레벨 반지 획득 가능, 4레벨 10%"
+    },
+    {
+      "name": "에스텔라 이어링",
+      "image": "/catalog/reward/dawn_boss_earring.png",
+      "imageSource": "https://maplescouter.com/reward/dawn_boss_earring.png",
+      "description": ""
+    },
+    {
+      "name": "데이브레이크 펜던트",
+      "image": "/catalog/reward/dawn_boss_pendant.png",
+      "imageSource": "https://maplescouter.com/reward/dawn_boss_pendant.png",
+      "description": ""
+    },
+    {
+      "name": "트와일라이트 마크",
+      "image": "/catalog/reward/dawn_boss_face_acc.png",
+      "imageSource": "https://maplescouter.com/reward/dawn_boss_face_acc.png",
+      "description": ""
+    },
+    {
+      "name": "가디언 엔젤 링",
+      "image": "/catalog/reward/dawn_boss_ring.png",
+      "imageSource": "https://maplescouter.com/reward/dawn_boss_ring.png",
+      "description": ""
+    },
+    {
+      "name": "카이의 칠흑 장신구 상자",
+      "image": "/catalog/reward/kai_dark_boss_box.png",
+      "imageSource": "https://maplescouter.com/reward/kai_dark_boss_box.png",
+      "description": ""
+    },
+    {
+      "name": "카이의 하급 솔 에르다 조각 상자",
+      "image": "/catalog/reward/kai_low_piece_box.png",
+      "imageSource": "https://maplescouter.com/reward/kai_low_piece_box.png",
+      "description": ""
+    },
+    {
+      "name": "카이의 상급 솔 에르다 조각 상자",
+      "image": "/catalog/reward/kai_high_piece_box.png",
+      "imageSource": "https://maplescouter.com/reward/kai_high_piece_box.png",
+      "description": ""
+    },
+    {
+      "name": "카이의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/kai_eternel_box.png",
+      "imageSource": "https://maplescouter.com/reward/kai_eternel_box.png",
+      "description": ""
+    },
+    {
+      "name": "시간의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/time_eternel_box.png",
+      "imageSource": "https://maplescouter.com/reward/time_eternel_box.png",
+      "description": ""
+    },
+    {
+      "name": "불안정한 시간의 파편",
+      "image": "/catalog/reward/time_eternel_piece.png",
+      "imageSource": "https://maplescouter.com/reward/time_eternel_piece.png",
+      "description": ""
+    },
+    {
+      "name": "메이린의 칠흑 장신구 상자",
+      "image": "/catalog/reward/maerin_dark_boss_box.png",
+      "imageSource": "https://maplescouter.com/reward/maerin_dark_boss_box.png",
+      "description": ""
+    },
+    {
+      "name": "메이린의 하급 솔 에르다 조각 상자",
+      "image": "/catalog/reward/maerin_low_piece_box.png",
+      "imageSource": "https://maplescouter.com/reward/maerin_low_piece_box.png",
+      "description": ""
+    },
+    {
+      "name": "메이린의 상급 솔 에르다 조각 상자",
+      "image": "/catalog/reward/maerin_high_piece_box.png",
+      "imageSource": "https://maplescouter.com/reward/maerin_high_piece_box.png",
+      "description": ""
+    },
+    {
+      "name": "메이린의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/maerin_eternel_box.png",
+      "imageSource": "https://maplescouter.com/reward/maerin_eternel_box.png",
+      "description": ""
+    },
+    {
+      "name": "운명의 에테르넬 방어구 상자",
+      "image": "/catalog/reward/maerin_eternel_box2.png",
+      "imageSource": "https://maplescouter.com/reward/maerin_eternel_box2.png",
+      "description": ""
+    },
+    {
+      "name": "변화하는 운명의 파편",
+      "image": "/catalog/reward/maerin_eternel_piece.png",
+      "imageSource": "https://maplescouter.com/reward/maerin_eternel_piece.png",
+      "description": ""
+    }
+  ]
+}

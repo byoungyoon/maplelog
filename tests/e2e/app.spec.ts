@@ -114,7 +114,7 @@ test("서버 검증 완료 fixture → 캐릭터 선택 → 장부 → 해제", 
   await page.getByRole("button", { name: "내 장부 시작하기" }).click();
   await expect(page).toHaveURL(origin + "/");
   await expect(
-    page.getByRole("heading", { name: "내 보스 수익" }),
+    page.getByRole("heading", { name: "전체 캐릭터 정산" }),
   ).toBeVisible();
   await page.reload();
   await expect(page).toHaveURL(origin + "/");
@@ -136,28 +136,81 @@ test("서버 검증 완료 fixture → 캐릭터 선택 → 장부 → 해제", 
     weekly_boss_clear_count: 1,
     weekly_boss_clear_limit_count: 12,
   });
+  fixtureBook.characters.push({
+    ...fixtureBook.characters[0],
+    id: "test-ocid-two",
+    name: "두번째캐릭터",
+    order: 1,
+  });
+  mergeScheduler(fixtureBook, "test-ocid-two", {
+    date: new Date().toISOString(),
+    boss_contents: [
+      {
+        content_name: "루시드",
+        difficulty: "hard",
+        cycle: "bossWeekly",
+        list_order_no: 1,
+        registration_flag: "true",
+        complete_flag: "true",
+      },
+    ],
+    weekly_boss_clear_count: 1,
+    weekly_boss_clear_limit_count: 12,
+  });
   fixtureBook.revision++;
   writeBook(fixtureBook);
   await page.reload();
-  await expect(
-    page.getByRole("button", { name: /루시드.*기록하기/ }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: /루시드.*기록하기/ }).click();
-  const sheet = page.getByRole("dialog");
-  await sheet
-    .getByText("결정석 분배 인원을 확인해 주세요", { exact: true })
+  const cards = page.getByRole("article");
+  await expect(cards).toHaveCount(2);
+  const firstCard = page.getByRole("article", {
+    name: "테스트캐릭터 루시드 정산",
+    exact: true,
+  });
+  const belt = firstCard.getByRole("button", {
+    name: "몽환의 벨트 획득",
+    exact: true,
+  });
+  await expect(belt).toBeVisible();
+  expect(
+    await firstCard.locator(".quick-drop-toggle").count(),
+  ).toBeLessThanOrEqual(5);
+  await belt.click();
+  await expect(belt).toHaveAttribute("aria-pressed", "true");
+  await belt.click();
+  await expect(belt).toHaveAttribute("aria-pressed", "false");
+  await belt.click();
+  await expect(belt).toHaveAttribute("aria-pressed", "true");
+  await firstCard
+    .getByRole("button", { name: "결정석 정산", exact: true })
     .click();
-  await sheet.getByLabel("결정석 분배 인원").selectOption("1");
-  await sheet.getByRole("button", { name: "조건 확인", exact: true }).click();
-  await expect(sheet.getByText("결정석 1인 분배 · 조건 수정")).toBeVisible();
-  await sheet.getByRole("button", { name: /몽환의 벨트/ }).click();
   await expect(
-    sheet.getByRole("button", { name: /몽환의 벨트 거래 조건/ }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await sheet.getByRole("button", { name: "기록 마치기", exact: true }).click();
+    firstCard.getByRole("button", { name: "정산 완료", exact: true }),
+  ).toBeDisabled();
   const updated = readBook("live");
   expect(updated.completions[0].crystal).toBe("59700000");
+  expect(updated.completions[0].party).toBe(1);
+  expect(updated.settlements[0].net).toBe("59700000");
   expect(updated.drops[0].quantity).toBe(1);
+  expect(updated.drops[0].unitPrice).toBe("3800000000");
+  await page.getByRole("link", { name: "보스", exact: true }).click();
+  await page
+    .getByLabel("캐릭터 선택", { exact: true })
+    .selectOption("test-ocid");
+  await expect(page.locator(".boss-record")).toHaveCount(1);
+  await page.getByLabel("보스 또는 캐릭터 검색").fill("없는보스");
+  await expect(page.locator(".boss-record")).toHaveCount(0);
+  await page.getByLabel("보스 또는 캐릭터 검색").fill("루시드");
+  await expect(page.locator(".boss-record")).toHaveCount(1);
+  await page.getByRole("link", { name: "정산", exact: true }).click();
+  await expect(page.getByRole("article")).toHaveCount(2);
+  await expect(page.getByLabel("캐릭터 선택", { exact: true })).toHaveCount(0);
+  await firstCard.getByRole("button", { name: "루시드 드랍 상세" }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.getByLabel("결정석 분배 인원")).toHaveCount(0);
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "기록 마치기", exact: true })
+    .click();
   for (const width of [1440, 1024, 390, 360]) {
     await page.setViewportSize({ width, height: 900 });
     for (const path of ["/", "/bosses", "/ledger", "/prices", "/settings"]) {

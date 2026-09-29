@@ -45,9 +45,10 @@ it("가격·이미지 갱신을 반복해도 사용자 기준가를 덮거나 �
   applyCatalogue(b);
   expect(b.bosses[0].crystal).toBe("123456789");
   expect(b.items).toHaveLength(count);
-  expect(
-    b.items.every((i) => i.price === null && i.tradeConfirmed === false),
-  ).toBe(true);
+  expect(b.items.find((i) => i.name === "몽환의 벨트")?.price).toBe(
+    "3800000000",
+  );
+  expect(b.items.some((i) => i.price === null)).toBe(true);
 });
 it("원본에 없는 이미지는 null로 표시하며 참조한 로컬 파일은 모두 존재한다", () => {
   for (const entry of [...catalog.bosses, ...catalog.items])

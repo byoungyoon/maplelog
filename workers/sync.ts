@@ -1,3 +1,4 @@
+import { syncReferencePrices } from "../src/server/catalog/sync-prices";
 import { applyCatalogue } from "../src/server/catalog";
 import { sqlite, readBook, writeBook } from "../src/server/db";
 import { connectionStatus } from "../src/server/connection";
@@ -23,6 +24,7 @@ async function tick() {
       .immediate();
     const book = readBook("live");
     if (!connectionStatus().connected || !book.settings.setupDone) return;
+    await syncReferencePrices().catch(() => {});
     const focus =
       !!book.sync.focusUntil && Date.parse(book.sync.focusUntil) > now;
     const last = book.sync.lastRequest ? Date.parse(book.sync.lastRequest) : 0;

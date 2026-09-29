@@ -1,3 +1,4 @@
+import { applyReferencePrices } from "./reference-prices";
 import { createHash } from "node:crypto";
 import catalog from "@/data/scouter-catalog.json" with { type: "json" };
 import type { Ledger } from "@/domain/model";
@@ -63,7 +64,7 @@ export function applyCatalogue(book: Ledger, at = new Date().toISOString()) {
       }
     }
   }
-  return changed;
+  return applyReferencePrices(book) || changed;
 }
 export const catalogStatus = {
   source: catalog.source,

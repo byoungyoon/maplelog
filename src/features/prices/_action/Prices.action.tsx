@@ -28,15 +28,29 @@ export default function PricesAction() {
           <h1>나의 기준 시세</h1>
           <p>자주 기록하는 아이템의 가격을 관리하세요.</p>
         </div>
-        <span className="outlined-badge">자동 연동 미연결</span>
+        <div className="price-source-status">
+          <span className="outlined-badge">메이플스카우터 참고가</span>
+          <button
+            className="button"
+            disabled={cmd.isPending}
+            onClick={() => cmd.mutate({ type: "prices-refresh" })}
+          >
+            {cmd.isPending ? "조회 중…" : "참고가 새로고침"}
+          </button>
+        </div>
       </div>
       <div className="notice">
         <Info size={17} />
         <span>
-          수동 기준가는 새 획득 기록에 적용돼요. 기존 기록과 실제 정산액은
-          바뀌지 않아요.
+          참고가는 서버·옵션별 실거래가와 다를 수 있어요. 직접 입력한 가격을
+          우선하며, 가격 갱신은 새 획득 기록부터 적용돼요.
         </span>
       </div>
+      {book.priceSync?.error && (
+        <div className="notice warning" role="alert">
+          {book.priceSync.error}
+        </div>
+      )}
       <details className="audit-details">
         <summary>사용자 가격 데이터 가져오기</summary>
         <p>
@@ -98,7 +112,9 @@ export default function PricesAction() {
                   </p>
                   <span className="price-meta">
                     {i.source === "scouter"
-                      ? "메이플스카우터 후보 · 단가 미정"
+                      ? i.price === null
+                        ? "메이플스카우터 후보 · 가격 미정"
+                        : "메이플스카우터 참고가"
                       : "수동 기준가"}{" "}
                     ·{" "}
                     {new Date(i.observedAt).toLocaleString("ko-KR", {

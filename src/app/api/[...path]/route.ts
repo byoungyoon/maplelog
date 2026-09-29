@@ -1,3 +1,4 @@
+import { syncReferencePrices } from "@/server/catalog/sync-prices";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
@@ -81,6 +82,8 @@ async function handle(req: NextRequest) {
           command: commandSchema,
         })
         .parse(await req.json());
+      if (body.command.type === "prices-refresh")
+        return ok(await syncReferencePrices({ force: true }));
       if (body.command.type === "sync") {
         ensure(
           body.command.scenario === "refresh",

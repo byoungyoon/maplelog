@@ -7,7 +7,7 @@ export function RevenueCard({ report }: { report: Report }) {
   return (
     <section className="revenue-card home-revenue">
       <div className="revenue-heading">
-        <span>기록 합계</span>
+        <span>전체 캐릭터 정산 합계</span>
         <span className="home-complete">
           보스 {report.selected.length}회 완료
         </span>
@@ -33,7 +33,7 @@ export function RevenueCard({ report }: { report: Report }) {
         </div>
       </div>
       {s.unknown > 0 && (
-        <p className="price-footnote">가격·분배 미정 {s.unknown}건 제외</p>
+        <p className="price-footnote">가격 미정 {s.unknown}건 제외</p>
       )}
       <Link
         href="/ledger"

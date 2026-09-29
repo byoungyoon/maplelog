@@ -1,3 +1,4 @@
+import { applySoloPolicy } from "@/domain/solo";
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import { eq } from "drizzle-orm";
@@ -27,6 +28,7 @@ export function readBook(mode: Mode): Ledger {
   return JSON.parse(row.payload);
 }
 export function writeBook(s: Ledger) {
+  applySoloPolicy(s);
   validateLedger(s);
   db.update(books)
     .set({ revision: s.revision, payload: JSON.stringify(s) })
@@ -109,3 +111,14 @@ export function usageCount(provider: string) {
       .get(provider, Date.now() - 86400000) as { n: number }
   ).n;
 }
+
+// Upgrade existing personal expectations once; preserve paid settlements and snapshots.
+sqlite
+  .transaction(() => {
+    const book = readBook("live");
+    if (applySoloPolicy(book)) {
+      book.revision++;
+      writeBook(book);
+    }
+  })
+  .immediate();

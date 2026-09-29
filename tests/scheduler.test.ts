@@ -67,7 +67,7 @@ it("동일 API 완료 10회에도 최초 기록 하나만 생성하고 가격은
   expect(b.completions[0]).toMatchObject({
     provenance: "initial",
     crystal: null,
-    party: null,
+    party: 1,
     occurredAt: null,
     detectedAt: "2026-09-29T08:00:00.000Z",
     difficulty: "하드",
@@ -157,7 +157,8 @@ it("사용자 드랍 후보·수량·부분 정산과 기준가가 실제 장부
     party: 2,
     difficulty: "하드",
   });
-  expect(c.crystal).toBe("60000000");
+  expect(c.crystal).toBe("120000000");
+  expect(c.party).toBe(1);
   expect(b.settlements).toHaveLength(1);
   validateLedger(b);
 });

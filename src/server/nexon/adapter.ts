@@ -6,6 +6,7 @@ export const nexonContract = {
   documentation: "https://openapi.nexon.com/ko/game/maplestory/?id=57",
 };
 export const priceProvider = {
-  status: "unsupported" as const,
-  reason: "시세 자동 연동은 미연결 상태예요. 수동 기준가를 사용할 수 있어요.",
+  status: "connected" as const,
+  reason:
+    "메이플스카우터 참고가 연결 · 서버/옵션별 실거래 시세는 아니에요. 직접 입력한 가격은 유지해요.",
 };

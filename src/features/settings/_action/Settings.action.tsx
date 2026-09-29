@@ -163,7 +163,7 @@ export default function SettingsAction() {
       </section>
       <section className="panel settings-section">
         <div className="section-heading">
-          <h2>보스 계획과 분배</h2>
+          <h2>보스 계획</h2>
           <label>
             <span className="sr-only">계획 캐릭터</span>
             <select
@@ -209,7 +209,7 @@ export default function SettingsAction() {
                         type: "plan",
                         id: p.id,
                         enabled: e.target.checked,
-                        party: p.party,
+                        party: 1,
                         difficulty: p.difficulty,
                       })
                     }
@@ -226,7 +226,7 @@ export default function SettingsAction() {
                         type: "plan",
                         id: p.id,
                         enabled: p.enabled,
-                        party: p.party,
+                        party: 1,
                         difficulty: e.target.value || null,
                       })
                     }
@@ -241,30 +241,7 @@ export default function SettingsAction() {
                       ))}
                   </select>
                 </label>
-                <label>
-                  <span className="sr-only">{b.name} 파티 인원</span>
-                  <select
-                    disabled={cmd.isPending}
-                    value={p.party ?? ""}
-                    onChange={(e) =>
-                      cmd.mutate({
-                        type: "plan",
-                        id: p.id,
-                        enabled: p.enabled,
-                        party: e.target.value ? Number(e.target.value) : null,
-                        difficulty: p.difficulty,
-                      })
-                    }
-                  >
-                    <option value="">분배 미정</option>
-                    <option value="1">개인 / 1인</option>
-                    {[2, 3, 4, 5, 6].map((n) => (
-                      <option value={n} key={n}>
-                        {n}인 분배
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <span className="solo-caption">1인 정산</span>
               </div>
             );
           })}

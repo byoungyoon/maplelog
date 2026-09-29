@@ -60,51 +60,7 @@ export default function DropSheet() {
             </small>
           </span>
         </div>
-        <details className="audit-details">
-          <summary>
-            {c.party
-              ? `결정석 ${c.party}인 분배 · 조건 수정`
-              : "결정석 분배 인원을 확인해 주세요"}
-          </summary>
-          <form
-            className="detail-form"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const f = new FormData(e.currentTarget);
-              cmd.mutate({
-                type: "completion-confirm",
-                id: c.id,
-                difficulty: b.difficulty,
-                party: Number(f.get("party")),
-              });
-            }}
-          >
-            <p>
-              난이도는 조회 결과를 기준으로 표시해요. 파티 인원은 직접 확인해
-              주세요.
-            </p>
-            <label>
-              난이도
-              <input readOnly value={b.difficulty} />
-            </label>
-            <label>
-              결정석 분배 인원
-              <select name="party" defaultValue="" required>
-                <option value="" disabled>
-                  선택해 주세요
-                </option>
-                {[1, 2, 3, 4, 5, 6].map((n) => (
-                  <option key={n} value={n}>
-                    {n}인
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button className="button" disabled={cmd.isPending}>
-              조건 확인
-            </button>
-          </form>
-        </details>
+        <p className="solo-caption">결정석 · 드랍 모두 1인 정산</p>
         <h2>어떤 아이템을 얻었나요?</h2>
         <ManualItem bossId={b.id} />
         <p className="sheet-description">
@@ -181,8 +137,8 @@ export default function DropSheet() {
                   type: "drop-edit",
                   id: editing.id,
                   tradable: editing.tradable,
-                  shared: editing.shared,
-                  share: editing.share,
+                  shared: false,
+                  share: 1,
                   feeBps: editing.feeBps,
                   cost: editing.cost,
                   used: editing.used,
@@ -209,35 +165,6 @@ export default function DropSheet() {
               />
               거래 가능
             </label>
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={editing.shared}
-                onChange={(e) =>
-                  setEditing({ ...editing, shared: e.target.checked })
-                }
-              />
-              공동 분배
-            </label>
-            {editing.shared && (
-              <label>
-                분배 인원
-                <select
-                  value={editing.share ?? ""}
-                  onChange={(e) =>
-                    setEditing({
-                      ...editing,
-                      share: e.target.value ? Number(e.target.value) : null,
-                    })
-                  }
-                >
-                  <option value="">확인 필요</option>
-                  {[1, 2, 3, 4, 5, 6].map((x) => (
-                    <option key={x}>{x}</option>
-                  ))}
-                </select>
-              </label>
-            )}
             <label>
               수수료 (basis points, 100 = 1%)
               <input

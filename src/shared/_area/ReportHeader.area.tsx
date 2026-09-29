@@ -37,6 +37,7 @@ export function ReportHeader({
           <label className="character-select">
             <span className="sr-only">캐릭터 선택</span>
             <select
+              aria-label="캐릭터 선택"
               value={character}
               onChange={(e) => setCharacter(e.target.value)}
             >
@@ -90,7 +91,9 @@ export function ReportHeader({
           </button>
           {offset === 0 && <span className="subtle-badge">이번 기간</span>}
         </div>
-        {compact && <span className="settlement-scope">전체 캐릭터 · 1인 정산</span>}
+        {compact && (
+          <span className="settlement-scope">전체 캐릭터 · 1인 정산</span>
+        )}
         <div className="sync-controls">
           {!compact && (
             <span className="last-sync">

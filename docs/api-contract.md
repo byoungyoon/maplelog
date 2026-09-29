@@ -6,11 +6,11 @@
 
 공식 스키마: `https://openapi.nexon.com/static/api/maplestory/14_ko_script20260917040003.yaml`, `https://openapi.nexon.com/static/api/maplestory/62_ko_script20260821005015.yaml`.
 
-| 경로 | 입력 | 확인한 응답 | 실제 확인 |
-|---|---|---|---|
-| `/maplestory/v1/character/list` | 서버의 x-nxopen-api-key | account_list[].account_id, character_list[].ocid/character_name/world_name/character_class/character_level | 성공 |
-| `/maplestory/v1/character/basic` | ocid | character_image, character_level, character_class | 관리 캐릭터 이미지 5개 |
-| `/maplestory/v1/scheduler/character-state` | ocid, 선택 date | date, boss_contents, weekly_boss_clear_count, weekly_boss_clear_limit_count | 5캐릭터 중 2개 정상·3개 빈 목록, 완료 24건 |
+| 경로                                       | 입력                    | 확인한 응답                                                                                                | 실제 확인                                  |
+| ------------------------------------------ | ----------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `/maplestory/v1/character/list`            | 서버의 x-nxopen-api-key | account_list[].account_id, character_list[].ocid/character_name/world_name/character_class/character_level | 성공                                       |
+| `/maplestory/v1/character/basic`           | ocid                    | character_image, character_level, character_class                                                          | 관리 캐릭터 이미지 5개                     |
+| `/maplestory/v1/scheduler/character-state` | ocid, 선택 date         | date, boss_contents, weekly_boss_clear_count, weekly_boss_clear_limit_count                                | 5캐릭터 중 2개 정상·3개 빈 목록, 완료 24건 |
 
 스케줄러 boss_contents는 content_name/difficulty/cycle/list_order_no/registration_flag/complete_flag를 포함합니다. flag는 boolean이 아닌 문자열 `true`/`false`입니다. 관측 응답의 cycle은 bossWeekly/bossMonthly이며 bossDaily도 별도 분기합니다. 미지원 주기·난이도는 기록을 생성하지 않고 확인 필요로 표시합니다. date 실응답은 `2026-09-29T00:00+09:00` 형식이었습니다.
 
@@ -29,3 +29,13 @@
 ## 내부 API
 
 GET book/sync/status/connection/status/export는 읽기 전용입니다. POST connection/verify로 키 확인, connection/disconnect로 해제, sync/request로 실제 동기화를 요청합니다. 일반 저장은 command의 검증된 discriminated union, revision, requestId로 처리합니다. 복원은 import/preview → import/commit입니다. 키 연결 전 book/export/command는 428, 데모 모드는 404입니다. 공개 URL에서는 모든 장부·키 엔드포인트와 setup 페이지에 소유자 인증이 필요합니다.
+
+## 아이템 참고가
+
+공개 경로: [메이플스카우터 가격 응답](https://api.maplescouter.com/api/archive/item-price). `success: true`, `item_price: { 항목명: 숫자 문자열 }` 형태입니다. 억 메소를 정수 메소로 변환하며 소수점 8자리까지 BigInt로 처리합니다. 예: 몽환의 벨트 `38` → `3,800,000,000` 메소. 스냅샷은 `src/data/scouter-item-prices.json`에 있습니다.
+
+서버·옵션·공급자 갱신 시각이 없는 참고가입니다. 표시하는 확인 시각은 이 앱이 응답을 받은 시각입니다. 약칭은 임의로 매칭하지 않고 정확히 같은 아이템 이름만 적용합니다. 개인 귀속 보상은 가격이 있더라도 거래 가능으로 자동 변경하지 않습니다. 그 외 가격이 있는 공용 보스 보상은 획득 직후 거래 가능 조건으로 예상하며 상세에서 조건을 바꿀 수 있습니다.
+
+인증 키나 캐릭터 정보를 외부 가격 공급자에 보내지 않습니다. 워커는 하루에 한 번 확인하고 시세 페이지 새로고침은 60초 간격으로 합칩니다. 오류 시 마지막 참고가를 유지하고 오류를 표시합니다. 수동 가격, 기존 드랍 단가, 실제 정산액은 갱신하지 않습니다.
+
+장부의 분배 정책은 항상 1인입니다. `crystal-settle` 명령은 검증된 완료의 결정석을 서버에서 1인 기준으로 계산해 한 번만 정산합니다. 보스 검색의 선택 캐릭터와 관계없이 정산 페이지는 `character=all`로 조회합니다.
