@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+.env*
+!.env.example
+data/
+*.tsbuildinfo
+test-results/
+playwright-report/
+.DS_Store
+
+.next-e2e/
+
+.local-secrets/
