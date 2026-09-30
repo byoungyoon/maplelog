@@ -1,5 +1,6 @@
 "use client";
 import { usePriceImport } from "../_state/usePriceImport";
+import { visiblePriceItems } from "../_lib/visiblePriceItems";
 import { useState } from "react";
 import { Search, PenLine, Info } from "lucide-react";
 import { useBook } from "@/shared/_state/useBook";
@@ -20,6 +21,7 @@ export default function PricesAction() {
   if (q.isPending) return <Loading />;
   if (q.error) return <ErrorState error={q.error} retry={() => q.refetch()} />;
   const { book } = q.data;
+  const items = visiblePriceItems(book.items, search);
   return (
     <>
       <div className="page-heading">
@@ -95,68 +97,70 @@ export default function PricesAction() {
         />
       </label>
       <section className="panel prices-list">
-        {book.items
-          .filter((i) => i.name.includes(search))
-          .map((i) => {
-            const stale =
-              new Date(i.observedAt).getTime() <
-              q.data.asOf - book.settings.staleHours * 3600000;
-            return (
-              <div className="price-row" key={i.id}>
-                <ItemIcon image={i.image} kind={i.icon} />
-                <div className="row-body">
-                  <strong>{i.name}</strong>
-                  <p>
-                    {i.market.replaceAll("메이플스카우터 ", "")} · {i.variant}
-                  </p>
-                  <span className="price-meta">
-                    {i.source === "scouter"
-                      ? i.price === null
-                        ? "드랍 후보 · 가격 미정"
-                        : "참고가"
-                      : "수동 기준가"}{" "}
-                    ·{" "}
-                    {new Date(i.observedAt).toLocaleString("ko-KR", {
-                      timeZone: "Asia/Seoul",
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-                <div className="price-value">
-                  <strong>
-                    {formatMeso(i.price)}
-                    {i.price && <small> 메소</small>}
-                  </strong>
-                  <span className={`price-state ${stale ? "stale" : ""}`}>
-                    {i.price === null
-                      ? "미정"
-                      : stale
-                        ? "오래된 기준가"
-                        : "기준가 있음"}
-                  </span>
-                </div>
-                <button
-                  className="icon-button"
-                  aria-label={`${i.name} 기준가 수정`}
-                  onClick={() =>
-                    setEdit({
-                      ...i,
-                      market: i.market.replaceAll("메이플스카우터 ", ""),
-                    })
-                  }
-                >
-                  <PenLine size={18} />
-                </button>
+        {items.map((i) => {
+          const stale =
+            new Date(i.observedAt).getTime() <
+            q.data.asOf - book.settings.staleHours * 3600000;
+          return (
+            <div className="price-row" key={i.id}>
+              <ItemIcon image={i.image} kind={i.icon} />
+              <div className="row-body">
+                <strong>{i.name}</strong>
+                <p>
+                  {i.market.replaceAll("메이플스카우터 ", "")} · {i.variant}
+                </p>
+                <span className="price-meta">
+                  {i.source === "scouter"
+                    ? i.price === null
+                      ? "드랍 후보 · 가격 미정"
+                      : "참고가"
+                    : "수동 기준가"}{" "}
+                  ·{" "}
+                  {new Date(i.observedAt).toLocaleString("ko-KR", {
+                    timeZone: "Asia/Seoul",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
               </div>
-            );
-          })}
-        {!book.items.length && (
+              <div className="price-value">
+                <strong>
+                  {formatMeso(i.price)}
+                  {i.price && <small> 메소</small>}
+                </strong>
+                <span className={`price-state ${stale ? "stale" : ""}`}>
+                  {i.price === null
+                    ? "미정"
+                    : stale
+                      ? "오래된 기준가"
+                      : "기준가 있음"}
+                </span>
+              </div>
+              <button
+                className="icon-button"
+                aria-label={`${i.name} 기준가 수정`}
+                onClick={() =>
+                  setEdit({
+                    ...i,
+                    market: i.market.replaceAll("메이플스카우터 ", ""),
+                  })
+                }
+              >
+                <PenLine size={18} />
+              </button>
+            </div>
+          );
+        })}
+        {!items.length && (
           <Empty
-            title="등록된 아이템이 없어요"
-            detail="보스의 드랍 기록에서 아이템을 직접 추가하면 여기서 기준가를 관리할 수 있어요."
+            title={search ? "검색 결과가 없어요" : "표시할 아이템이 없어요"}
+            detail={
+              search
+                ? "다른 아이템 이름으로 검색해 주세요."
+                : "경매장에 매물이 없는 것으로 확인된 아이템은 시세 목록에서 제외돼요."
+            }
           />
         )}
       </section>

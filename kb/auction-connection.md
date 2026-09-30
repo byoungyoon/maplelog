@@ -1,5 +1,20 @@
 # Web Auction Connection
 
+## Five-item usage trial on 2026-09-30
+
+The saved browser profile returned to Nexon sign-in. Authorized reauthentication
+succeeded after reconnecting the interactive process and accommodating the login
+button's recent-login label. Character selection and five filter searches then
+completed successfully without an observed OTP challenge.
+
+Three searches returned listings; two returned zero results. The search counter
+increased from 1/100 to 6/100. See [the trial record](auction-usage-trial.md) for
+prices, counts, scope, and usage limitations. The two zero-result items are now
+hidden from the Prices page through `src/data/auction-listings.json`; their
+ledger entries and drop history are preserved. The browser was closed afterward.
+No credentials were added to repository files, no prices were imported, and no
+dots schedule was created.
+
 ## Latest successful retry on 2026-09-30
 
 Authenticated with the newly supplied email-form account in the dedicated headed Chrome profile. Character selection loaded successfully, and an eligible Vera character entered `/buy`. No OTP challenge was required during this observed login and search flow.

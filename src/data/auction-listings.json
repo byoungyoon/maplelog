@@ -1,0 +1,28 @@
+{
+  "source": "https://auction.maplestory.nexon.com/buy",
+  "checkedOn": "2026-09-30",
+  "scope": "Default filters; current-world-only setting unverified",
+  "items": [
+    {
+      "name": "몽환의 벨트",
+      "listingCount": 1490,
+      "lowestUnitPrice": "3830000000"
+    },
+    {
+      "name": "마력이 깃든 안대",
+      "listingCount": 2016,
+      "lowestUnitPrice": "2811100000"
+    },
+    {
+      "name": "루즈 컨트롤 머신 마크",
+      "listingCount": 2435,
+      "lowestUnitPrice": "1350000000"
+    },
+    {
+      "name": "홍옥의 보스 반지 상자",
+      "listingCount": 0,
+      "lowestUnitPrice": null
+    },
+    { "name": "솔 에르다 기운", "listingCount": 0, "lowestUnitPrice": null }
+  ]
+}

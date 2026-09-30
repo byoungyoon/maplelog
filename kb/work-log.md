@@ -1,5 +1,15 @@
 # Work Log
 
+## 2026-09-30 — Five-Item Auction Trial and Price List Filtering
+
+- Completed five agent-directed searches in headed Chrome after reauthentication. Three items returned listings and two returned zero results; the auction search counter increased from 1/100 to 6/100.
+- Recorded observed listing counts and prices in `src/data/auction-listings.json`. These prices are observations only and have not been imported into the ledger.
+- Hid Ruby Boss Ring Box and Sol Erda Energy from the Prices page based on confirmed zero-result searches. Unchecked items remain visible; all ledger items, boss drops, and historical records remain intact.
+- Updated the empty state to reflect filtered search results. Future verified listing observations can restore visibility by updating the snapshot.
+- Documented connection recovery, search scope, and usage-measurement limitations in [Auction browser usage trial](auction-usage-trial.md). This session did not invoke dots or configure a schedule.
+- Verification: TypeScript, targeted ESLint, and whitespace checks passed. A read-only check against the live ledger confirmed 67 retained items, 65 visible price entries, both zero-result names excluded even during search, and Dreamy Belt still searchable.
+
+
 ## 2026-09-30 — Auction Search Verified and Settlement Layout Aligned
 
 - Successfully retried official auction sign-in, character selection, and one item search in headed Chrome. The observed flow did not require an OTP challenge.
