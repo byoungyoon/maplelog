@@ -1,124 +1,152 @@
-import { applySoloPolicy } from "@/domain/solo";
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import { eq } from "drizzle-orm";
-import { mkdirSync, readFileSync } from "node:fs";
-import path from "node:path";
+import { getApps, initializeApp, applicationDefault, cert } from "firebase-admin/app";
+import { getFirestore, type Firestore } from "firebase-admin/firestore";
 import { createHash } from "node:crypto";
-import { books } from "./schema";
-import { emptyLedger } from "@/domain/empty-ledger";
-import { ensure, validateLedger, type Ledger, type Mode } from "@/domain/model";
+import { gzipSync, gunzipSync } from "node:zlib";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { applySoloPolicy } from "@/domain/solo";
 import { applyCommand, type Command } from "@/domain/commands";
-const dir = process.env.DATA_DIR || path.join(process.cwd(), "data");
-mkdirSync(dir, { recursive: true, mode: 0o700 });
-export const sqlite = new Database(path.join(dir, "mesolog.sqlite"));
-sqlite.pragma("busy_timeout = 5000");
-sqlite.pragma("journal_mode = WAL");
-sqlite.pragma("foreign_keys = ON");
-sqlite.exec(
-  readFileSync(path.join(process.cwd(), "src/server/db/migration.sql"), "utf8"),
-);
-export const db = drizzle(sqlite);
-db.insert(books)
-  .values({ mode: "live", revision: 0, payload: JSON.stringify(emptyLedger()) })
-  .onConflictDoNothing()
-  .run();
-export function readBook(mode: Mode): Ledger {
-  const row = db.select().from(books).where(eq(books.mode, mode)).get()!;
-  return JSON.parse(row.payload);
+import { ensure, validateLedger, type Ledger, type Mode } from "@/domain/model";
+
+let instance: Firestore | undefined;
+export function firestore() {
+  if (instance) return instance;
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  ensure(projectId, "FIREBASE_PROJECT_ID 설정이 필요해요.", 503);
+  const localKey = path.resolve(".local-secrets/firebase-service-account.json");
+  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON ||
+    (existsSync(localKey) ? readFileSync(localKey, "utf8") : null);
+  const credential = raw ? cert(JSON.parse(raw)) : applicationDefault();
+  const app = getApps()[0] || initializeApp({ credential, projectId });
+  instance = getFirestore(app);
+  return instance;
 }
-export function writeBook(s: Ledger) {
-  applySoloPolicy(s);
-  validateLedger(s);
-  db.update(books)
-    .set({ revision: s.revision, payload: JSON.stringify(s) })
-    .where(eq(books.mode, s.mode))
-    .run();
+
+export const bookRef = (mode: Mode) => firestore().collection("books").doc(mode);
+export const leaseRef = (name: string) =>
+  firestore().collection("leases").doc(encodeURIComponent(name));
+export const credentialRef = () => firestore().collection("private").doc("credential");
+export const connectionLockRef = () => firestore().collection("private").doc("connection-lock");
+export const analysisRef = (characterId: string) =>
+  firestore().collection("boss-analyses").doc(encodeURIComponent(characterId));
+
+export function decodeLedger(data: FirebaseFirestore.DocumentData | undefined): Ledger {
+  ensure(data?.payloadGzip || data?.payload,
+    "Firestore 장부가 아직 이전되지 않았어요.", 503);
+  const raw = data.payloadGzip
+    ? gunzipSync(Buffer.from(data.payloadGzip, "base64")).toString("utf8")
+    : data.payload;
+  return validateLedger(JSON.parse(raw));
 }
-export function mutate(
+
+export function encodeLedger(book: Ledger) {
+  const payloadGzip = gzipSync(JSON.stringify(validateLedger(book))).toString("base64");
+  return { revision: book.revision, payloadGzip };
+}
+
+export async function readBook(mode: Mode): Promise<Ledger> {
+  return decodeLedger((await bookRef(mode).get()).data());
+}
+
+export async function editBook<T>(edit: (book: Ledger) => T): Promise<T> {
+  const ref = bookRef("live");
+  return firestore().runTransaction(async (tx) => {
+    const book = decodeLedger((await tx.get(ref)).data());
+    const revision = book.revision;
+    const result = edit(book);
+    applySoloPolicy(book);
+    book.revision = revision + 1;
+    tx.set(ref, encodeLedger(book));
+    return result;
+  });
+}
+
+export async function editBookWithCredential<T>(
+  generation: number,
+  edit: (book: Ledger) => T,
+): Promise<T> {
+  const ref = bookRef("live");
+  const credential = credentialRef();
+  return firestore().runTransaction(async (tx) => {
+    const [bookDoc, credentialDoc] = await Promise.all([tx.get(ref), tx.get(credential)]);
+    ensure(credentialDoc.get("generation") === generation,
+      "키 연결이 변경되어 결과를 저장하지 않았어요.", 409);
+    const book = decodeLedger(bookDoc.data());
+    const revision = book.revision;
+    const result = edit(book);
+    applySoloPolicy(book);
+    book.revision = revision + 1;
+    tx.set(ref, encodeLedger(book));
+    return result;
+  });
+}
+
+export async function mutate(
   mode: Mode,
   revision: number,
   requestId: string,
   command: Command,
-): Ledger {
-  return sqlite
-    .transaction(() => {
-      const s = readBook(mode);
-      const fingerprint = createHash("sha256")
-        .update(JSON.stringify(command))
-        .digest("hex");
-      const prior = sqlite
-        .prepare("SELECT fingerprint FROM requests WHERE mode=? AND id=?")
-        .get(mode, requestId) as { fingerprint: string } | undefined;
-      if (prior) {
-        ensure(
-          prior.fingerprint === fingerprint,
-          "재전송 식별자가 다른 요청에 사용되었어요.",
-          409,
-        );
-        return s;
-      }
-      ensure(
-        s.revision === revision,
-        "다른 창에서 기록이 바뀌었어요. 최신값을 확인하고 다시 시도해 주세요.",
-        409,
-      );
-      if (
-        command.type === "sync" &&
-        command.scenario === "refresh" &&
-        s.sync.lastRequest &&
-        Date.now() - new Date(s.sync.lastRequest).getTime() < 15000
-      )
-        return s;
-      applyCommand(s, command);
-      if (command.type === "sync")
-        s.sync.lastRequest = new Date().toISOString();
-      s.revision++;
-      writeBook(s);
-      sqlite
-        .prepare("INSERT INTO requests(mode,id,fingerprint) VALUES(?,?,?)")
-        .run(mode, requestId, fingerprint);
-      return s;
-    })
-    .immediate();
-}
-export function consumeBudget(
-  provider: string,
-  budget: number,
-  now = Date.now(),
-): boolean {
-  return sqlite
-    .transaction(() => {
-      sqlite.prepare("DELETE FROM usage WHERE at < ?").run(now - 86400000);
-      const daily = sqlite
-        .prepare("SELECT count(*) AS n FROM usage WHERE provider=?")
-        .get(provider) as { n: number };
-      const second = sqlite
-        .prepare("SELECT count(*) AS n FROM usage WHERE provider=? AND at>?")
-        .get(provider, now - 1000) as { n: number };
-      if (daily.n >= budget || second.n >= 5) return false;
-      sqlite
-        .prepare("INSERT INTO usage(provider,at) VALUES(?,?)")
-        .run(provider, now);
-      return true;
-    })
-    .immediate();
-}
-export function usageCount(provider: string) {
-  return (
-    sqlite
-      .prepare("SELECT count(*) AS n FROM usage WHERE provider=? AND at>?")
-      .get(provider, Date.now() - 86400000) as { n: number }
-  ).n;
+): Promise<Ledger> {
+  const ref = bookRef(mode);
+  const requestRef = firestore().collection("requests").doc(`${mode}:${requestId}`);
+  const fingerprint = createHash("sha256").update(JSON.stringify(command)).digest("hex");
+  return firestore().runTransaction(async (tx) => {
+    const [bookDoc, prior] = await Promise.all([tx.get(ref), tx.get(requestRef)]);
+    const book = decodeLedger(bookDoc.data());
+    if (prior.exists) {
+      ensure(prior.get("fingerprint") === fingerprint,
+        "재전송 식별자가 다른 요청에 사용되었어요.", 409);
+      return book;
+    }
+    ensure(book.revision === revision,
+      "다른 창에서 기록이 바뀌었어요. 최신값을 확인하고 다시 시도해 주세요.", 409);
+    if (command.type === "sync" && command.scenario === "refresh" &&
+      book.sync.lastRequest && Date.now() - Date.parse(book.sync.lastRequest) < 15000)
+      return book;
+    applyCommand(book, command);
+    if (command.type === "sync") book.sync.lastRequest = new Date().toISOString();
+    book.revision++;
+    applySoloPolicy(book);
+    tx.set(ref, encodeLedger(book));
+    tx.create(requestRef, { fingerprint });
+    return book;
+  });
 }
 
-// Upgrade existing personal expectations once; preserve paid settlements and snapshots.
-sqlite
-  .transaction(() => {
-    const book = readBook("live");
-    if (applySoloPolicy(book)) {
-      book.revision++;
-      writeBook(book);
-    }
-  })
-  .immediate();
+export async function acquireLease(name: string, durationMs: number) {
+  const ref = leaseRef(name);
+  return firestore().runTransaction(async (tx) => {
+    const doc = await tx.get(ref);
+    if (((doc.get("untilAt") as number | undefined) ?? 0) > Date.now()) return false;
+    tx.set(ref, { untilAt: Date.now() + durationMs });
+    return true;
+  });
+}
+
+export async function leaseUntil(name: string) {
+  return ((await leaseRef(name).get()).get("untilAt") as number | undefined) ?? 0;
+}
+
+export async function setLease(name: string, untilAt: number) {
+  await leaseRef(name).set({ untilAt });
+}
+
+export async function consumeBudget(provider: string, budget: number, now = Date.now()) {
+  const ref = firestore().collection("usage").doc(encodeURIComponent(provider));
+  return firestore().runTransaction(async (tx) => {
+    const doc = await tx.get(ref);
+    const times = ((doc.get("times") as number[] | undefined) ?? [])
+      .filter((at) => at >= now - 86400000);
+    if (times.length >= budget || times.filter((at) => at > now - 1000).length >= 5)
+      return false;
+    times.push(now);
+    tx.set(ref, { provider, times });
+    return true;
+  });
+}
+
+export async function usageCount(provider: string) {
+  const doc = await firestore().collection("usage").doc(encodeURIComponent(provider)).get();
+  return ((doc.get("times") as number[] | undefined) ?? [])
+    .filter((at) => at > Date.now() - 86400000).length;
+}

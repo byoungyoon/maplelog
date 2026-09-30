@@ -268,6 +268,7 @@ export function applyCommand(
       break;
     }
     case "prices-import": {
+      ensure(s.mode !== "live", "아이템 시세는 경매장 수집 결과로만 갱신돼요.");
       for (const quote of cmd.quotes)
         applyCommand(s, { type: "price", ...quote }, now);
       break;
@@ -511,6 +512,7 @@ export function applyCommand(
       break;
     }
     case "price": {
+      ensure(s.mode !== "live", "아이템 시세는 경매장 수집 결과로만 갱신돼요.");
       const i = s.items.find((i) => i.id === cmd.id);
       ensure(i, "아이템이 없어요.");
       i.price = cmd.price;

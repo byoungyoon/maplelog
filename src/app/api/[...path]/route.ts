@@ -3,7 +3,7 @@ import { after, NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { authorize, assertOrigin, login, session } from "@/server/auth";
-import { readBook, mutate, sqlite, writeBook, usageCount } from "@/server/db";
+import { bookRef, decodeLedger, editBook, encodeLedger, firestore, readBook, mutate, usageCount } from "@/server/db";
 import { commandSchema, audit } from "@/domain/commands";
 import { DomainError, ensure, validateLedger, type Mode } from "@/domain/model";
 import { report } from "@/server/report";
@@ -46,7 +46,7 @@ async function handle(req: NextRequest) {
       return ok({ loggedIn: false });
     }
     if (req.method === "GET" && route === "connection/status")
-      return ok(connectionStatus());
+      return ok(await connectionStatus());
     if (req.method === "POST" && route === "connection/verify") {
       const body = z
         .object({ key: z.string().trim().min(1).max(512) })
@@ -62,10 +62,10 @@ async function handle(req: NextRequest) {
       return ok(connection);
     }
     if (req.method === "POST" && route === "connection/disconnect") {
-      disconnect();
+      await disconnect();
       return ok({ connected: false });
     }
-    ensure(connectionStatus().connected, "API 키를 먼저 연결해 주세요.", 428);
+    ensure((await connectionStatus()).connected, "API 키를 먼저 연결해 주세요.", 428);
     if (req.method === "POST" && route === "characters/strength")
       return ok(await syncCharacterStrength());
     if (req.method === "POST" && route === "bosses/analyze") {
@@ -75,18 +75,19 @@ async function handle(req: NextRequest) {
       return ok(await analyzeCharacter(body.characterId));
     }
     if (req.method === "GET" && route === "book") {
-      const book = readBook(mode);
+      const book = await readBook(mode);
+      const credential = await credentialForRequest();
       return ok({
         asOf: Date.now(),
         book,
         report: report(book, req.nextUrl),
         connection: {
-          ...connectionStatus(),
+          ...await connectionStatus(),
           status: "connected",
           reason: nexonContract.reason,
         },
         priceProvider,
-        usage: usageCount(`nexon:${credentialForRequest().fingerprint}`),
+        usage: await usageCount(`nexon:${credential.fingerprint}`),
       });
     }
     if (req.method === "POST" && route === "sync/request") {
@@ -97,7 +98,7 @@ async function handle(req: NextRequest) {
       return ok(await syncAccount({ characterId: body.characterId }));
     }
     if (req.method === "GET" && route === "sync/status")
-      return ok(readBook(mode).sync);
+      return ok((await readBook(mode)).sync);
     if (req.method === "POST" && route === "command") {
       const body = z
         .object({
@@ -123,11 +124,11 @@ async function handle(req: NextRequest) {
         );
         return ok(await syncAccount());
       }
-      const book = mutate(mode, body.revision, body.requestId, body.command);
+      const book = await mutate(mode, body.revision, body.requestId, body.command);
       return ok({ revision: book.revision });
     }
     if (req.method === "GET" && route === "export") {
-      const book = readBook(mode);
+      const book = await readBook(mode);
       if (req.nextUrl.searchParams.get("format") === "csv") {
         const rows = [
           ["캐릭터", "항목", "수량", "완료 수익", "출처"],
@@ -185,20 +186,14 @@ async function handle(req: NextRequest) {
         book.mode === mode,
         "이 장부와 다른 형식의 백업은 복원할 수 없어요.",
       );
-      const current = readBook(mode);
+      const current = await readBook(mode);
       const token = randomUUID();
-      sqlite.prepare("DELETE FROM imports WHERE expires<?").run(Date.now());
-      sqlite
-        .prepare(
-          "INSERT INTO imports(token,mode,revision,payload,expires) VALUES(?,?,?,?,?)",
-        )
-        .run(
-          token,
-          mode,
-          current.revision,
-          JSON.stringify(book),
-          Date.now() + 600000,
-        );
+      await firestore().collection("imports").doc(token).set({
+        mode,
+        revision: current.revision,
+        payload: JSON.stringify(book),
+        expires: Date.now() + 600000,
+      });
       return ok({
         token,
         characters: book.characters.length,
@@ -213,49 +208,38 @@ async function handle(req: NextRequest) {
       const b = z
         .object({ token: z.string().uuid(), confirm: z.literal(true) })
         .parse(await req.json());
-      sqlite
-        .transaction(() => {
-          const row = sqlite
-            .prepare("SELECT * FROM imports WHERE token=? AND mode=?")
-            .get(b.token, mode) as
-            { revision: number; payload: string; expires: number } | undefined;
-          ensure(
-            row && row.expires > Date.now(),
-            "미리보기가 만료되었어요. 다시 올려 주세요.",
-            409,
-          );
-          const current = readBook(mode);
-          ensure(
-            current.revision === row.revision,
-            "미리보기 이후 장부가 변경되었어요. 다시 확인해 주세요.",
-            409,
-          );
-          const book = validateLedger(JSON.parse(row.payload));
-          book.revision = current.revision + 1;
-          audit(book, "백업 복원", "검증된 백업으로 장부 교체");
-          writeBook(book);
-          sqlite.prepare("DELETE FROM imports WHERE token=?").run(b.token);
-          sqlite.prepare("DELETE FROM requests WHERE mode=?").run(mode);
-        })
-        .immediate();
+      const importRef = firestore().collection("imports").doc(b.token);
+      const reference = bookRef(mode);
+      await firestore().runTransaction(async (tx) => {
+        const [importDoc, bookDoc] = await Promise.all([
+          tx.get(importRef), tx.get(reference),
+        ]);
+        const row = importDoc.data() as
+          { mode: Mode; revision: number; payload: string; expires: number } | undefined;
+        ensure(row && row.mode === mode && row.expires > Date.now(),
+          "미리보기가 만료되었어요. 다시 올려 주세요.", 409);
+        const current = decodeLedger(bookDoc.data());
+        ensure(current.revision === row.revision,
+          "미리보기 이후 장부가 변경되었어요. 다시 확인해 주세요.", 409);
+        const book = validateLedger(JSON.parse(row.payload));
+        book.revision = current.revision + 1;
+        audit(book, "백업 복원", "검증된 백업으로 장부 교체");
+        tx.set(reference, encodeLedger(book));
+        tx.delete(importRef);
+      });
       return ok({ restored: true });
     }
     if (req.method === "POST" && route === "delete") {
       const b = z
         .object({ confirm: z.literal("장부 삭제"), revision: z.number().int() })
         .parse(await req.json());
-      sqlite
-        .transaction(() => {
-          const book = readBook(mode);
-          ensure(book.revision === b.revision, "장부가 변경되었어요.", 409);
-          book.completions = [];
-          book.drops = [];
-          book.settlements = [];
-          book.audit = [];
-          book.revision++;
-          writeBook(book);
-        })
-        .immediate();
+      await editBook((book) => {
+        ensure(book.revision === b.revision, "장부가 변경되었어요.", 409);
+        book.completions = [];
+        book.drops = [];
+        book.settlements = [];
+        book.audit = [];
+      });
       return ok({ deleted: true });
     }
     throw new DomainError("지원하지 않는 요청이에요.", 404);

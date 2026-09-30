@@ -10,7 +10,9 @@ import {
   eokToMeso,
   referencePriceSchema,
 } from "@/server/catalog/reference-prices";
+import { applyAuctionPrices, auctionReportSchema } from "@/server/catalog/auction-prices";
 import { quickDrops } from "@/features/drops/_lib/quickDrops";
+import { visiblePriceItems } from "@/features/prices/_lib/visiblePriceItems";
 function book() {
   const s = emptyLedger();
   s.characters.push({
@@ -94,7 +96,7 @@ it("억 단위 문자열을 정밀도 손실 없이 메소로 변환한다", () 
       .success,
   ).toBe(false);
 });
-it("참고가는 새 획득에 적용하고 수동 가격·기존 드랍 스냅샷은 보존한다", () => {
+it("참고가는 새 획득에 적용하고 기존 드랍 스냅샷은 보존한다", () => {
   const s = book(),
     belt = s.items.find((i) => i.name === "몽환의 벨트")!,
     c = s.completions[0];
@@ -108,15 +110,131 @@ it("참고가는 새 획득에 적용하고 수동 가격·기존 드랍 스냅�
   applyReferencePrices(s, { "몽환의 벨트": "40" }, "2026-10-01T00:00:00.000Z");
   expect(belt.price).toBe("4000000000");
   expect(s.drops[0].unitPrice).toBe("3800000000");
-  applyCommand(s, {
+  expect(() => applyCommand(s, {
     type: "price",
     id: belt.id,
     price: "4200000000",
     market: "내 서버",
     variant: "직접 확인",
-  });
+  })).toThrow("아이템 시세는 경매장 수집 결과로만 갱신돼요.");
+  belt.price = "4200000000";
+  belt.source = "manual";
   applyReferencePrices(s, { "몽환의 벨트": "50" }, "2026-10-02T00:00:00.000Z");
   expect(belt.price).toBe("4200000000");
+});
+it("경매장 시세는 새 획득 기준가만 바꾸고 기존 드랍은 지킨다", () => {
+  const s = book();
+  const belt = s.items.find((item) => item.name === "몽환의 벨트")!;
+  applyCommand(s, {
+    type: "drop",
+    completionId: s.completions[0].id,
+    itemId: belt.id,
+    quantity: 1,
+  });
+  const originalDropPrice = s.drops[0].unitPrice;
+  const observedAt = "2026-10-03T00:00:00.000Z";
+  const report = auctionReportSchema.parse({
+    source: "https://auction.maplestory.nexon.com/buy",
+    world: "베라",
+    character: "수민탁구몬함",
+    currentWorldOnly: true,
+    searchMode: "quick",
+    scope: "all",
+    sort: "개당 낮은 가격순",
+    startedAt: observedAt,
+    completedAt: observedAt,
+    items: s.items.map((item) => ({
+      id: item.id,
+      name: item.name,
+      status: item.id === belt.id ? "listed" : "zero-results",
+      listingCount: item.id === belt.id ? 1 : 0,
+      lowestUnitPrice: item.id === belt.id ? "3850000000" : null,
+      firstCard: item.id === belt.id ? "몽환의 벨트\n38억 5000만\n메소" : null,
+      observedAt,
+      searchCounter: 1,
+    })),
+  });
+  const result = applyAuctionPrices(s, report);
+  expect(result.updated).toBe(s.items.length);
+  expect(result.quoted).toBe(1);
+  expect(result.cleared).toBeGreaterThan(0);
+  expect(belt.price).toBe("3850000000");
+  expect(belt.source).toBe("auction");
+  expect(s.items.find((item) => item.id !== belt.id && item.price === null)).toBeDefined();
+  expect(s.drops[0].unitPrice).toBe(originalDropPrice);
+  applyReferencePrices(s, { "몽환의 벨트": "50" }, "2026-10-04T00:00:00.000Z");
+  expect(belt.price).toBe("3850000000");
+  belt.source = "manual";
+  expect(applyAuctionPrices(s, report).updated).toBe(1);
+  expect(belt.source).toBe("auction");
+  expect(belt.price).toBe("3850000000");
+});
+it("빠른 검색의 미정 항목 부분 갱신은 이미 있는 시세를 유지한다", () => {
+  const s = book();
+  const retained = s.items.find((item) => item.name === "몽환의 벨트")!;
+  const target = s.items.find((item) => item.id !== retained.id)!;
+  const retainedPrice = retained.price;
+  target.price = null;
+  const observedAt = "2026-10-03T00:00:00.000Z";
+  const report = auctionReportSchema.parse({
+    source: "https://auction.maplestory.nexon.com/buy",
+    world: "베라",
+    character: "수민탁구몬함",
+    currentWorldOnly: true,
+    searchMode: "quick",
+    scope: "missing",
+    sort: "개당 낮은 가격순",
+    startedAt: observedAt,
+    completedAt: observedAt,
+    items: [{
+      id: target.id,
+      name: target.name,
+      status: "listed",
+      listingCount: 1,
+      lowestUnitPrice: "100000000",
+      firstCard: `${target.name}\n1억\n메소`,
+      observedAt,
+      searchCounter: 1,
+    }],
+  });
+  expect(applyAuctionPrices(s, report).updated).toBe(1);
+  expect(target.price).toBe("100000000");
+  expect(retained.price).toBe(retainedPrice);
+});
+it("경매장 괄호 앞 공백을 같은 아이템으로 읽고 미정 항목은 시세에서 숨긴다", () => {
+  const s = book();
+  const hammer = s.items.find((item) => item.name === "몽환의 벨트")!;
+  hammer.name = "익셉셔널 해머(벨트)";
+  hammer.price = null;
+  const unpriced = s.items.find((item) => item.id !== hammer.id)!;
+  unpriced.price = null;
+  const observedAt = "2026-10-03T00:00:00.000Z";
+  const report = auctionReportSchema.parse({
+    source: "https://auction.maplestory.nexon.com/buy",
+    world: "베라",
+    character: "수민탁구몬함",
+    currentWorldOnly: true,
+    searchMode: "quick",
+    scope: "parentheses",
+    sort: "개당 낮은 가격순",
+    startedAt: observedAt,
+    completedAt: observedAt,
+    items: [{
+      id: hammer.id,
+      name: hammer.name,
+      query: ` ${hammer.name}`,
+      status: "listed",
+      listingCount: 4,
+      lowestUnitPrice: "7400000000",
+      firstCard: "익셉셔널 해머 (벨트)\n개당\n74억\n메소",
+      observedAt,
+      searchCounter: 95,
+    }],
+  });
+  expect(applyAuctionPrices(s, report).quoted).toBe(1);
+  expect(hammer.price).toBe("7400000000");
+  expect(visiblePriceItems(s.items, "")).toContain(hammer);
+  expect(visiblePriceItems(s.items, "")).not.toContain(unpriced);
 });
 it("빠른 드랍은 가격 내림차순 최대 5개이며 보스에 없는 후보를 섞지 않는다", () => {
   const s = book(),

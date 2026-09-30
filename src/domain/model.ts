@@ -41,7 +41,7 @@ export const itemSchema = z.object({
   icon: z.enum(["gem", "ring", "box", "scroll", "flower"]),
   tradable: z.boolean(),
   price: money.nullable(),
-  source: z.enum(["demo", "manual", "scouter"]),
+  source: z.enum(["demo", "manual", "scouter", "auction"]),
   observedAt: stamp,
   market: z.string().max(80),
   variant: z.string().max(160),
@@ -79,7 +79,7 @@ export const dropSchema = z.object({
   currentQuote: z
     .object({
       unitPrice: money.nullable(),
-      priceSource: z.enum(["demo", "manual", "scouter"]),
+      priceSource: z.enum(["demo", "manual", "scouter", "auction"]),
       observedAt: stamp,
     })
     .optional(),
@@ -89,7 +89,7 @@ export const dropSchema = z.object({
   quantity: z.number().int().min(0).max(9999),
   used: z.number().int().min(0).max(9999),
   unitPrice: money.nullable(),
-  priceSource: z.enum(["demo", "manual", "scouter"]),
+  priceSource: z.enum(["demo", "manual", "scouter", "auction"]),
   observedAt: stamp,
   market: z.string().max(80),
   variant: z.string().max(160),

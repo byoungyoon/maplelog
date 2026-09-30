@@ -2,8 +2,18 @@ import { test, expect } from "@playwright/test";
 import { characterListFixture } from "../fixtures/nexon";
 import { calculateBossCuts } from "../../src/domain/boss-cut";
 import bossFixture from "../fixtures/boss-analysis.json" with { type: "json" };
+import { emptyLedger } from "../../src/domain/empty-ledger";
 const origin = "http://127.0.0.1:3100";
 test.describe.configure({ mode: "serial" });
+test.beforeAll(async () => {
+  if (!process.env.FIRESTORE_EMULATOR_HOST)
+    throw new Error("Firestore emulator is required for browser tests");
+  const { bookRef, credentialRef, connectionLockRef } = await import("../../src/server/db");
+  const book = emptyLedger();
+  await bookRef("live").set({ revision: book.revision, payload: JSON.stringify(book) });
+  await credentialRef().delete();
+  await connectionLockRef().set({ generation: 0 });
+});
 test("키 없이 모든 장부 URL과 내부 API 접근을 차단한다", async ({
   page,
   request,
@@ -96,7 +106,6 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
 }) => {
   test.setTimeout(90_000);
   // Seed ONLY the isolated test server through the same connection service. No production bypass exists.
-  process.env.DATA_DIR = process.env.MESOLOG_E2E_DATA_DIR;
   const { connectKey } = await import("../../src/server/connection");
   await connectKey("test-only-e2e-key", async () =>
     Response.json(characterListFixture),
@@ -175,8 +184,8 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
   await expect(
     page.getByRole("heading", { name: "테스트캐릭터" }),
   ).toBeVisible();
-  const { readBook, writeBook } = await import("../../src/server/db");
-  expect(readBook("live").characters[0]?.managed).toBe(false);
+  const { readBook, editBook } = await import("../../src/server/db");
+  expect((await readBook("live")).characters[0]?.managed).toBe(false);
   await page.goto("/");
   await expect(
     page.getByRole("heading", { name: "전체 캐릭터 정산" }),
@@ -184,7 +193,7 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
   await page.reload();
   await expect(page).toHaveURL(origin + "/");
   const { mergeScheduler } = await import("../../src/server/nexon/normalize");
-  const fixtureBook = readBook("live");
+  const fixtureBook = await readBook("live");
   mergeScheduler(fixtureBook, "test-ocid", {
     date: new Date().toISOString(),
     boss_contents: [
@@ -226,8 +235,7 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
   });
   fixtureBook.characters[0].combatPower = "1000";
   fixtureBook.characters[0].combatPowerCheckedAt = new Date().toISOString();
-  fixtureBook.revision++;
-  writeBook(fixtureBook);
+  await editBook((book) => { Object.assign(book, fixtureBook); });
   await page.reload();
   const cards = page.getByRole("article");
   await expect(cards).toHaveCount(1);
@@ -257,7 +265,7 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
     page.getByRole("button", { name: "결정석 정산", exact: true }),
   ).toHaveCount(0);
   await expect(page.getByText(/실제 정산|미정산/)).toHaveCount(0);
-  const updated = readBook("live");
+  const updated = await readBook("live");
   expect(updated.completions[0].crystal).toBe("59700000");
   expect(updated.completions[0].party).toBe(1);
   expect(updated.settlements).toHaveLength(0);

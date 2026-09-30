@@ -14,7 +14,7 @@ The solo threshold statistic is obtained by inverting the solo classification bo
 
 - `POST /api/characters/strength`: owned Nexon `/character/stat` requests, extracting the exact `final_stat` entry named combat power. Reuses the existing request budget and generation guards, uses a durable lease, and refreshes after 24 hours. Absent combat power remains unknown.
 - Initial selection uses descending verified combat power, then level and stable ordering. With no known power, the highest-level character is provisional. Manual character selection is preserved during refresh.
-- `POST /api/bosses/analyze`: validates ownership and connection, uses a per-character lease and a 30-second cooldown, and caches normalized results in SQLite for ten minutes. The daily analysis budget is 100 requests.
+- `POST /api/bosses/analyze`: validates ownership and connection, uses a per-character lease and a 30-second cooldown, and caches normalized results in Firestore for ten minutes. The daily analysis budget is 100 requests.
 - Results from an old credential generation are not saved. Analysis data is derived cache, separate from ledger backup and recorded prices.
 - The public bundle discovery and upstream response schema can change. Failures surface as errors; outdated cached UI results are explicitly identified when a refresh fails.
 
@@ -30,7 +30,7 @@ The interface retains pale sage glass surfaces, uses readable text contrast and 
 
 - Compared 47 rate/stat/status results against the inspected public client's isolated pure-math modules; all matched. The golden fixture contains normalized results and anonymized calculation inputs, not downloaded application code or credentials.
 - Unit coverage includes formula boundaries, invalid inputs, ownership, cache/cooldown behavior, stale credential protection, strongest selection, and completion matching.
-- Browser tests use an isolated database and mocked external responses at 1440, 1024, 390, and 360 pixels. They verify selection, gauges, completion checks, removed controls, and internal scrolling without screenshots or traces.
+- Browser tests use an isolated Firestore emulator and mocked external responses at 1440, 1024, 390, and 360 pixels. They verify selection, gauges, completion checks, removed controls, and internal scrolling without screenshots or traces.
 - A live owned-character request succeeded and returned 47 computed boss comparisons.
 
 ## Character search routing

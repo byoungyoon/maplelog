@@ -1,8 +1,8 @@
 import { credentialForRequest } from "../src/server/connection";
 import { readBook } from "../src/server/db";
 import { fetchScheduler } from "../src/server/nexon/scheduler";
-const credential = credentialForRequest();
-const characters = readBook("live").characters.filter((c) => c.managed);
+const credential = await credentialForRequest();
+const characters = (await readBook("live")).characters.filter((c) => c.managed);
 for (const character of characters) {
   const data = await fetchScheduler(credential.key, character.id, {
     generation: credential.generation,

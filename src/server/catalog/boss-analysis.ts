@@ -1,7 +1,7 @@
 import { calculateBossCuts, type BossAnalysis } from "@/domain/boss-cut";
 import { DomainError, ensure } from "@/domain/model";
 import { credentialForRequest, credentialIsCurrent } from "@/server/connection";
-import { consumeBudget, readBook, sqlite } from "@/server/db";
+import { acquireLease, analysisRef, consumeBudget, readBook, setLease } from "@/server/db";
 import catalogue from "@/data/scouter-boss-cuts.json";
 
 let browserHeader: { value: string; expires: number } | undefined;
@@ -38,17 +38,14 @@ export async function analyzeCharacter(
   characterId: string,
   fetcher: typeof fetch = fetch,
 ): Promise<BossAnalysis> {
-  const credential = credentialForRequest();
-  const character = readBook("live").characters.find(
+  const credential = await credentialForRequest();
+  const character = (await readBook("live")).characters.find(
     (c) => c.id === characterId,
   );
   ensure(character, "연결된 캐릭터를 찾지 못했어요.", 404);
-  const cached = sqlite
-    .prepare(
-      "SELECT checked_at,payload FROM boss_analyses WHERE character_id=?",
-    )
-    .get(characterId) as { checked_at: number; payload: string } | undefined;
-  if (cached && Date.now() - cached.checked_at < 600000) {
+  const cached = (await analysisRef(characterId).get()).data() as
+    { checkedAt: number; payload: string } | undefined;
+  if (cached && Date.now() - cached.checkedAt < 600000) {
     const data = JSON.parse(cached.payload) as BossAnalysis;
     if (
       data.version === catalogue.version &&
@@ -58,20 +55,7 @@ export async function analyzeCharacter(
       return data;
   }
   const lease = `boss-analysis:${characterId}`;
-  const acquired = sqlite
-    .transaction(() => {
-      const old = sqlite
-        .prepare("SELECT until_at FROM leases WHERE name=?")
-        .get(lease) as { until_at: number } | undefined;
-      if (old && old.until_at > Date.now()) return false;
-      sqlite
-        .prepare(
-          "INSERT INTO leases(name,until_at) VALUES(?,?) ON CONFLICT(name) DO UPDATE SET until_at=excluded.until_at",
-        )
-        .run(lease, Date.now() + 60000);
-      return true;
-    })
-    .immediate();
+  const acquired = await acquireLease(lease, 60000);
   ensure(
     acquired,
     "환산 조회가 진행 중이거나 잠시 대기 중이에요. 잠시 후 다시 시도해 주세요.",
@@ -79,7 +63,7 @@ export async function analyzeCharacter(
   );
   try {
     ensure(
-      consumeBudget("scouter-boss-analysis", 100),
+      await consumeBudget("scouter-boss-analysis", 100),
       "오늘의 환산 조회 예산을 모두 사용했어요.",
       429,
     );
@@ -109,15 +93,10 @@ export async function analyzeCharacter(
       character.name,
       character.world,
     );
-    sqlite
-      .transaction(() => {
-        ensure(
-          credentialIsCurrent(credential.generation),
-          "키 연결이 변경되어 환산 결과를 저장하지 않았어요.",
-          409,
-        );
-        ensure(
-          readBook("live").characters.some(
+    ensure(await credentialIsCurrent(credential.generation),
+      "키 연결이 변경되어 환산 결과를 저장하지 않았어요.", 409);
+    ensure(
+          (await readBook("live")).characters.some(
             (c) =>
               c.id === characterId &&
               c.name === data.name &&
@@ -126,13 +105,7 @@ export async function analyzeCharacter(
           "캐릭터 정보가 변경되어 다시 조회해야 해요.",
           409,
         );
-        sqlite
-          .prepare(
-            "INSERT INTO boss_analyses(character_id,checked_at,payload) VALUES(?,?,?) ON CONFLICT(character_id) DO UPDATE SET checked_at=excluded.checked_at,payload=excluded.payload",
-          )
-          .run(characterId, Date.now(), JSON.stringify(data));
-      })
-      .immediate();
+    await analysisRef(characterId).set({ checkedAt: Date.now(), payload: JSON.stringify(data) });
     return data;
   } catch (error) {
     if (error instanceof DomainError) throw error;
@@ -141,8 +114,6 @@ export async function analyzeCharacter(
       502,
     );
   } finally {
-    sqlite
-      .prepare("UPDATE leases SET until_at=? WHERE name=?")
-      .run(Date.now() + 30000, lease);
+    await setLease(lease, Date.now() + 30000);
   }
 }

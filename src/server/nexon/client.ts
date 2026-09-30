@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { DomainError, ensure } from "@/domain/model";
-import { consumeBudget, usageCount, sqlite } from "@/server/db";
+import { consumeBudget, usageCount, leaseUntil, setLease, credentialRef } from "@/server/db";
 export type NexonPath =
   | "/maplestory/v1/character/list"
   | "/maplestory/v1/character/stat"
@@ -19,20 +19,18 @@ export async function nexonRequest(
   const fingerprint = createHash("sha256").update(key).digest("hex");
   const provider = `nexon:${fingerprint}`;
   const budget = options.budget ?? 800;
-  const blocked = sqlite
-    .prepare("SELECT until_at FROM leases WHERE name=?")
-    .get(provider) as { until_at: number } | undefined;
+  const blocked = await leaseUntil(provider);
   ensure(
-    !blocked || blocked.until_at <= Date.now(),
+    blocked <= Date.now(),
     "넥슨 호출 제한 대기 중이에요.",
     429,
   );
   let reserved = false;
   for (let attempt = 0; attempt < 6; attempt++) {
-    reserved = consumeBudget(provider, budget);
+    reserved = await consumeBudget(provider, budget);
     if (reserved) break;
     ensure(
-      usageCount(provider) < budget,
+      (await usageCount(provider)) < budget,
       "앱의 24시간 호출 예산을 모두 사용했어요.",
       429,
     );
@@ -46,11 +44,10 @@ export async function nexonRequest(
     options.generation === undefined
       ? undefined
       : setInterval(() => {
-          const row = sqlite
-            .prepare("SELECT generation FROM credentials WHERE id=1")
-            .get() as { generation: number } | undefined;
-          if (row?.generation !== options.generation) controller.abort();
-        }, 100);
+          void credentialRef().get().then((row) => {
+            if (row.get("generation") !== options.generation) controller.abort();
+          }).catch(() => controller.abort());
+        }, 1000);
   let response: Response;
   try {
     response = await (options.fetcher ?? fetch)(url.toString(), {
@@ -75,11 +72,7 @@ export async function nexonRequest(
     const until = Number.isFinite(seconds)
       ? Date.now() + Math.max(seconds, 60) * 1000
       : Math.max(Date.now() + 60000, Date.parse(raw || "") || 0);
-    sqlite
-      .prepare(
-        "INSERT INTO leases(name,until_at) VALUES(?,?) ON CONFLICT(name) DO UPDATE SET until_at=excluded.until_at",
-      )
-      .run(provider, until);
+    await setLease(provider, until);
     throw new DomainError(
       "넥슨 호출 한도에 도달했어요. 잠시 후 다시 시도해 주세요.",
       429,

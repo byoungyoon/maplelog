@@ -1,11 +1,5 @@
 import { defineConfig } from "@playwright/test";
 import { randomBytes } from "node:crypto";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import path from "node:path";
-process.env.MESOLOG_E2E_DATA_DIR ||= mkdtempSync(
-  path.join(tmpdir(), "mesolog-key-e2e-"),
-);
 process.env.CREDENTIAL_ENCRYPTION_KEY ||= randomBytes(32).toString("hex");
 const baseURL = "http://127.0.0.1:3100";
 export default defineConfig({
@@ -27,7 +21,8 @@ export default defineConfig({
     url: baseURL,
     reuseExistingServer: false,
     env: {
-      DATA_DIR: process.env.MESOLOG_E2E_DATA_DIR,
+      FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID || "demo-maplelog",
+      FIRESTORE_EMULATOR_HOST: process.env.FIRESTORE_EMULATOR_HOST || "127.0.0.1:8080",
       NEXT_BUILD_DIR: ".next-e2e",
       CREDENTIAL_ENCRYPTION_KEY: process.env.CREDENTIAL_ENCRYPTION_KEY,
     },

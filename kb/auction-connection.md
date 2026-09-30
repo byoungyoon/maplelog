@@ -9,9 +9,11 @@ completed successfully without an observed OTP challenge.
 
 Three searches returned listings; two returned zero results. The search counter
 increased from 1/100 to 6/100. See [the trial record](auction-usage-trial.md) for
-prices, counts, scope, and usage limitations. The two zero-result items are now
-hidden from the Prices page through `src/data/auction-listings.json`; their
-ledger entries and drop history are preserved. The browser was closed afterward.
+prices, counts, scope, and usage limitations. At the time, the two zero-result
+items were hidden from the Prices page through `src/data/auction-listings.json`.
+That display rule was replaced with a collected-price check: currently unpriced
+items are hidden from the Prices page. The ledger entries and drop history are
+preserved for future searches. The browser was closed afterward.
 No credentials were added to repository files, no prices were imported, and no
 dots schedule was created.
 
@@ -56,13 +58,12 @@ browser session. Sign out of Nexon in the dedicated browser to end that session.
 
 ## Remaining work
 
-- Implement a bounded read-only collector for the now-verified item search interface.
-- Verify market scope, item identity, upgrade conditions, and per-unit prices.
-- Add a validated auction price source that preserves manual overrides and
-  existing drop snapshots, without letting reference-price refreshes overwrite it.
-- Test a real read-only collection and ledger update before enabling recurrence.
-- Configure a weekly dots task once browser access and a supported path back to
-  Maplelog are available. No dots schedule has been created from this session.
+- The bounded collector, Vera scope, and first ledger update are documented in
+  [Daily auction price refresh](auction-daily.md). Full item option identity
+  remains unverified; visibly optioned first listings are left unpriced.
+- Connect the owner's computer to Dots and create the requested daily 10:00
+  Asia/Seoul responsibility. No Dots schedule has been created from this
+  Codex session.
 
 Dots supports a browser and recurring responsibilities according to its
 [official getting-started guide](https://learn.chatgpt.com/docs/dots/getting-started).

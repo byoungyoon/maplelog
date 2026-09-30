@@ -27,6 +27,7 @@ export function applyReferencePrices(
   for (const item of book.items) {
     if (
       item.source === "manual" ||
+      item.source === "auction" ||
       !Object.hasOwn(quotes, item.name) ||
       item.observedAt > checkedAt
     )

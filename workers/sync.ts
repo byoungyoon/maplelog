@@ -1,6 +1,6 @@
 import { syncReferencePrices } from "../src/server/catalog/sync-prices";
 import { applyCatalogue } from "../src/server/catalog";
-import { sqlite, readBook, writeBook } from "../src/server/db";
+import { editBook, readBook } from "../src/server/db";
 import { connectionStatus } from "../src/server/connection";
 import { syncAccount } from "../src/server/nexon/sync";
 let running = false;
@@ -9,22 +9,17 @@ async function tick() {
   running = true;
   try {
     const now = Date.now();
-    sqlite
-      .transaction(() => {
-        const book = readBook("live");
+    await editBook((book) => {
         applyCatalogue(book);
         book.sync.workerSeen = new Date(now).toISOString();
         if (book.sync.focusUntil && Date.parse(book.sync.focusUntil) <= now) {
           book.sync.focusUntil = null;
           book.sync.focusCharacter = null;
         }
-        book.revision++;
-        writeBook(book);
-      })
-      .immediate();
-    const book = readBook("live");
+      });
+    const book = await readBook("live");
     if (
-      !connectionStatus().connected ||
+      !(await connectionStatus()).connected ||
       !book.settings.setupDone ||
       !book.characters.length
     )

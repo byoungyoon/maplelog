@@ -5,6 +5,7 @@ This directory records completed work, user decisions, verification, and relevan
 - [Work log](work-log.md)
 - [Boss analysis](boss-analysis.md)
 - [Web auction connection](auction-connection.md)
+- [Daily auction price refresh](auction-daily.md)
 - [Architecture](../docs/architecture.md)
 - [API contract](../docs/api-contract.md)
 - [Implementation decisions](../docs/decisions.md)

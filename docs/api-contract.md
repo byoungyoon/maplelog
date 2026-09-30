@@ -41,7 +41,7 @@ The response shape is `success: true` with `item_price: { itemName: numericStrin
 
 The source does not provide world, item-option, or supplier-update metadata. Displayed timestamps indicate when this app fetched the response. Only exact item names are matched; abbreviations are not expanded speculatively. Personal-bound rewards are not automatically made tradable. Other priced shared rewards use the assumption of tradability immediately after acquisition, which can be edited in drop details.
 
-The item-price endpoint receives no Nexon key or character information. The worker refreshes daily, while manual refreshes are coalesced with a 60-second cooldown. Failures preserve the last prices and show an error. Manual values and existing drop price snapshots are preserved.
+The item-price endpoint receives no Nexon key or character information. The worker still refreshes reference data daily, but does not overwrite items with an auction observation. The Prices page no longer exposes a manual item-price refresh or editor. The separate local auction collector and apply command update the current item price book; existing drop price snapshots are preserved. See [the auction procedure](../kb/auction-daily.md).
 
 ## Internal API
 

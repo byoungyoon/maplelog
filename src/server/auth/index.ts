@@ -47,7 +47,7 @@ export async function authorize(req: Request) {
 }
 export async function login(password: string) {
   ensure(
-    consumeBudget("owner-login", 10),
+    await consumeBudget("owner-login", 10),
     "로그인 시도가 많아요. 24시간 뒤 다시 시도해 주세요.",
     429,
   );

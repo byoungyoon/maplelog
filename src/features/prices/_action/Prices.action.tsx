@@ -1,92 +1,45 @@
 "use client";
-import { usePriceImport } from "../_state/usePriceImport";
 import { visiblePriceItems } from "../_lib/visiblePriceItems";
 import { useState } from "react";
-import { Search, PenLine, Info } from "lucide-react";
+import { Search, Info } from "lucide-react";
 import { useBook } from "@/shared/_state/useBook";
 import { useCommand } from "@/shared/_action/useCommand";
-import { useAppState } from "@/shared/_state/useAppState";
 import { Loading, ErrorState, Empty } from "@/shared/_component/Status";
 import { ItemIcon } from "@/shared/_component/Visual";
-import { Sheet } from "@/shared/_component/Sheet";
 import { formatMeso } from "@/domain/money";
-import type { Item } from "@/domain/model";
+
 export default function PricesAction() {
   const q = useBook();
-  const priceImport = usePriceImport();
   const cmd = useCommand();
-  const { notify } = useAppState();
   const [search, setSearch] = useState("");
-  const [edit, setEdit] = useState<Item | null>(null);
   if (q.isPending) return <Loading />;
   if (q.error) return <ErrorState error={q.error} retry={() => q.refetch()} />;
   const { book } = q.data;
   const items = visiblePriceItems(book.items, search);
+  const latestAuction = book.items
+    .filter((item) => item.source === "auction")
+    .map((item) => item.observedAt)
+    .sort()
+    .at(-1);
+
   return (
     <>
-      <div className="page-heading">
-        <div>
-          <div className="eyebrow">PRICE BOOK</div>
-          <h1>나의 기준 시세</h1>
-          <p>자주 기록하는 아이템의 가격을 관리하세요.</p>
-        </div>
-        <div className="price-source-status">
-          <button
-            className="button"
-            disabled={cmd.isPending}
-            onClick={() => cmd.mutate({ type: "prices-refresh" })}
-          >
-            {cmd.isPending ? "조회 중…" : "참고가 새로고침"}
-          </button>
-        </div>
-      </div>
       <div className="notice">
         <Info size={17} />
         <span>
-          참고가는 서버·옵션별 실거래가와 다를 수 있어요. 직접 입력한 가격을
-          우선하며, 가격 갱신은 새 획득 기록부터 적용돼요.
+          베라 경매장 시세 · 정기 갱신 목표: 매일 오전 10시 (한국 시간) · 최근 수집:{" "}
+          {latestAuction
+            ? new Date(latestAuction).toLocaleString("ko-KR", {
+                timeZone: "Asia/Seoul",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "아직 없음"}
         </span>
       </div>
-      {book.priceSync?.error && (
-        <div className="notice warning" role="alert">
-          {book.priceSync.error}
-        </div>
-      )}
-      <details className="audit-details">
-        <summary>사용자 가격 데이터 가져오기</summary>
-        <p>
-          JSON 배열에 id, price(메소 정수 문자열 또는 null), market, variant를
-          넣어 주세요. 같은 아이템 ID의 기준가를 한 번에 수정해요.
-        </p>
-        <pre className="import-example">
-          {JSON.stringify(
-            [
-              {
-                id: "아이템 ID",
-                price: "55000000",
-                market: "비교 시장",
-                variant: "기본 · 교환 가능",
-              },
-            ],
-            null,
-            2,
-          )}
-        </pre>
-        <label className="button">
-          {priceImport.busy ? "가져오는 중…" : "가격 JSON 선택"}
-          <input
-            type="file"
-            accept="application/json,.json"
-            className="sr-only"
-            disabled={priceImport.busy}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) void priceImport.importFile(file);
-              e.target.value = "";
-            }}
-          />
-        </label>
-      </details>
       <label className="search-input">
         <Search size={18} />
         <input
@@ -97,26 +50,26 @@ export default function PricesAction() {
         />
       </label>
       <section className="panel prices-list">
-        {items.map((i) => {
+        {items.map((item) => {
           const stale =
-            new Date(i.observedAt).getTime() <
+            new Date(item.observedAt).getTime() <
             q.data.asOf - book.settings.staleHours * 3600000;
           return (
-            <div className="price-row" key={i.id}>
-              <ItemIcon image={i.image} kind={i.icon} />
+            <div className="price-row" key={item.id}>
+              <ItemIcon image={item.image} kind={item.icon} />
               <div className="row-body">
-                <strong>{i.name}</strong>
-                <p>
-                  {i.market.replaceAll("메이플스카우터 ", "")} · {i.variant}
-                </p>
+                <strong>{item.name}</strong>
+                <p>{item.market} · {item.variant}</p>
                 <span className="price-meta">
-                  {i.source === "scouter"
-                    ? i.price === null
-                      ? "드랍 후보 · 가격 미정"
-                      : "참고가"
-                    : "수동 기준가"}{" "}
+                  {item.source === "auction"
+                    ? item.price === null
+                      ? "경매장 가격 미정"
+                      : "경매장 최저 등록가"
+                    : item.price === null
+                      ? "가격 미정"
+                      : "이전 참고가"}{" "}
                   ·{" "}
-                  {new Date(i.observedAt).toLocaleString("ko-KR", {
+                  {new Date(item.observedAt).toLocaleString("ko-KR", {
                     timeZone: "Asia/Seoul",
                     month: "short",
                     day: "numeric",
@@ -127,29 +80,17 @@ export default function PricesAction() {
               </div>
               <div className="price-value">
                 <strong>
-                  {formatMeso(i.price)}
-                  {i.price && <small> 메소</small>}
+                  {formatMeso(item.price)}
+                  {item.price && <small> 메소</small>}
                 </strong>
                 <span className={`price-state ${stale ? "stale" : ""}`}>
-                  {i.price === null
+                  {item.price === null
                     ? "미정"
                     : stale
                       ? "오래된 기준가"
                       : "기준가 있음"}
                 </span>
               </div>
-              <button
-                className="icon-button"
-                aria-label={`${i.name} 기준가 수정`}
-                onClick={() =>
-                  setEdit({
-                    ...i,
-                    market: i.market.replaceAll("메이플스카우터 ", ""),
-                  })
-                }
-              >
-                <PenLine size={18} />
-              </button>
             </div>
           );
         })}
@@ -159,7 +100,7 @@ export default function PricesAction() {
             detail={
               search
                 ? "다른 아이템 이름으로 검색해 주세요."
-                : "경매장에 매물이 없는 것으로 확인된 아이템은 시세 목록에서 제외돼요."
+                : "가격이 확인된 아이템이 없어요."
             }
           />
         )}
@@ -173,42 +114,42 @@ export default function PricesAction() {
           9월 17일 가격표를 적용했어요. 직접 수정한 기준가는 새 완료 기록부터
           적용되며, 기존 기록은 드랍 기록의 조건 확인에서 반영할 수 있어요.
         </p>
-        {book.bosses.map((b) => (
+        {book.bosses.map((boss) => (
           <form
-            key={b.id}
+            key={boss.id}
             className="price-row"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const f = new FormData(e.currentTarget);
+            onSubmit={(event) => {
+              event.preventDefault();
+              const form = new FormData(event.currentTarget);
               cmd.mutate({
                 type: "crystal-price",
-                bossId: b.id,
-                price: String(f.get("price")) || null,
+                bossId: boss.id,
+                price: String(form.get("price")) || null,
               });
             }}
           >
             <div className="row-body">
-              <strong>{b.name}</strong>
+              <strong>{boss.name}</strong>
               <p>
-                {b.difficulty} ·{" "}
-                {b.cycle === "weekly"
+                {boss.difficulty} ·{" "}
+                {boss.cycle === "weekly"
                   ? "주간"
-                  : b.cycle === "daily"
+                  : boss.cycle === "daily"
                     ? "일간"
                     : "월간"}
               </p>
             </div>
             <label>
               <span className="sr-only">
-                {b.name} {b.difficulty} 결정석 기준가
+                {boss.name} {boss.difficulty} 결정석 기준가
               </span>
               <input
-                key={b.crystal}
+                key={boss.crystal}
                 name="price"
                 inputMode="numeric"
                 pattern="[0-9]*"
                 placeholder="기준가 미정"
-                defaultValue={b.crystal ?? ""}
+                defaultValue={boss.crystal ?? ""}
                 style={{ width: 150 }}
               />
             </label>
@@ -218,91 +159,6 @@ export default function PricesAction() {
           </form>
         ))}
       </details>
-      <p className="muted-note mt-6">
-        시세 자동 연동은 미연결 상태예요. 확인한 기준가를 직접 관리할 수 있어요.
-      </p>
-      {edit && (
-        <Sheet
-          title="기준가 수정"
-          onClose={() => {
-            if (
-              window.confirm(
-                "기준가 편집을 닫을까요? 저장하지 않은 값은 사라져요.",
-              )
-            )
-              setEdit(null);
-          }}
-          busy={cmd.isPending}
-        >
-          <div className="sheet-content">
-            <h2>{edit.name}</h2>
-            <p className="sheet-description">
-              비교 조건이 같은 아이템의 기준가를 입력하세요.
-            </p>
-            <form
-              className="detail-form"
-              onSubmit={(e) => {
-                e.preventDefault();
-                cmd.mutate(
-                  {
-                    type: "price",
-                    id: edit.id,
-                    price: edit.price,
-                    market: edit.market,
-                    variant: edit.variant,
-                  },
-                  {
-                    onSuccess: () => {
-                      setEdit(null);
-                      notify(
-                        "기준가를 저장했어요. 기존 평가 스냅샷은 유지돼요.",
-                      );
-                    },
-                  },
-                );
-              }}
-            >
-              <label>
-                단가 (메소, 비우면 미정)
-                <input
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={edit.price ?? ""}
-                  onChange={(e) =>
-                    setEdit({ ...edit, price: e.target.value || null })
-                  }
-                />
-              </label>
-              <label>
-                비교 시장
-                <input
-                  value={edit.market}
-                  required
-                  onChange={(e) => setEdit({ ...edit, market: e.target.value })}
-                />
-              </label>
-              <label>
-                옵션·거래 조건
-                <input
-                  value={edit.variant}
-                  onChange={(e) =>
-                    setEdit({ ...edit, variant: e.target.value })
-                  }
-                />
-              </label>
-              <div className="notice">
-                가격 0과 가격 미정은 달라요. 시세를 모르면 빈칸으로 두세요.
-              </div>
-              {cmd.isError && (
-                <p className="field-error">{cmd.error.message}</p>
-              )}
-              <button className="button primary full" disabled={cmd.isPending}>
-                기준가 저장
-              </button>
-            </form>
-          </div>
-        </Sheet>
-      )}
     </>
   );
 }

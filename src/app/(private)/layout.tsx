@@ -9,7 +9,7 @@ export default async function PrivateLayout({
   children: React.ReactNode;
 }) {
   await authorizePage();
-  if (!connectionStatus().connected || !readBook("live").settings.setupDone)
+  if (!(await connectionStatus()).connected || !(await readBook("live")).settings.setupDone)
     redirect("/setup");
   return children;
 }

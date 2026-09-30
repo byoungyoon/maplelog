@@ -1,7 +1,4 @@
-import { beforeAll, beforeEach, afterAll, it, expect, vi } from "vitest";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { beforeAll, beforeEach, it, expect, vi } from "vitest";
 import { randomBytes } from "node:crypto";
 import { emptyLedger } from "@/domain/empty-ledger";
 import { validateLedger } from "@/domain/model";
@@ -47,18 +44,21 @@ function fresh() {
   return book;
 }
 beforeAll(async () => {
-  process.env.DATA_DIR = mkdtempSync(join(tmpdir(), "mesolog-scheduler-"));
+  if (!process.env.FIRESTORE_EMULATOR_HOST)
+    throw new Error("Firestore emulator is required for scheduler tests");
   process.env.CREDENTIAL_ENCRYPTION_KEY = randomBytes(32).toString("hex");
   database = await import("@/server/db");
   connection = await import("@/server/connection");
   sync = await import("@/server/nexon/sync");
 });
-beforeEach(() => {
-  database.sqlite.prepare("DELETE FROM usage").run();
-  database.sqlite.prepare("DELETE FROM leases").run();
-  database.writeBook(fresh());
+beforeEach(async () => {
+  const book = fresh();
+  await database.bookRef("live").set({ revision: book.revision, payload: JSON.stringify(book) });
+  await database.credentialRef().delete();
+  await database.connectionLockRef().set({ generation: 0 });
+  for (const name of ["usage", "leases"])
+    await database.firestore().recursiveDelete(database.firestore().collection(name));
 });
-afterAll(() => database.sqlite.close());
 it("동일 API 완료 10회에도 최초 기록 하나만 생성하고 가격은 미정으로 둔다", () => {
   const b = fresh();
   for (let i = 0; i < 10; i++)
@@ -166,19 +166,20 @@ it("동시 동기화 요청은 외부 요청 한 번으로 합쳐진다", async 
   await connection.connectKey("test-sync-key", async () =>
     Response.json(characterListFixture),
   );
-  const b = database.readBook("live");
+  const b = await database.readBook("live");
   b.characters[0].managed = true;
   b.characters[0].imageUpdatedAt = new Date().toISOString();
-  database.writeBook(b);
+  await database.editBook((book) => { Object.assign(book, b); });
   let finish!: (r: Response) => void;
   const fetcher = vi.fn(() => new Promise<Response>((r) => (finish = r)));
   const pending = sync.syncAccount({ fetcher });
+  await vi.waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1));
   const second = await sync.syncAccount({ fetcher });
   expect(second.coalesced).toBe(true);
   finish(Response.json(sample()));
   expect((await pending).success).toBe(1);
   expect(fetcher).toHaveBeenCalledTimes(1);
-  expect(database.readBook("live").completions).toHaveLength(1);
+  expect((await database.readBook("live")).completions).toHaveLength(1);
 });
 it("검색한 캐릭터의 보스만 조회한다", async () => {
   await connection.connectKey("test-search-key", async () =>
@@ -187,7 +188,7 @@ it("검색한 캐릭터의 보스만 조회한다", async () => {
   const book = fresh();
   book.characters.push({ ...book.characters[0], id: "second-ocid" });
   book.characters.forEach((c) => (c.imageUpdatedAt = new Date().toISOString()));
-  database.writeBook(book);
+  await database.editBook((current) => { Object.assign(current, book); });
   const requested: string[] = [];
   const fetcher: typeof fetch = async (url) => {
     requested.push(String(url));
@@ -200,7 +201,7 @@ it("검색한 캐릭터의 보스만 조회한다", async () => {
   expect(result.success).toBe(1);
   expect(requested).toHaveLength(1);
   expect(requested[0]).toContain("second-ocid");
-  expect(database.readBook("live").completions[0].characterId).toBe(
+  expect((await database.readBook("live")).completions[0].characterId).toBe(
     "second-ocid",
   );
 });
@@ -211,33 +212,34 @@ it("전체 조회는 선택하지 않은 캐릭터도 포함하고 부분 실패
   const b = fresh();
   b.characters.push({ ...b.characters[0], id: "second-ocid", managed: false });
   b.characters.forEach((c) => (c.imageUpdatedAt = new Date().toISOString()));
-  database.writeBook(b);
+  await database.editBook((book) => { Object.assign(book, b); });
   const fetcher: typeof fetch = async (url) =>
     String(url).includes("second-ocid")
       ? new Response("", { status: 503 })
       : Response.json(sample());
   const result = await sync.syncAccount({ fetcher });
   expect(result).toMatchObject({ success: 1, failed: 1 });
-  expect(database.readBook("live").completions).toHaveLength(1);
+  expect((await database.readBook("live")).completions).toHaveLength(1);
   expect(
-    database.readBook("live").sync.characters?.map((c) => c.status),
+    (await database.readBook("live")).sync.characters?.map((c) => c.status),
   ).toEqual(["ok", "error"]);
 });
 it("연결 해제 후 도착한 API 결과는 저장되지 않는다", async () => {
   await connection.connectKey("test-disconnect-sync", async () =>
     Response.json(characterListFixture),
   );
-  const b = database.readBook("live");
+  const b = await database.readBook("live");
   b.characters[0].managed = true;
-  database.writeBook(b);
+  await database.editBook((book) => { Object.assign(book, b); });
   let finish!: (r: Response) => void;
   const pending = sync.syncAccount({
     fetcher: () => new Promise<Response>((r) => (finish = r)),
   });
-  connection.disconnect();
+  await vi.waitFor(() => expect(finish).toBeTypeOf("function"));
+  await connection.disconnect();
   finish(Response.json(sample()));
   await expect(pending).rejects.toThrow("키 연결");
-  expect(database.readBook("live").completions).toHaveLength(0);
+  expect((await database.readBook("live")).completions).toHaveLength(0);
 });
 it("429 Retry-After는 재요청을 차단하고 장부를 지우지 않는다", async () => {
   await connection.connectKey("test-limited-key", async () =>
@@ -245,16 +247,14 @@ it("429 Retry-After는 재요청을 차단하고 장부를 지우지 않는다",
   );
   const b = fresh();
   mergeScheduler(b, "test-ocid", sample());
-  database.writeBook(b);
+  await database.editBook((book) => { Object.assign(book, b); });
   const fetcher = vi.fn(
     async () =>
       new Response("", { status: 429, headers: { "Retry-After": "120" } }),
   );
   expect((await sync.syncAccount({ fetcher })).failed).toBe(1);
-  database.sqlite
-    .prepare("DELETE FROM leases WHERE name='scheduler-sync'")
-    .run();
+  await database.leaseRef("scheduler-sync").delete();
   expect((await sync.syncAccount({ fetcher })).failed).toBe(1);
   expect(fetcher).toHaveBeenCalledTimes(1);
-  expect(database.readBook("live").completions).toHaveLength(1);
+  expect((await database.readBook("live")).completions).toHaveLength(1);
 });

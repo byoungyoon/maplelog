@@ -1,5 +1,28 @@
 # Work Log
 
+## 2026-09-30 — Hide Unpriced Items and Verify Parenthesis Listings
+
+- Hid all 40 currently unpriced items from the Prices page. The 67 ledger entries, auction observations, drop history, and future full-search scope remain intact. The empty state now explains that only confirmed-price items are shown.
+- Inspected three Vera auction quick-search result pages whose card names contain an extra space before `(`. Matched that display spelling to the corresponding ledger names, checked that the cheapest first cards had no visible option markers, and recorded unit asking prices of 7,400,000,000, 6,439,999,998, and 32,999,999,979 meso for the belt, face accessory, and eye accessory Exceptional Hammers.
+- Stored the corrected five-item report in Firestore, applied the three verified prices, and advanced the live ledger to revision 1648. The two other Exceptional Hammers had zero results. The auction search counter reached 97/100. The ledger now has 27 priced and 40 unpriced items. Future full collection still searches all 67 items.
+- Verified the live Firestore ledger and report counts, TypeScript, ESLint, whitespace, and 85 unit tests, including auction display-name normalization and unpriced-item filtering.
+
+## 2026-09-30 — Firestore Migration and Auction Report Storage
+
+- Created the `maplelog-3ba66` Firestore Standard database in Seoul and configured server-only Firebase Admin access. Client rules deny direct reads and writes.
+- Migrated the live revision 1646 ledger, encrypted Nexon credential, connection generation, request ids, API usage, leases, analysis cache, and both auction reports. All 37 Firestore documents were read back and compared with the source, including an exact ledger hash. The ledger contains 67 item prices (24 quoted), 60 characters, 48 completions, and three drops.
+- Replaced runtime SQLite access with Firestore transactions and converted API routes, background synchronization, authentication limits, boss analysis, auction collection, and price application. Dated auction reports are now written to Firestore as well as local JSON. Quick searches for names containing `(` submit one leading space while matching the exact original item name.
+- Compressed the aggregate Firestore ledger from about 212 KB of JSON to about 63 KB of stored Base64 gzip data without changing revision or contents, leaving room for future records under Firestore's document-size limit. Deployed rules that deny direct client access.
+- Updated unit and browser tests to use the isolated `demo-maplelog` Firestore emulator. Verification: 84 unit tests, eight browser tests, TypeScript, ESLint, and the Webpack production build passed. Removed SQLite after the verified migration.
+
+## 2026-09-30 — Vera Auction Price Collection and Read-Only Price Book
+
+- The initial filter-search pass classified 67 ledger names, but its autocomplete was restricted to armor categories. The 44 names it marked absent were not valid general-auction observations. Ten observed prices were imported and retained until the next full quick-search refresh; 57 entries were unpriced.
+- Corrected the collector to submit each item name through quick search. At the owner's request, queried only those 57 unpriced entries on this run. Fourteen gained a price, 37 returned zero results, two first pages contained only visibly optioned exact-name listings, and four first pages contained no exact-name listing. The auction counter moved from 32/100 to 89/100. The live ledger now has 24 priced and 43 unpriced auction items; revision advanced from 1645 to 1646. Future `auction:refresh` runs search all 67 entries.
+- The 57-entry update created a SQLite backup. Drops, settlements, bosses, characters, and settings matched the backup afterward. The earlier two-item hiding rule was removed; the page now uses the general collected-price rule recorded above.
+- Added a resumable headed-Chrome collector, validated ledger application, auction provenance, and a read-only item price section. Removed the item's manual price editor and JSON import from the Prices page; live item price commands reject manual updates. The page shows the target 10:00 Asia/Seoul refresh time and latest observation.
+- Recorded the procedure and Dots setup in [Daily auction price refresh](auction-daily.md). A Dots schedule remains uncreated because this session has no Dots scheduling connection. Verification: 84 unit tests, TypeScript, ESLint, and whitespace checks passed.
+
 ## 2026-09-30 — Five-Item Auction Trial and Price List Filtering
 
 - Completed five agent-directed searches in headed Chrome after reauthentication. Three items returned listings and two returned zero results; the auction search counter increased from 1/100 to 6/100.

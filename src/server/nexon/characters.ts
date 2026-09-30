@@ -26,7 +26,7 @@ export async function verifyCharacterKey(
 ) {
   const fingerprint = createHash("sha256").update(key).digest("hex");
   ensure(
-    consumeBudget("connection-attempts", 100),
+    await consumeBudget("connection-attempts", 100),
     "앱의 연결 확인 예산을 모두 사용했어요.",
     429,
   );
