@@ -138,17 +138,39 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
   await expect(
     page.getByRole("heading", { name: "테스트캐릭터" }),
   ).toBeVisible();
+  const comfortable = page.locator(".boss-cut-comfortable");
+  await expect(comfortable).toBeVisible();
+  await expect(comfortable).not.toHaveAttribute("open");
+  await expect(comfortable.locator(".boss-cut-card").first()).not.toBeVisible();
+  await comfortable.locator(":scope > summary").click();
+  await expect(comfortable.locator(".boss-cut-card").first()).toBeVisible();
   await expect(
     page.getByLabel("보스 최소컷 분석").getByRole("meter"),
   ).toHaveCount(47);
+  await comfortable.locator(":scope > summary").click();
+  await expect(comfortable.locator(".boss-cut-card").first()).not.toBeVisible();
   await expect(page.getByLabel("조회 주기")).toHaveCount(0);
   await expect(page.locator(".page-heading")).toHaveCount(0);
   await expect(
     page.getByRole("link", { name: "기록", exact: true }),
   ).toHaveCount(0);
   await expect(page.locator('a[href*="maplescouter"]')).toHaveCount(0);
-  await page.getByRole("button", { name: "다른 캐릭터 검색" }).click();
-  await page.getByLabel("캐릭터 검색").fill("테스트캐릭터");
+  await page.getByRole("link", { name: "다른 캐릭터 검색" }).click();
+  await expect(page).toHaveURL(/\/bosses\/characters\?/);
+  await expect(
+    page.getByRole("dialog", { name: "다른 캐릭터 검색" }),
+  ).toBeVisible();
+  await page.goBack();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.goForward();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.getByRole("link", { name: "다른 캐릭터 검색" }).click();
+
+  await page
+    .getByRole("textbox", { name: "캐릭터 검색", exact: true })
+    .fill("테스트캐릭터");
   await page.getByRole("button", { name: "보스 조회", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "테스트캐릭터" }),
@@ -247,24 +269,53 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
     page.getByRole("heading", { name: "두번째캐릭터" }),
   ).toBeVisible();
   await expect(page.locator(".boss-record")).toHaveCount(1);
+  await comfortable.locator(":scope > summary").click();
   await expect(
     page
       .getByRole("article", { name: "루시드 하드 최소컷" })
       .getByText("처치 완료"),
   ).toBeVisible();
   await expect(page.locator(".boss-record .row-menu")).toHaveCount(0);
-  await page.getByRole("button", { name: "다른 캐릭터 검색" }).click();
-  await page.getByLabel("캐릭터 검색").fill("테스트캐릭터");
+  await page.getByRole("link", { name: "다른 캐릭터 검색" }).click();
+  await page
+    .getByRole("textbox", { name: "캐릭터 검색", exact: true })
+    .fill("테스트캐릭터");
   await page.getByRole("button", { name: "상세보기" }).click();
   await expect(page.locator(".boss-record")).toHaveCount(1);
   await expect(page.locator(".boss-record .quick-settlement")).toHaveCount(0);
-  await page.getByRole("button", { name: "다른 캐릭터 검색" }).click();
-  await page.getByLabel("캐릭터 검색").fill("없는캐릭터");
+  await page.getByRole("link", { name: "다른 캐릭터 검색" }).click();
+  await page
+    .getByRole("textbox", { name: "캐릭터 검색", exact: true })
+    .fill("없는캐릭터");
   await expect(page.getByRole("button", { name: "상세보기" })).toHaveCount(0);
-  await expect(page.locator(".boss-record")).toHaveCount(0);
-  await page.getByLabel("캐릭터 검색").fill("두번째캐릭터");
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.getByText("검색한 캐릭터가 없어요.")).toBeVisible();
+  await page
+    .getByRole("textbox", { name: "캐릭터 검색", exact: true })
+    .fill("두번째캐릭터");
   await page.getByRole("button", { name: "상세보기" }).click();
   await expect(page.locator(".boss-record")).toHaveCount(1);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page).toHaveURL(/character=test-ocid-two/);
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "두번째캐릭터" }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "다른 캐릭터 검색" }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page).toHaveURL(/\/bosses\/characters\?/);
+  await page.reload();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "캐릭터 검색" }),
+  ).toBeVisible();
+  await page
+    .getByRole("textbox", { name: "캐릭터 검색", exact: true })
+    .fill("두번째캐릭터");
+  await page.getByRole("button", { name: "상세보기", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "두번째캐릭터" }),
+  ).toBeVisible();
   await page.getByRole("link", { name: "정산", exact: true }).click();
   await expect(page.getByRole("article")).toHaveCount(1);
   await expect(page.getByLabel("캐릭터 선택", { exact: true })).toHaveCount(0);
@@ -303,6 +354,19 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
           .locator(".glass-workspace")
           .evaluate((el) => getComputedStyle(el).overflowY),
       ).toBe("auto");
+      if (path === "/bosses") {
+        await page.getByRole("link", { name: "다른 캐릭터 검색" }).click();
+        const modal = page.getByRole("dialog");
+        await expect(modal).toBeVisible();
+        await expect(
+          modal.getByRole("textbox", { name: "캐릭터 검색", exact: true }),
+        ).toBeFocused();
+        const bounds = await modal.boundingBox();
+        expect(bounds!.x).toBeGreaterThanOrEqual(0);
+        expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
+        await modal.getByRole("button", { name: "캐릭터 검색 닫기" }).click();
+        await expect(modal).toHaveCount(0);
+      }
     }
   }
   await page.setViewportSize({ width: 1440, height: 900 });

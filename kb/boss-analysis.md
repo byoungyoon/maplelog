@@ -32,3 +32,9 @@ The interface retains pale sage glass surfaces, uses readable text contrast and 
 - Unit coverage includes formula boundaries, invalid inputs, ownership, cache/cooldown behavior, stale credential protection, strongest selection, and completion matching.
 - Browser tests use an isolated database and mocked external responses at 1440, 1024, 390, and 360 pixels. They verify selection, gauges, completion checks, removed controls, and internal scrolling without screenshots or traces.
 - A live owned-character request succeeded and returned 47 computed boss comparisons.
+
+## Character search routing
+
+`/bosses/characters` is the standalone character-search route. The Bosses layout renders an `@modal` slot with `(.)characters` for in-context navigation. A null slot index, default, and catch-all prevent stale dialogs after navigation. Native dialog controls handle focus and Escape; close and backdrop actions go back in browser history. Selection replaces the modal URL with `/bosses?character=<owned-character-id>`, keeping the explicit selection after reloads. The strongest-character default applies when no valid character is selected.
+
+Comfortable solo clears are grouped into a closed disclosure below other minimum-cut cards. Completion badges use a single-line icon and label; the light glass palette is unchanged.

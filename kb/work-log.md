@@ -1,5 +1,16 @@
 # Work Log
 
+## 2026-09-30 — Collapsed Easy Clears and Routed Character Search
+
+- Grouped comfortable solo clears into a native disclosure, collapsed by default, while retaining gauges and completion checks when expanded.
+- Replaced the vertically stacked completion marker with a compact, single-line rounded badge without changing the card palette.
+- Moved character search into the Bosses `@modal` parallel slot and `(.)characters` intercepting route. Soft navigation preserves the underlying boss screen; direct visits and reloads render the standalone search page.
+- Stored explicit character selection in the URL so a reload keeps the chosen character. Missing selections still default to the strongest known character.
+- Added native-dialog focus behavior, Escape/backdrop/close controls, history navigation, and mobile sizing. Closing an in-flight search prevents late navigation away from the current page.
+- Preserved boss-screen scroll position during modal navigation and kept the Bosses navigation item active for nested search routes.
+- Validation: eight browser tests passed, including disclosure toggling, back/forward/Escape dismissal, selection persistence, direct-page reloads, focus, and modal bounds at four viewport sizes. TypeScript, ESLint, and the Webpack production build passed. No screenshots were taken.
+
+
 ## 2026-09-30 — Boss Analysis and Simplified Boss UI
 
 - Inspected the public Chrome client and implemented the local boss comparison formulas using live character calculation inputs. All 47 results matched independently executed source math.

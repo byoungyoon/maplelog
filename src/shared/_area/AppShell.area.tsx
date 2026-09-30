@@ -14,7 +14,11 @@ const nav = [
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const previousPath = useRef(path);
   useEffect(() => {
+    const previous = previousPath.current;
+    previousPath.current = path;
+    if (previous.startsWith("/bosses") && path.startsWith("/bosses")) return;
     scrollRef.current?.scrollTo({ top: 0 });
   }, [path]);
   const { toast, notify, ambientMotion, toggleAmbientMotion } = useAppState();
@@ -67,8 +71,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 <Link
                   key={n.href}
                   href={n.href}
-                  className={path === n.href ? "active" : ""}
-                  aria-current={path === n.href ? "page" : undefined}
+                  className={
+                    path === n.href ||
+                    (n.href !== "/" && path.startsWith(n.href + "/"))
+                      ? "active"
+                      : ""
+                  }
+                  aria-current={
+                    path === n.href ||
+                    (n.href !== "/" && path.startsWith(n.href + "/"))
+                      ? "page"
+                      : undefined
+                  }
                 >
                   <n.icon size={16} strokeWidth={1.8} />
                   <span>{n.name}</span>

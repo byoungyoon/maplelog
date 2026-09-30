@@ -31,6 +31,97 @@ export function BossCutPanel({
       : filter === "파티 가능"
         ? party
         : (data?.cuts ?? []);
+  const activeCuts = cuts.filter((cut) => cut.status !== "솔플 여유컷");
+  const comfortableCuts = cuts.filter((cut) => cut.status === "솔플 여유컷");
+  const renderCards = (rows: typeof cuts) => (
+    <div className="boss-cut-grid">
+      {rows.map((cut) => {
+        const tone = cut.status.startsWith("솔플")
+          ? "solo"
+          : cut.status === "불가능" || !cut.entryAllowed
+            ? "short"
+            : "party";
+        const image = catalogue.bosses.find((b) => b.key === cut.key)?.image;
+        const ratio =
+          cut.rate /
+          (cut.partyReference ? (cut.partyLimit === 3 ? 2.7 : 5.1) : 0.9);
+        const percent = Math.round(ratio * 100);
+        const margin =
+          ratio >= 1
+            ? `최소컷의 ${ratio.toLocaleString("ko-KR", { maximumFractionDigits: 1 })}배`
+            : `최소컷까지 ${Math.ceil((1 - ratio) * 100)}% 부족`;
+        return (
+          <article
+            className="boss-cut-card"
+            data-tone={tone}
+            key={cut.key}
+            aria-label={`${cut.name} ${cut.difficulty} 최소컷`}
+          >
+            <div className="boss-cut-card-title">
+              <ItemIcon image={image} kind="crown" />
+              <div>
+                <strong>{cut.name}</strong>
+                <small>
+                  {cut.difficulty}
+                  {completed.has(cut.key) && (
+                    <span className="boss-cut-cleared">
+                      <CircleCheck size={13} aria-hidden />
+                      처치 완료
+                    </span>
+                  )}
+                </small>
+              </div>
+              <span className="boss-cut-verdict">
+                {cut.status === "불가능" ? "스펙 부족" : cut.status}
+              </span>
+            </div>
+            <div className="boss-cut-gauge-heading">
+              <strong>{cut.entryAllowed ? margin : "입장 레벨 미달"}</strong>
+              <span>솔플 기준</span>
+            </div>
+            <div
+              className="boss-cut-gauge"
+              role="meter"
+              aria-label={`${cut.name} ${cut.difficulty} 솔플 최소컷 대비`}
+              aria-valuemin={0}
+              aria-valuemax={200}
+              aria-valuenow={Math.min(200, percent)}
+              aria-valuetext={`솔플 최소컷 대비 ${percent}퍼센트${!cut.entryAllowed ? ", 입장 레벨 미달" : ""}`}
+            >
+              <span
+                className="boss-cut-gauge-fill"
+                style={{ width: `${Math.min(100, ratio * 50)}%` }}
+              />
+              <span className="boss-cut-gauge-target" />
+            </div>
+            <div className="boss-cut-gauge-scale">
+              <span>0</span>
+              <span>최소컷</span>
+              <span>2배 이상</span>
+            </div>
+            <details className="boss-cut-values">
+              <summary>환산 수치</summary>
+              <span>
+                내 적용 {cut.effectiveStat.toLocaleString("ko-KR")} · 솔플 최소{" "}
+                {cut.minimumStat.toLocaleString("ko-KR")}
+              </span>
+            </details>
+            <div className="boss-cut-notes">
+              {!cut.entryAllowed && <span>Lv. {cut.entryLevel}부터 입장</span>}
+              {(cut.levelPenalty || cut.forcePenalty) && (
+                <span>
+                  {[cut.levelPenalty && "레벨", cut.forcePenalty && "포스"]
+                    .filter(Boolean)
+                    .join("·")}{" "}
+                  보정 적용
+                </span>
+              )}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
   return (
     <section className="panel boss-cut-panel" aria-label="보스 최소컷 분석">
       <div className="boss-cut-heading">
@@ -88,102 +179,15 @@ export function BossCutPanel({
               </button>
             ))}
           </div>
-          <div className="boss-cut-grid">
-            {cuts.map((cut) => {
-              const tone = cut.status.startsWith("솔플")
-                ? "solo"
-                : cut.status === "불가능" || !cut.entryAllowed
-                  ? "short"
-                  : "party";
-              const image = catalogue.bosses.find(
-                (b) => b.key === cut.key,
-              )?.image;
-              const ratio =
-                cut.rate /
-                (cut.partyReference ? (cut.partyLimit === 3 ? 2.7 : 5.1) : 0.9);
-              const percent = Math.round(ratio * 100);
-              const margin =
-                ratio >= 1
-                  ? `최소컷의 ${ratio.toLocaleString("ko-KR", { maximumFractionDigits: 1 })}배`
-                  : `최소컷까지 ${Math.ceil((1 - ratio) * 100)}% 부족`;
-              return (
-                <article
-                  className="boss-cut-card"
-                  data-tone={tone}
-                  key={cut.key}
-                  aria-label={`${cut.name} ${cut.difficulty} 최소컷`}
-                >
-                  <div className="boss-cut-card-title">
-                    <ItemIcon image={image} kind="crown" />
-                    <div>
-                      <strong>{cut.name}</strong>
-                      <small>
-                        {cut.difficulty}
-                        {completed.has(cut.key) && (
-                          <span className="boss-cut-cleared">
-                            <CircleCheck size={13} aria-hidden />
-                            처치 완료
-                          </span>
-                        )}
-                      </small>
-                    </div>
-                    <span className="boss-cut-verdict">
-                      {cut.status === "불가능" ? "스펙 부족" : cut.status}
-                    </span>
-                  </div>
-                  <div className="boss-cut-gauge-heading">
-                    <strong>
-                      {cut.entryAllowed ? margin : "입장 레벨 미달"}
-                    </strong>
-                    <span>솔플 기준</span>
-                  </div>
-                  <div
-                    className="boss-cut-gauge"
-                    role="meter"
-                    aria-label={`${cut.name} ${cut.difficulty} 솔플 최소컷 대비`}
-                    aria-valuemin={0}
-                    aria-valuemax={200}
-                    aria-valuenow={Math.min(200, percent)}
-                    aria-valuetext={`솔플 최소컷 대비 ${percent}퍼센트${!cut.entryAllowed ? ", 입장 레벨 미달" : ""}`}
-                  >
-                    <span
-                      className="boss-cut-gauge-fill"
-                      style={{ width: `${Math.min(100, ratio * 50)}%` }}
-                    />
-                    <span className="boss-cut-gauge-target" />
-                  </div>
-                  <div className="boss-cut-gauge-scale">
-                    <span>0</span>
-                    <span>최소컷</span>
-                    <span>2배 이상</span>
-                  </div>
-                  <details className="boss-cut-values">
-                    <summary>환산 수치</summary>
-                    <span>
-                      내 적용 {cut.effectiveStat.toLocaleString("ko-KR")} · 솔플
-                      최소 {cut.minimumStat.toLocaleString("ko-KR")}
-                    </span>
-                  </details>
-                  <div className="boss-cut-notes">
-                    {!cut.entryAllowed && (
-                      <span>Lv. {cut.entryLevel}부터 입장</span>
-                    )}
-                    {(cut.levelPenalty || cut.forcePenalty) && (
-                      <span>
-                        {[
-                          cut.levelPenalty && "레벨",
-                          cut.forcePenalty && "포스",
-                        ]
-                          .filter(Boolean)
-                          .join("·")}{" "}
-                        보정 적용
-                      </span>
-                    )}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
+          {activeCuts.length > 0 && renderCards(activeCuts)}
+          {comfortableCuts.length > 0 && (
+            <details className="boss-cut-comfortable">
+              <summary>
+                솔플 여유컷 <span>{comfortableCuts.length}개</span>
+              </summary>
+              {renderCards(comfortableCuts)}
+            </details>
+          )}
           {!cuts.length && (
             <p className="muted-note">현재 조건에 맞는 보스가 없어요.</p>
           )}

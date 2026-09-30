@@ -1,14 +1,13 @@
 "use client";
 import { useState } from "react";
-import { Check, Search } from "lucide-react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Check } from "lucide-react";
 import { useBook } from "@/shared/_state/useBook";
-import { useAppState } from "@/shared/_state/useAppState";
 import { useCommand } from "@/shared/_action/useCommand";
 import { Avatar, ItemIcon } from "@/shared/_component/Visual";
 import { Loading, ErrorState, Empty } from "@/shared/_component/Status";
 import { formatMeso } from "@/domain/money";
-import type { Character } from "@/domain/model";
-import { api } from "@/shared/_lib/api";
 import { strongestCharacter } from "../_lib/strongestCharacter";
 import { useCharacterStrength } from "../_state/useCharacterStrength";
 import { completedBossKeys } from "../_lib/completedBossKeys";
@@ -16,62 +15,14 @@ import { BossCutPanel } from "../_component/BossCutPanel";
 export default function BossesAction() {
   const q = useBook(true, true);
   const strength = useCharacterStrength(q.data?.book.characters, q.data?.asOf);
-  const { notify } = useAppState();
   const cmd = useCommand(true, true);
-  const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("전체");
-  const [searchingId, setSearchingId] = useState<string | null>(null);
-  // undefined selects the strongest automatically; null opens the search view.
-  const [selectedId, setSelectedId] = useState<string | null | undefined>(
-    undefined,
-  );
+  const selectedId = useSearchParams().get("character");
   if (q.isPending) return <Loading />;
   if (q.error) return <ErrorState error={q.error} retry={() => q.refetch()} />;
   const { book, report } = q.data;
-  const selected =
-    selectedId === undefined
-      ? strongestCharacter(book.characters)
-      : book.characters.find((c) => c.id === selectedId);
-  const term = search.trim().toLocaleLowerCase();
-  const characters =
-    !selected && term
-      ? book.characters.filter((c) => c.name.toLocaleLowerCase().includes(term))
-      : [];
-  const lookupCharacter = async (character: Character) => {
-    if (
-      book.sync.characters?.some(
-        (state) =>
-          state.characterId === character.id && state.status !== "error",
-      )
-    ) {
-      setSelectedId(character.id);
-      setSearch("");
-      return;
-    }
-    setSearchingId(character.id);
-    try {
-      const result = await api<{
-        coalesced: boolean;
-        failed: number;
-      }>("sync/request", { characterId: character.id });
-      await q.refetch();
-      setSelectedId(character.id);
-      setSearch("");
-      notify(
-        result.coalesced
-          ? "다른 보스 조회가 진행 중이에요. 잠시 뒤 다시 조회해 주세요."
-          : result.failed
-            ? "보스 조회에 실패했어요. 조회 상태를 확인해 주세요."
-            : `${character.name}의 보스를 불러왔어요.`,
-      );
-    } catch (error) {
-      notify(
-        error instanceof Error ? error.message : "보스 조회에 실패했어요.",
-      );
-    } finally {
-      setSearchingId(null);
-    }
-  };
+  const explicitSelection = book.characters.find((c) => c.id === selectedId);
+  const selected = explicitSelection ?? strongestCharacter(book.characters);
   const plans = report.plans.filter((p) => {
     if (p.characterId !== selected?.id) return false;
     const c = report.selected.find(
@@ -101,60 +52,10 @@ export default function BossesAction() {
         </p>
       )}
       {!selected ? (
-        <>
-          <label className="search-input boss-search">
-            <Search size={18} />
-            <input
-              aria-label="캐릭터 검색"
-              placeholder="캐릭터 이름 검색"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </label>
-          {characters.length > 0 && (
-            <div
-              className="boss-character-results"
-              aria-label="캐릭터 검색 결과"
-            >
-              {characters.slice(0, 8).map((character) => (
-                <div className="boss-character-result" key={character.id}>
-                  <Avatar
-                    image={character.image}
-                    variant={character.avatar}
-                    size={42}
-                  />
-                  <span>
-                    <strong>{character.name}</strong>
-                    <small>
-                      {character.world} · {character.job} · Lv.{" "}
-                      {character.level}
-                    </small>
-                  </span>
-                  <button
-                    className="button"
-                    disabled={searchingId !== null || cmd.isPending}
-                    onClick={() => void lookupCharacter(character)}
-                  >
-                    {searchingId === character.id
-                      ? "조회 중…"
-                      : book.sync.characters?.some(
-                            (state) =>
-                              state.characterId === character.id &&
-                              state.status !== "error",
-                          )
-                        ? "상세보기"
-                        : "보스 조회"}
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="panel boss-search-empty">
-            {book.characters.length
-              ? "캐릭터 이름을 검색해 보스 상세를 열어보세요."
-              : "연결된 계정에서 캐릭터를 찾지 못했어요. 키 연결을 확인해 주세요."}
-          </div>
-        </>
+        <Empty
+          title="연결된 캐릭터가 없어요"
+          detail="키 연결을 확인해 주세요."
+        />
       ) : (
         <>
           <div className="boss-detail-hero">
@@ -170,23 +71,21 @@ export default function BossesAction() {
               </p>
               <p className="boss-character-power">
                 {selected.combatPower == null
-                  ? selectedId === undefined
+                  ? !explicitSelection
                     ? "전투력 미확인 · 레벨 기준 임시 선택"
                     : "전투력 미확인"
                   : `전투력 ${formatMeso(selected.combatPower)}`}
               </p>
             </div>
-            <button
+            <Link
               className="button"
-              onClick={() => {
-                setSelectedId(null);
-                setSearch("");
-              }}
+              href={`/bosses/characters?${new URLSearchParams({ character: selected.id })}`}
+              scroll={false}
             >
               다른 캐릭터 검색
-            </button>
+            </Link>
           </div>
-          {!(selectedId === undefined && strength.isFetching) && (
+          {!(!explicitSelection && strength.isFetching) && (
             <BossCutPanel
               key={selected.id}
               character={selected}
@@ -229,9 +128,7 @@ export default function BossesAction() {
                       </small>
                     </div>
                     <span
-                      className={
-                        c && !c.excluded ? "status-done" : "status-muted"
-                      }
+                      className={`boss-completion-status ${c && !c.excluded ? "status-done" : "status-muted"}`}
                     >
                       {c?.excluded ? (
                         "제외"
@@ -239,7 +136,7 @@ export default function BossesAction() {
                         "확인 필요"
                       ) : c ? (
                         <>
-                          <Check size={13} />
+                          <Check size={13} aria-hidden />
                           완료
                         </>
                       ) : (
