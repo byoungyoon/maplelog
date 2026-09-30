@@ -47,7 +47,7 @@ The item-price endpoint receives no Nexon key or character information. The work
 
 `GET book`, `sync/status`, `connection/status`, and `export` are read-only. `POST connection/verify` validates a key and starts loading all characters. `connection/disconnect` removes the credential. `sync/request` supports a full refresh or a requested `characterId` when opening an unqueried character.
 
-Commands use a validated discriminated union, ledger revision, and request ID. Restore uses `import/preview` followed by `import/commit`. Before key connection, private ledger endpoints return 428. Demo mode returns 404. Public deployments require owner authentication for ledger, setup, and credential endpoints.
+Commands use a validated discriminated union, ledger revision, and request ID. Restore uses `import/preview` followed by `import/commit`. Before key connection, private ledger endpoints return 428. Demo mode returns 404. Public deployments require a signed account session for ledger, setup, and credential endpoints. `POST auth/login` verifies the submitted Nexon API key against the official character list, creates an isolated account ledger when needed, and sets that session.
 
 ## Completion-Based Reporting
 

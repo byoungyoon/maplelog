@@ -1,5 +1,13 @@
 # Work Log
 
+## 2026-09-30 — Nexon API Key Login and Account Isolation
+
+- Replaced the owner-password login form with a Nexon API key form. Login verifies the submitted key against Nexon's character-list endpoint, so the key does not need to be registered in Firestore before the first sign-in.
+- Fixed the origin check that rejected the production HTTPS login at `maplelog-khaki.vercel.app` when `APP_ORIGIN` was unset. The check now uses the request Host and forwarded HTTPS protocol, while retaining an optional fixed `APP_ORIGIN` override.
+- Bound signed sessions to the verified Nexon account signature. The migrated account keeps its existing root Firestore ledger; a different Nexon account gets separate `accounts/{accountSignature}` collections for its book, encrypted key, operational state, and cache. Account-scoped connection changes cannot switch an existing ledger to another Nexon account.
+- Updated the local worker to poll the migrated account and registered new accounts. Initial sign-in starts a background account sync when the new ledger has no boss data. Removed the unused owner-password hash command and configuration.
+- Verified 88 unit tests, nine browser tests, TypeScript, ESLint, whitespace checks, and a Webpack production build. The tests include an unregistered valid API key reaching a signed session, same-account key replacement, and two Nexon accounts opening isolated Firestore ledgers. A live deployment check remains before release.
+
 ## 2026-09-30 — Hide Unpriced Items and Verify Parenthesis Listings
 
 - Hid all 40 currently unpriced items from the Prices page. The 67 ledger entries, auction observations, drop history, and future full-search scope remain intact. The empty state now explains that only confirmed-price items are shown.

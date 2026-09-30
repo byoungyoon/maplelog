@@ -1,6 +1,6 @@
 # Maplelog
 
-A personal MapleStory ledger that reads your boss scheduler through the Nexon Open API. Track boss completion and acquired drops with your own verified API key. There is no demo mode.
+A MapleStory ledger that reads boss schedulers through the Nexon Open API. Sign in with a verified Nexon API key; each Nexon account gets a separate ledger. There is no demo mode.
 
 ## Run locally
 
@@ -38,9 +38,9 @@ The item price book is refreshed from the official Vera web auction by `npm run 
 
 ## Deployment and secrets
 
-The application ledger, encrypted Nexon key, request ids, API usage, leases, analysis cache, and auction reports use the `maplelog-3ba66` Firestore project. The server uses the Firebase Admin SDK; `firestore.rules` denies direct client access. Set `FIREBASE_PROJECT_ID=maplelog-3ba66` and put the service-account JSON at `.local-secrets/firebase-service-account.json` for local work. The file is Git-ignored. For Vercel, set `FIREBASE_SERVICE_ACCOUNT_JSON` as a server-only environment variable instead. The headed Chrome auction collector and the continuous sync worker still run on the owner's computer; Vercel functions do not run those background processes. See the [Vercel deployment guide](docs/deployment-vercel.md).
+The existing owner's ledger and encrypted key remain in the migrated Firestore root collections. New Nexon accounts use separate `accounts/{accountSignature}` subcollections for their ledger, encrypted key, request ids, API usage, leases, and analysis cache. The server uses the Firebase Admin SDK; `firestore.rules` denies direct client access. Set `FIREBASE_PROJECT_ID=maplelog-3ba66` and put the service-account JSON at `.local-secrets/firebase-service-account.json` for local work. The file is Git-ignored. For Vercel, set `FIREBASE_SERVICE_ACCOUNT_JSON` as a server-only environment variable instead. The headed Chrome auction collector still uses the original owner's local profile; the local worker polls connected accounts. See the [Vercel deployment guide](docs/deployment-vercel.md).
 
-The Nexon credential encryption key is stored separately in `.local-secrets/credential.key`. For public deployments, configure `APP_ORIGIN`, `OWNER_PASSWORD_HASH`, `SESSION_SECRET`, `CREDENTIAL_ENCRYPTION_KEY`, `FIREBASE_PROJECT_ID`, and `FIREBASE_SERVICE_ACCOUNT_JSON` as described in `.env.example`. Generate an owner password hash with `npm run owner:hash`. Never expose credentials through `NEXT_PUBLIC` variables.
+The Nexon credential encryption key is stored separately in `.local-secrets/credential.key`. For public deployments, configure `SESSION_SECRET`, `CREDENTIAL_ENCRYPTION_KEY`, `FIREBASE_PROJECT_ID`, and `FIREBASE_SERVICE_ACCOUNT_JSON` as described in `.env.example`. Set `APP_ORIGIN` to pin the production origin if desired. Login verifies the entered API key with Nexon; a new account gets a new Firestore ledger automatically. Never expose credentials through `NEXT_PUBLIC` variables.
 
 Back up Firestore and the encryption key separately. JSON exports contain no Nexon API key. Restores require a preview and explicit confirmation. Disconnecting removes the credential and preserves the ledger.
 

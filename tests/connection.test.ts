@@ -52,6 +52,18 @@ describe("verified key connection with Firestore persistence", () => {
     expect((await database.readBook("live")).settings.setupDone).toBe(true);
   });
 
+  it("같은 Nexon 계정의 새 API 키는 기존 장부를 이어받는다", async () => {
+    const { verifyCharacterKey } = await import("@/server/nexon/characters");
+    const verified = await verifyCharacterKey("replacement-key", success);
+    const before = await database.readBook("live");
+    await database.withAccount({ id: verified.accountSignature, legacy: true }, () =>
+      connection.connectLoginKey("replacement-key", verified));
+    const encrypted = (await database.credentialRef().get()).get("encrypted") as string;
+    expect(crypto.decryptCredential(encrypted)).toBe("replacement-key");
+    expect((await database.readBook("live")).characters[0].id)
+      .toBe(before.characters[0].id);
+  });
+
   it("uses a fresh GCM nonce and rejects tampered ciphertext", () => {
     const first = crypto.encryptCredential("test-only");
     const second = crypto.encryptCredential("test-only");
@@ -83,5 +95,30 @@ describe("verified key connection with Firestore persistence", () => {
     await expect(pending).rejects.toThrow("최근");
     expect((await connection.connectionStatus()).connected).toBe(false);
     expect((await database.readBook("live")).characters).toHaveLength(1);
+  });
+
+  it("유효한 서로 다른 Nexon 계정은 Firestore 장부와 키가 분리된다", async () => {
+    const { verifyCharacterKey } = await import("@/server/nexon/characters");
+    const otherFixture = structuredClone(characterListFixture);
+    otherFixture.account_list[0].account_id = "another-account";
+    otherFixture.account_list[0].character_list[0].ocid = "another-ocid";
+    const first = await verifyCharacterKey("first-key", success);
+    const second = await verifyCharacterKey("second-key", async () =>
+      Response.json(otherFixture));
+    const firstAccount = { id: first.accountSignature, legacy: false };
+    const secondAccount = { id: second.accountSignature, legacy: false };
+    expect(firstAccount.id).not.toBe(secondAccount.id);
+    await database.withAccount(firstAccount, () =>
+      connection.connectLoginKey("first-key", first));
+    await database.withAccount(secondAccount, () =>
+      connection.connectLoginKey("second-key", second));
+    expect((await database.withAccount(firstAccount, () =>
+      database.readBook("live"))).characters[0].id).toBe("test-ocid");
+    expect((await database.withAccount(secondAccount, () =>
+      database.readBook("live"))).characters[0].id).toBe("another-ocid");
+    await expect(database.withAccount(firstAccount, () =>
+      connection.connectLoginKey("second-key", second)))
+      .rejects.toThrow("별도 장부");
+    expect((await database.readBook("live")).characters[0].id).toBe("test-ocid");
   });
 });

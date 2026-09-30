@@ -9,4 +9,4 @@ The footer credits Nexon Open API. The current-state cache and user-authored led
 - Disconnecting removes the encrypted credential and stops tracking while preserving ledger records. Backup and deletion controls are available on the Settings route, which is not in the primary navigation.
 - Before broader deployment, confirm stale account cache handling and the retention rules for derived historical records.
 
-Verification has focused on personal local use. The app does not collect other users' credentials or operate a raw-data archive.
+The app stores each signed-in Nexon account's encrypted API key and ledger in an isolated Firestore scope. It does not operate a raw-data archive.

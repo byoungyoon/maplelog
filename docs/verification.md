@@ -15,6 +15,8 @@ E2E tests run on port 3100 with the isolated `demo-maplelog` Firestore emulator 
 
 The Firestore migration copied and verified 37 documents, including the live revision 1646 ledger, encrypted credential, leases, API usage, analysis cache, idempotency records, and two auction reports. The ledger contains 67 items (24 priced), 60 characters, 48 completions, and three drops. The 84 unit tests, eight browser tests, TypeScript, ESLint, and a Webpack production build passed after the storage change.
 
+The later Nexon API key login and account-isolation change passed 88 unit tests, nine browser tests, and a Webpack production build. The browser suite checks the login payload and the original local ledger flow; emulator tests verify that an unregistered valid key receives a signed session, a replacement key for the same account preserves its ledger, and two different Nexon account signatures receive separate Firestore books and credentials.
+
 ## Existing Coverage
 
 Domain tests cover integer money calculations, period boundaries, duplicate observations, conflict handling, revisions, and restore validation. Legacy payment helpers still have compatibility tests; they are no longer exposed through the application UI or HTTP command API.

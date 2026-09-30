@@ -7,7 +7,7 @@ import { consumeBudget } from "@/server/db";
 export const characterListResponse = z.object({
   account_list: z.array(
     z.object({
-      account_id: z.string(),
+      account_id: z.string().min(1),
       character_list: z.array(
         z.object({
           ocid: z.string().min(1),
@@ -52,6 +52,8 @@ export async function verifyCharacterKey(
     "캐릭터 목록 응답이 공식 계약과 달라 연결을 완료하지 않았어요.",
     502,
   );
+  ensure(parsed.data.account_list.length > 0,
+    "이 API 키에 연결된 메이플 계정을 찾지 못했어요.", 400);
   const accountSignature = createHash("sha256")
     .update(
       parsed.data.account_list

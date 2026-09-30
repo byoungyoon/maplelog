@@ -5,6 +5,23 @@ import bossFixture from "../fixtures/boss-analysis.json" with { type: "json" };
 import { emptyLedger } from "../../src/domain/empty-ledger";
 const origin = "http://127.0.0.1:3100";
 test.describe.configure({ mode: "serial" });
+test("로그인 화면은 Nexon API 키를 제출한다", async ({ page }) => {
+  await page.goto("/login");
+  const input = page.getByLabel("Nexon API 키", { exact: true });
+  await expect(input).toHaveAttribute("type", "password");
+  let submitted = false;
+  await page.route("**/api/auth/login", async (route) => {
+    expect(route.request().postDataJSON()).toEqual({ key: "test-login-key" });
+    submitted = true;
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ ok: true, data: { loggedIn: true } }),
+    });
+  });
+  await input.fill("test-login-key");
+  await page.getByRole("button", { name: "로그인" }).click();
+  await expect.poll(() => submitted).toBe(true);
+});
 test.beforeAll(async () => {
   if (!process.env.FIRESTORE_EMULATOR_HOST)
     throw new Error("Firestore emulator is required for browser tests");

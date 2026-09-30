@@ -4,7 +4,7 @@ import { authorize } from "./index";
 export async function authorizePage() {
   const h = await headers();
   try {
-    await authorize(
+    return await authorize(
       new Request(`http://${h.get("host") || "localhost"}`, { headers: h }),
     );
   } catch {

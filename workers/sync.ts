@@ -1,15 +1,14 @@
 import { syncReferencePrices } from "../src/server/catalog/sync-prices";
 import { applyCatalogue } from "../src/server/catalog";
-import { editBook, readBook } from "../src/server/db";
+import { editBook, firestore, readBook, withAccount, type AccountScope } from "../src/server/db";
 import { connectionStatus } from "../src/server/connection";
 import { syncAccount } from "../src/server/nexon/sync";
 let running = false;
-async function tick() {
-  if (running) return;
-  running = true;
+async function tickAccount(account: AccountScope) {
   try {
-    const now = Date.now();
-    await editBook((book) => {
+    await withAccount(account, async () => {
+      const now = Date.now();
+      await editBook((book) => {
         applyCatalogue(book);
         book.sync.workerSeen = new Date(now).toISOString();
         if (book.sync.focusUntil && Date.parse(book.sync.focusUntil) <= now) {
@@ -17,29 +16,39 @@ async function tick() {
           book.sync.focusCharacter = null;
         }
       });
-    const book = await readBook("live");
-    if (
-      !(await connectionStatus()).connected ||
-      !book.settings.setupDone ||
-      !book.characters.length
-    )
-      return;
-    await syncReferencePrices().catch(() => {});
-    const focus =
-      !!book.sync.focusUntil && Date.parse(book.sync.focusUntil) > now;
-    const last = book.sync.lastRequest ? Date.parse(book.sync.lastRequest) : 0;
-    // Normal polling: once per hour. Focus: chosen character every 2 minutes, max 2 hours.
-    if (now - last >= (focus ? 120000 : 3600000))
-      await syncAccount(
-        focus && book.sync.focusCharacter
-          ? { characterId: book.sync.focusCharacter }
-          : {},
-      );
+      const book = await readBook("live");
+      if (
+        !(await connectionStatus()).connected ||
+        !book.settings.setupDone ||
+        !book.characters.length
+      ) return;
+      await syncReferencePrices().catch(() => {});
+      const focus =
+        !!book.sync.focusUntil && Date.parse(book.sync.focusUntil) > now;
+      const last = book.sync.lastRequest ? Date.parse(book.sync.lastRequest) : 0;
+      // Normal polling: once per hour. Focus: chosen character every 2 minutes, max 2 hours.
+      if (now - last >= (focus ? 120000 : 3600000))
+        await syncAccount(
+          focus && book.sync.focusCharacter
+            ? { characterId: book.sync.focusCharacter }
+            : {},
+        );
+    });
   } catch (error) {
     console.error(
       "동기화 작업 실패:",
       error instanceof Error ? error.message : "저장 상태를 확인해 주세요.",
     );
+  }
+}
+async function tick() {
+  if (running) return;
+  running = true;
+  try {
+    const accounts: AccountScope[] = [{ id: "legacy", legacy: true }];
+    const registered = await firestore().collection("accounts").get();
+    accounts.push(...registered.docs.map((doc) => ({ id: doc.id, legacy: false })));
+    for (const account of accounts) await tickAccount(account);
   } finally {
     running = false;
   }

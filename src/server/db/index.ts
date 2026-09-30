@@ -4,11 +4,29 @@ import { createHash } from "node:crypto";
 import { gzipSync, gunzipSync } from "node:zlib";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { AsyncLocalStorage } from "node:async_hooks";
 import { applySoloPolicy } from "@/domain/solo";
 import { applyCommand, type Command } from "@/domain/commands";
 import { ensure, validateLedger, type Ledger, type Mode } from "@/domain/model";
 
 let instance: Firestore | undefined;
+export type AccountScope = { id: string; legacy: boolean };
+const accountStorage = new AsyncLocalStorage<AccountScope>();
+export function withAccount<T>(account: AccountScope, task: () => T): T {
+  return accountStorage.run(account, task);
+}
+export const currentAccount = () => accountStorage.getStore();
+
+export function accountCollection(name: string) {
+  const account = accountStorage.getStore();
+  if (!account) {
+    ensure(process.env.VERCEL !== "1", "계정 범위가 설정되지 않았어요.", 500);
+    return firestore().collection(name);
+  }
+  return account.legacy
+    ? firestore().collection(name)
+    : firestore().collection("accounts").doc(account.id).collection(name);
+}
 export function firestore() {
   if (instance) return instance;
   const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -22,13 +40,13 @@ export function firestore() {
   return instance;
 }
 
-export const bookRef = (mode: Mode) => firestore().collection("books").doc(mode);
+export const bookRef = (mode: Mode) => accountCollection("books").doc(mode);
 export const leaseRef = (name: string) =>
-  firestore().collection("leases").doc(encodeURIComponent(name));
-export const credentialRef = () => firestore().collection("private").doc("credential");
-export const connectionLockRef = () => firestore().collection("private").doc("connection-lock");
+  accountCollection("leases").doc(encodeURIComponent(name));
+export const credentialRef = () => accountCollection("private").doc("credential");
+export const connectionLockRef = () => accountCollection("private").doc("connection-lock");
 export const analysisRef = (characterId: string) =>
-  firestore().collection("boss-analyses").doc(encodeURIComponent(characterId));
+  accountCollection("boss-analyses").doc(encodeURIComponent(characterId));
 
 export function decodeLedger(data: FirebaseFirestore.DocumentData | undefined): Ledger {
   ensure(data?.payloadGzip || data?.payload,
@@ -88,7 +106,7 @@ export async function mutate(
   command: Command,
 ): Promise<Ledger> {
   const ref = bookRef(mode);
-  const requestRef = firestore().collection("requests").doc(`${mode}:${requestId}`);
+  const requestRef = accountCollection("requests").doc(`${mode}:${requestId}`);
   const fingerprint = createHash("sha256").update(JSON.stringify(command)).digest("hex");
   return firestore().runTransaction(async (tx) => {
     const [bookDoc, prior] = await Promise.all([tx.get(ref), tx.get(requestRef)]);
@@ -132,7 +150,9 @@ export async function setLease(name: string, untilAt: number) {
 }
 
 export async function consumeBudget(provider: string, budget: number, now = Date.now()) {
-  const ref = firestore().collection("usage").doc(encodeURIComponent(provider));
+  const shared = provider === "owner-login" || provider === "connection-attempts";
+  const ref = (shared ? firestore().collection("usage") : accountCollection("usage"))
+    .doc(encodeURIComponent(provider));
   return firestore().runTransaction(async (tx) => {
     const doc = await tx.get(ref);
     const times = ((doc.get("times") as number[] | undefined) ?? [])
@@ -146,7 +166,7 @@ export async function consumeBudget(provider: string, budget: number, now = Date
 }
 
 export async function usageCount(provider: string) {
-  const doc = await firestore().collection("usage").doc(encodeURIComponent(provider)).get();
+  const doc = await accountCollection("usage").doc(encodeURIComponent(provider)).get();
   return ((doc.get("times") as number[] | undefined) ?? [])
     .filter((at) => at > Date.now() - 86400000).length;
 }

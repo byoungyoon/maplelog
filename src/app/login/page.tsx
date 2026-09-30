@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/shared/_lib/api";
 export default function Login() {
-  const [password, setPassword] = useState("");
+  const [key, setKey] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const router = useRouter();
@@ -13,7 +13,7 @@ export default function Login() {
     <section className="setup-area">
       <div className="setup-card">
         <h1>내 장부에 로그인</h1>
-        <p>설치할 때 설정한 소유자 비밀번호를 입력하세요.</p>
+        <p>장부에 연결된 Nexon API 키를 입력하세요.</p>
         <form
           className="detail-form"
           onSubmit={async (e) => {
@@ -21,8 +21,8 @@ export default function Login() {
             setBusy(true);
             setError("");
             try {
-              await api("auth/login", { password });
-              setPassword("");
+              await api("auth/login", { key });
+              setKey("");
               await q.invalidateQueries({ queryKey: ["book"] });
               router.push("/");
             } catch (e) {
@@ -33,13 +33,13 @@ export default function Login() {
           }}
         >
           <label>
-            소유자 비밀번호
+            Nexon API 키
             <input
               type="password"
-              autoComplete="current-password"
+              autoComplete="off"
               required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={key}
+              onChange={(e) => setKey(e.target.value)}
             />
           </label>
           {error && (

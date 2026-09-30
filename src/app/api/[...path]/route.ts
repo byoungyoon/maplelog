@@ -3,7 +3,7 @@ import { after, NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { authorize, assertOrigin, login, session } from "@/server/auth";
-import { bookRef, decodeLedger, editBook, encodeLedger, firestore, readBook, mutate, usageCount } from "@/server/db";
+import { accountCollection, bookRef, decodeLedger, editBook, encodeLedger, firestore, readBook, mutate, usageCount, withAccount } from "@/server/db";
 import { commandSchema, audit } from "@/domain/commands";
 import { DomainError, ensure, validateLedger, type Mode } from "@/domain/model";
 import { report } from "@/server/report";
@@ -35,12 +35,22 @@ async function handle(req: NextRequest) {
     if (req.method !== "GET") assertOrigin(req);
     if (req.method === "POST" && route === "auth/login") {
       const b = z
-        .object({ password: z.string().min(1).max(256) })
+        .object({ key: z.string().trim().min(1).max(512) })
         .parse(await req.json());
-      await login(b.password);
+      const account = await login(b.key);
+      after(async () => {
+        try {
+          await withAccount(account, async () => {
+            if (!(await readBook("live")).bosses.length) await syncAccount();
+          });
+        } catch (error) {
+          console.error("첫 계정 조회 실패:", error);
+        }
+      });
       return ok({ loggedIn: true });
     }
-    await authorize(req);
+    const account = await authorize(req);
+    return await withAccount(account, async () => {
     if (req.method === "POST" && route === "auth/logout") {
       (await session()).destroy();
       return ok({ loggedIn: false });
@@ -54,7 +64,7 @@ async function handle(req: NextRequest) {
       const connection = await connectKey(body.key);
       after(async () => {
         try {
-          await syncAccount();
+          await withAccount(account, () => syncAccount());
         } catch (error) {
           console.error("전체 캐릭터 첫 조회 실패:", error);
         }
@@ -188,7 +198,7 @@ async function handle(req: NextRequest) {
       );
       const current = await readBook(mode);
       const token = randomUUID();
-      await firestore().collection("imports").doc(token).set({
+      await accountCollection("imports").doc(token).set({
         mode,
         revision: current.revision,
         payload: JSON.stringify(book),
@@ -208,7 +218,7 @@ async function handle(req: NextRequest) {
       const b = z
         .object({ token: z.string().uuid(), confirm: z.literal(true) })
         .parse(await req.json());
-      const importRef = firestore().collection("imports").doc(b.token);
+      const importRef = accountCollection("imports").doc(b.token);
       const reference = bookRef(mode);
       await firestore().runTransaction(async (tx) => {
         const [importDoc, bookDoc] = await Promise.all([
@@ -243,6 +253,7 @@ async function handle(req: NextRequest) {
       return ok({ deleted: true });
     }
     throw new DomainError("지원하지 않는 요청이에요.", 404);
+    });
   } catch (error) {
     const isValidation =
       error instanceof z.ZodError || error instanceof SyntaxError;
