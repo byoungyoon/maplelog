@@ -1,5 +1,14 @@
 # Work Log
 
+## 2026-09-30 — Web Auction Connection Probe
+
+- Confirmed that the official web auction opens in headed Chrome and completed an authorized Nexon sign-in.
+- Observed an OTP enrollment gate for the account before character selection or item search. Search-only access does not remove this account prerequisite.
+- Added `npm run auction:connect` to reopen the dedicated, Git-ignored Chrome profile and report connection stages without logging credentials or page content.
+- Documented the observed blocker and remaining work in [Web auction connection](auction-connection.md).
+- No auction prices were imported, ledger data changed, transactions performed, or weekly dots schedule created. OTP enrollment requires the owner's action before further live testing.
+- Verification: the live browser probe reached the enrollment gate; the reusable launcher passed Node syntax checking, ESLint, and whitespace checks. Its post-enrollment path remains unverified. The browser profile is confirmed to be ignored by Git.
+
 ## 2026-09-30 — Compact Cards and Completion-Based Income
 
 ### Requested behavior
