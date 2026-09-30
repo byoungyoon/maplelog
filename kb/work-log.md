@@ -1,12 +1,18 @@
 # Work Log
 
+## 2026-09-30 — Vercel Production Environment and Live Login
+
+- Authenticated the Vercel CLI with the project owner and configured the `maplelog` Production environment: `FIREBASE_PROJECT_ID`, `FIREBASE_SERVICE_ACCOUNT_JSON`, `CREDENTIAL_ENCRYPTION_KEY`, `SESSION_SECRET`, and `APP_ORIGIN`.
+- Used the existing local 32-byte encryption key so the migrated Nexon credential remains decryptable. Generated a separate session secret in the ignored `.local-secrets` directory. Secret values were sent through CLI standard input and were not added to Git.
+- Redeployed the latest Production build and confirmed that `https://maplelog-khaki.vercel.app` points to it. The live Nexon API key login returned HTTP 200; the authenticated book request returned HTTP 200 with revision 1648 and 60 characters.
+
 ## 2026-09-30 — Nexon API Key Login and Account Isolation
 
 - Replaced the owner-password login form with a Nexon API key form. Login verifies the submitted key against Nexon's character-list endpoint, so the key does not need to be registered in Firestore before the first sign-in.
 - Fixed the origin check that rejected the production HTTPS login at `maplelog-khaki.vercel.app` when `APP_ORIGIN` was unset. The check now uses the request Host and forwarded HTTPS protocol, while retaining an optional fixed `APP_ORIGIN` override.
 - Bound signed sessions to the verified Nexon account signature. The migrated account keeps its existing root Firestore ledger; a different Nexon account gets separate `accounts/{accountSignature}` collections for its book, encrypted key, operational state, and cache. Account-scoped connection changes cannot switch an existing ledger to another Nexon account.
 - Updated the local worker to poll the migrated account and registered new accounts. Initial sign-in starts a background account sync when the new ledger has no boss data. Removed the unused owner-password hash command and configuration.
-- Verified 88 unit tests, nine browser tests, TypeScript, ESLint, whitespace checks, and a Webpack production build. The tests include an unregistered valid API key reaching a signed session, same-account key replacement, and two Nexon accounts opening isolated Firestore ledgers. A live deployment check remains before release.
+- Verified 88 unit tests, nine browser tests, TypeScript, ESLint, whitespace checks, and a Webpack production build. The tests include an unregistered valid API key reaching a signed session, same-account key replacement, and two Nexon accounts opening isolated Firestore ledgers.
 
 ## 2026-09-30 — Hide Unpriced Items and Verify Parenthesis Listings
 
