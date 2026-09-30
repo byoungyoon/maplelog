@@ -18,21 +18,14 @@ export function RevenueCard({ report }: { report: Report }) {
       </div>
       <div className="revenue-breakdown">
         <div>
-          <span>실제 정산</span>
+          <span>잡은 보스 수익</span>
           <strong>
-            {formatMeso(s.actual)}
+            {formatMeso(s.total)}
             <small> 메소</small>
           </strong>
         </div>
         <div>
-          <span>완료 보스 미정산 예상</span>
-          <strong>
-            {formatMeso(s.expected)}
-            <small> 메소</small>
-          </strong>
-        </div>
-        <div>
-          <span>남은 보스 예상 · {report.remaining}건</span>
+          <span>안 잡은 보스 예상 · {report.remaining}건</span>
           <strong>
             {formatMeso(report.remainingKnownAmount)}
             <small> 메소</small>
@@ -41,7 +34,8 @@ export function RevenueCard({ report }: { report: Report }) {
       </div>
       {s.unknown + report.remainingUnknown > 0 && (
         <p className="price-footnote">
-          가격·조건 미정 {s.unknown + report.remainingUnknown}건은 예상 합계에서 제외
+          가격·조건 미정 {s.unknown + report.remainingUnknown}건은 예상 합계에서
+          제외
         </p>
       )}
       <Link

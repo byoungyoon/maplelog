@@ -29,7 +29,11 @@ export default function DashboardAction() {
     void api("sync/request", {})
       .then(() => refetch())
       .catch((error) =>
-        notify(error instanceof Error ? error.message : "전체 보스 조회에 실패했어요."),
+        notify(
+          error instanceof Error
+            ? error.message
+            : "전체 보스 조회에 실패했어요.",
+        ),
       );
   }, [missingSync, notify, refetch]);
   if (q.isPending) return <Loading />;
@@ -43,7 +47,8 @@ export default function DashboardAction() {
       <ReportHeader title="" subtitle="" compact />
       {missingSync && (
         <div className="notice">
-          전체 캐릭터 보스 조회 중 · {book.sync.characters?.length ?? 0}/{book.characters.length}명 확인
+          전체 캐릭터 보스 조회 중 · {book.sync.characters?.length ?? 0}/
+          {book.characters.length}명 확인
         </div>
       )}
       <RevenueCard report={report} />
@@ -62,23 +67,29 @@ export default function DashboardAction() {
           >
             <div className="settlement-card-heading">
               <ItemIcon image={group.boss.image} kind={group.boss.icon} />
-              <div>
+              <div className="settlement-boss-name">
                 <h3>{group.boss.name}</h3>
                 <p>{group.difficulties.join(" · ")}</p>
               </div>
-            </div>
-            <div className="settlement-boss-summary">
-              <div>
-                <span>완료 캐릭터</span>
-                <strong>{group.characterCount}명</strong>
-              </div>
-              <div>
-                <span>완료 수익 · 예상 포함</span>
-                <strong>{formatMeso(group.total)} <small>메소</small></strong>
+              <div className="settlement-boss-summary">
+                <div>
+                  <span>완료 캐릭터</span>
+                  <strong>{group.characterCount}명</strong>
+                </div>
+                <div>
+                  <span>
+                    완료 수익 <small>· 예상 포함</small>
+                  </span>
+                  <strong>
+                    {formatMeso(group.total)} <small>메소</small>
+                  </strong>
+                </div>
               </div>
             </div>
             {group.unknown > 0 && (
-              <p className="settlement-boss-note">가격 미정 {group.unknown}건 제외</p>
+              <p className="settlement-boss-note">
+                가격 미정 {group.unknown}건 제외
+              </p>
             )}
             <div className="settlement-characters">
               {group.records.map((completion) => {
@@ -86,14 +97,18 @@ export default function DashboardAction() {
                   (item) => item.id === completion.characterId,
                 )!;
                 const amount = summarize(
-                  report.rows.filter((row) => row.completionId === completion.id),
+                  report.rows.filter(
+                    (row) => row.completionId === completion.id,
+                  ),
                 ).total;
                 return (
                   <details className="settlement-character" key={completion.id}>
                     <summary aria-label={`${character.name} 정산 상세`}>
                       <span>{character.name}</span>
                       <small>{completion.difficulty ?? "확인 필요"}</small>
-                      <strong>{formatMeso(amount)} <small>메소</small></strong>
+                      <strong>
+                        {formatMeso(amount)} <small>메소</small>
+                      </strong>
                       <ChevronDown size={16} aria-hidden="true" />
                     </summary>
                     <QuickSettlement book={book} completion={completion} />

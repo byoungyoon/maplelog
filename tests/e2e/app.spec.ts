@@ -191,16 +191,14 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
   await expect(belt).toHaveAttribute("aria-pressed", "false");
   await belt.click();
   await expect(belt).toHaveAttribute("aria-pressed", "true");
-  await firstCharacter
-    .getByRole("button", { name: "결정석 정산", exact: true })
-    .click();
   await expect(
-    firstCharacter.getByRole("button", { name: "정산 완료", exact: true }),
-  ).toBeDisabled();
+    page.getByRole("button", { name: "결정석 정산", exact: true }),
+  ).toHaveCount(0);
+  await expect(page.getByText(/실제 정산|미정산/)).toHaveCount(0);
   const updated = readBook("live");
   expect(updated.completions[0].crystal).toBe("59700000");
   expect(updated.completions[0].party).toBe(1);
-  expect(updated.settlements[0].net).toBe("59700000");
+  expect(updated.settlements).toHaveLength(0);
   expect(updated.drops[0].quantity).toBe(1);
   expect(updated.drops[0].unitPrice).toBe("3800000000");
   await page.getByRole("link", { name: "보스", exact: true }).click();
@@ -221,7 +219,9 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
   await expect(page.getByRole("article")).toHaveCount(1);
   await expect(page.getByLabel("캐릭터 선택", { exact: true })).toHaveCount(0);
   await firstCard.getByLabel("테스트캐릭터 정산 상세").click();
-  await firstCharacter.getByRole("button", { name: "루시드 드랍 상세" }).click();
+  await firstCharacter
+    .getByRole("button", { name: "루시드 드랍 상세" })
+    .click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await expect(page.getByLabel("결정석 분배 인원")).toHaveCount(0);
   await page

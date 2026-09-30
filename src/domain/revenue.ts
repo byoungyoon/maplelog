@@ -97,6 +97,20 @@ export function summarize(rows: Entry[]) {
   };
 }
 
+/** Completion-based income; old payment records are kept only for backup compatibility. */
+export function completionEntries(
+  s: Ledger,
+  completions: Completion[] = s.completions,
+) {
+  return entries(
+    {
+      ...s,
+      settlements: [],
+    },
+    completions,
+  );
+}
+
 export function bossEarnings(s: Ledger, completions: Completion[]) {
   const groups = new Map<string, Completion[]>();
   for (const completion of completions) {
@@ -108,13 +122,15 @@ export function bossEarnings(s: Ledger, completions: Completion[]) {
   }
   return [...groups].map(([group, records]) => {
     const boss = s.bosses.find((item) => item.id === records[0].bossId)!;
-    const summary = summarize(entries(s, records));
+    const summary = summarize(completionEntries(s, records));
     return {
       group,
       boss,
       records,
       characterCount: new Set(records.map((record) => record.characterId)).size,
-      difficulties: [...new Set(records.map((record) => record.difficulty ?? "확인 필요"))],
+      difficulties: [
+        ...new Set(records.map((record) => record.difficulty ?? "확인 필요")),
+      ],
       ...summary,
     };
   });

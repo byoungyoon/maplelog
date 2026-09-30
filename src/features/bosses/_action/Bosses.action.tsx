@@ -200,7 +200,7 @@ export default function BossesAction() {
                         {c?.provenance === "manual"
                           ? "수동 기록"
                           : "스케줄러 기준"}
-                        · 1인 정산
+                        · 1인 기준
                       </p>
                     </div>
                     <div className="boss-status">

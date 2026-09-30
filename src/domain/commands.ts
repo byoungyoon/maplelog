@@ -364,12 +364,14 @@ export function applyCommand(
         };
         s.drops.push(d);
       }
-      const settled = s.settlements
+      const settled = (s.mode === "live" ? [] : s.settlements)
         .filter((x) => !x.deleted && x.targetId === d.id && x.kind === "drop")
         .reduce((a, x) => a + x.quantity, 0);
       ensure(
         cmd.quantity >= settled + d.used,
-        "정산·사용한 수량은 먼저 취소해 주세요.",
+        s.mode === "live"
+          ? "사용 수량을 먼저 수정해 주세요."
+          : "정산·사용한 수량은 먼저 취소해 주세요.",
       );
       d.quantity = cmd.quantity;
       c.review = s.drops.some((d) => d.completionId === c.id && d.quantity > 0)
@@ -412,11 +414,14 @@ export function applyCommand(
           !ds.some(
             (d) =>
               d.used > 0 ||
-              s.settlements.some(
-                (x) => !x.deleted && x.kind === "drop" && x.targetId === d.id,
-              ),
+              (s.mode !== "live" &&
+                s.settlements.some(
+                  (x) => !x.deleted && x.kind === "drop" && x.targetId === d.id,
+                )),
           ),
-          "정산·사용한 획득 기록은 지울 수 없어요.",
+          s.mode === "live"
+            ? "사용 수량을 먼저 수정해 주세요."
+            : "정산·사용한 획득 기록은 지울 수 없어요.",
         );
         ds.forEach((d) => (d.quantity = 0));
       }

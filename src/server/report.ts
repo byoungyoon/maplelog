@@ -1,5 +1,5 @@
 import type { Ledger } from "@/domain/model";
-import { entries, summarize } from "@/domain/revenue";
+import { completionEntries, summarize } from "@/domain/revenue";
 import { periodAt } from "@/domain/period";
 export function report(s: Ledger, url: URL, now = new Date()) {
   const cycle =
@@ -18,30 +18,8 @@ export function report(s: Ledger, url: URL, now = new Date()) {
   const selected = s.completions.filter(
     (c) => c.cycle === cycle && c.periodStart === period.start,
   );
-  const rows = entries(s, selected);
+  const rows = completionEntries(s, selected);
   const summary = summarize(rows);
-  const cash = entries(s).flatMap((e) =>
-    s.settlements
-      .filter(
-        (x) =>
-          !x.deleted &&
-          x.targetId === e.id &&
-          x.kind === e.kind &&
-          x.settledAt >= period.start &&
-          x.settledAt < period.end,
-      )
-      .map((x) => ({
-        ...e,
-        settlementId: x.id,
-        settledAt: x.settledAt,
-        quantity: x.quantity,
-        actual: x.net,
-        expected: "0",
-        total: x.net,
-        remaining: 0,
-        unknown: false,
-      })),
-  );
   const plans = s.plans.filter(
     (p) =>
       p.enabled &&
@@ -75,10 +53,12 @@ export function report(s: Ledger, url: URL, now = new Date()) {
   const remainingKnownAmount = remaining
     .reduce((total, plan) => {
       const boss = s.bosses.find((b) => b.id === plan.bossId)!;
-      return total +
+      return (
+        total +
         (boss.crystal !== null && plan.party && plan.difficulty
           ? BigInt(boss.crystal) / BigInt(plan.party)
-          : 0n);
+          : 0n)
+      );
     }, 0n)
     .toString();
   const remainingUnknown = remaining.filter((plan) => {
@@ -89,9 +69,7 @@ export function report(s: Ledger, url: URL, now = new Date()) {
     period,
     cycle,
     rows,
-    cash,
     summary,
-    cashSummary: summarize(cash),
     pending: selected.filter((c) => !c.excluded && c.review === "pending"),
     selected,
     plans,
@@ -99,7 +77,9 @@ export function report(s: Ledger, url: URL, now = new Date()) {
     remainingAmount,
     remainingKnownAmount,
     remainingUnknown,
-    projectedTotal: (BigInt(summary.total) + BigInt(remainingKnownAmount)).toString(),
+    projectedTotal: (
+      BigInt(summary.total) + BigInt(remainingKnownAmount)
+    ).toString(),
     characters: s.characters
       .slice()
       .sort((a, b) => a.order - b.order)
@@ -107,7 +87,7 @@ export function report(s: Ledger, url: URL, now = new Date()) {
         const cs = selected.filter((x) => x.characterId === c.id);
         return {
           ...c,
-          summary: summarize(entries(s, cs)),
+          summary: summarize(completionEntries(s, cs)),
           done: cs.length,
           planned: plans.filter((p) => p.characterId === c.id).length,
           pending: cs.filter((x) => x.review === "pending" && !x.excluded)

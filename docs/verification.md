@@ -1,18 +1,26 @@
-# 검증 결과
+# Verification
 
-2026-09-29 로컬 실행 결과입니다. 실제 운영 장부를 초기화하지 않았습니다.
+## Current Change: 2026-09-30
 
-- `npm run typecheck`: 통과.
-- `npm run lint`: 통과.
-- `npm run test`: 7개 파일, 68개 테스트 통과. 완료 기록이 합계에서 제외된 경우에도 다른 캐릭터의 남은 보스 예상액을 합산하고, 보스별 카드에서 캐릭터 수와 실제·예상 수익을 중복 없이 합산하는 회귀 검증 포함.
-- `npm run e2e`: 8개 테스트 통과. 1440/1024/390/360px, 키 미입력 접근 차단, 위조 성공 응답 차단, 서버 연결 fixture, 설정 메뉴 제거, 보스 화면의 캐릭터 검색·상세보기, 보스 완료 기록, 드랍 선택, 1인 결정석 정산, 가격순 드랍 토글, 캐릭터별 보스 상세 확인 후 전체 정산 합계 유지, 내보내기, 연결 해제 검증.
-- 모든 주요 페이지의 문서 스크롤 억제·내부 스크롤·Pretendard 적용, 배경 영상 로딩·재생·중지 확인.
-- `npm run build`: Node 22.23.3에서 Next 프로덕션 빌드 통과. 로컬 PowerShell의 기본 Node 20.11.1은 프로젝트 요구 버전(22.13 이상)보다 낮습니다.
+- TypeScript check: passed.
+- ESLint: passed.
+- Production build: passed with `NEXT_BUILD_DIR=.next-build-check npm run build -- --webpack`. Turbopack failed on an internal port-binding restriction in this environment, including after an elevated retry.
+- Unit tests: 69 passed across seven files.
+- Browser tests: eight passed, covering 1440, 1024, 390, and 360 pixel widths.
+- Boss card headers now place boss identity, completed character count, and income on one row.
+- Paid/unpaid controls and payment entry were removed. Tests verify completion-based totals remain independent of historical payments, old payment records do not block live drop toggles, and backup data remains intact.
+- Browser coverage includes key gating, rejection of forged client success, character search, grouped boss cards, drop selection, account-wide totals, internal scrolling, Pretendard, video playback, export, and disconnection.
 
-도메인 테스트는 금액 정밀도, 부분 정산, 주기 경계, 충돌·중복, revision, 복원 검증을 다룹니다. API 테스트는 키 변경 경합, 동시 동기화 합치기, 오류/빈 응답에서 기존 기록 유지, 중복 완료 방지, 429 예산 유지, 연결 해제 시 진행 중 요청 중단을 다룹니다. 카탈로그 테스트는 가격 효력일, 수동 가격 보존, 시즌 보스 별칭, 이미지 파일 유효성을 확인합니다.
+E2E tests run on port 3100 with an isolated temporary SQLite database and mocked external requests. Production user data is not reset. No screenshots or traces are captured.
 
-E2E는 별도 임시 SQLite DB와 3100 포트를 사용하고 외부 API를 fixture로 대체합니다. 실제 키 검증과 실제 API 결과 확인은 별도로 수행했습니다. 사용자 요청에 따라 새 화면 스크린샷·트레이스를 촬영하지 않았습니다.
+## Existing Coverage
 
-자동 14일 이력 보충, 경매장 시세 공급자는 미연결입니다. 상세 범위와 데이터 해석 제한은 [API 계약](api-contract.md)을 참고하세요.
+Domain tests cover integer money calculations, period boundaries, duplicate observations, conflict handling, revisions, and restore validation. Legacy payment helpers still have compatibility tests; they are no longer exposed through the application UI or HTTP command API.
 
-추가 검증: 결정석 중복 정산 거절, 1인 정책에서 과거 실제액 유지, 참고가 단위 변환 및 오류 입력 거절, 수동 가격·기존 획득 단가 보존, 주요 드랍 최대 5개 정렬. 실제 장부에서 완료 24건의 1인 기준 적용, 56개 보스 결정석 가격 및 아이템 22종 참고가 연결을 확인했습니다.
+Adapter tests cover concurrent credential changes, request coalescing, partial failures, empty responses, repeated completions, persistent 429 limits, and cancellation after disconnection. Catalog tests cover effective dates, manual price preservation, seasonal boss aliases, reference price conversion, and local asset availability.
+
+Real API verification was performed separately from fixture-based browser tests. Previously verified live results included 24 completion records, crystal prices for 56 boss variants, and reference prices for 22 observed item candidates.
+
+## Known Limits
+
+Automatic 14-day backfill and a world-specific auction price provider are not implemented. See the [API contract](api-contract.md) and [retention notes](data-retention.md).

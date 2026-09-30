@@ -7,7 +7,7 @@ import { readBook, mutate, sqlite, writeBook, usageCount } from "@/server/db";
 import { commandSchema, audit } from "@/domain/commands";
 import { DomainError, ensure, validateLedger, type Mode } from "@/domain/model";
 import { report } from "@/server/report";
-import { entries } from "@/domain/revenue";
+import { completionEntries } from "@/domain/revenue";
 import { csvCell } from "@/domain/money";
 import { connectionStatus, connectKey, disconnect } from "@/server/connection";
 import { syncAccount } from "@/server/nexon/sync";
@@ -96,6 +96,13 @@ async function handle(req: NextRequest) {
           command: commandSchema,
         })
         .parse(await req.json());
+      ensure(
+        !["settle", "crystal-settle", "cancel-settlement"].includes(
+          body.command.type,
+        ),
+        "보스 완료와 드랍 기록만 사용해요.",
+        400,
+      );
       if (body.command.type === "prices-refresh")
         return ok(await syncReferencePrices({ force: true }));
       if (body.command.type === "sync") {
@@ -113,13 +120,12 @@ async function handle(req: NextRequest) {
       const book = readBook(mode);
       if (req.nextUrl.searchParams.get("format") === "csv") {
         const rows = [
-          ["캐릭터", "항목", "수량", "실제 정산", "미정산 예상", "출처"],
-          ...entries(book).map((e) => [
+          ["캐릭터", "항목", "수량", "완료 수익", "출처"],
+          ...completionEntries(book).map((e) => [
             book.characters.find((c) => c.id === e.characterId)!.name,
             e.name,
             String(e.quantity),
-            e.actual,
-            e.expected ?? "미정",
+            e.unknown ? "미정" : e.total,
             e.source,
           ]),
         ];

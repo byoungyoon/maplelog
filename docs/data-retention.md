@@ -1,12 +1,12 @@
-# 데이터 갱신·보관
+# Data Refresh and Retention
 
-Nexon API 출처 표시는 화면 하단에 있습니다. [공식 데이터 안내](https://openapi.nexon.com/ko/game/maplestory/?id=14)의 30일 갱신 안내를 기준으로 현재 상태 캐시와 사용자 기록을 구분합니다.
+The footer credits Nexon Open API. The current-state cache and user-authored ledger are treated separately, based on the refresh guidance in the [official data documentation](https://openapi.nexon.com/ko/game/maplestory/?id=14).
 
-- 원문 HTTP 응답, 평문 키, 캐릭터 원문 진단 로그는 저장하지 않습니다.
-- 현재 보스 상태는 관리 캐릭터별 최신 관측 하나만 저장하며, 정상 조회 시 갱신합니다. 기본 이미지 캐시는 24시간 후 다시 조회합니다.
-- 캐릭터 목록은 키 연결·재연결 시 갱신됩니다. 미관리 캐릭터의 장기 미갱신 캐시는 현재 자동 갱신되지 않으므로 장기 운영 전 갱신 정책을 추가해야 합니다.
-- 드랍·정산·사용자 설정은 사용자 작성 장부입니다. API 완료 관측에서 파생된 과거 기록의 장기 보관 허용 범위는 공식 안내에서 확정하지 못했습니다. 무기한 보관이 허용된다고 보장하지 않습니다.
-- 연결 해제는 암호화한 키를 지우고 추적을 중지합니다. 사용자 장부는 유지합니다. 설정에서 장부 삭제 또는 백업 후 수동 삭제할 수 있습니다.
-- 공개 배포 전 장기 미사용 계정의 캐시 제거·갱신과 파생 기록 보존 범위를 추가 확인해야 합니다.
+- Do not persist raw HTTP responses, plaintext keys, or raw character diagnostic logs.
+- Keep the latest observed boss state for each queried character. Refresh the character image cache after 24 hours.
+- Refresh the account character list when connecting or reconnecting a key. Periodic character roster refresh is not implemented, so newly created characters may require reconnection.
+- Drops, preferences, and historical payment records are user-authored ledger data. The permitted long-term retention of historical records derived from API observations has not been conclusively established; indefinite retention is not asserted.
+- Disconnecting removes the encrypted credential and stops tracking while preserving ledger records. Backup and deletion controls are available on the Settings route, which is not in the primary navigation.
+- Before broader deployment, confirm stale account cache handling and the retention rules for derived historical records.
 
-현재는 개인 로컬용 실행을 중심으로 검증했습니다. 운영용 원문 수집이나 다른 사용자 데이터 수집 기능은 없습니다.
+Verification has focused on personal local use. The app does not collect other users' credentials or operate a raw-data archive.

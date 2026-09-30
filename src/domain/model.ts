@@ -262,7 +262,7 @@ export function validateLedger(input: unknown): Ledger {
   s.drops.forEach((d) =>
     ensure(
       d.used +
-        s.settlements
+        (s.mode === "live" ? [] : s.settlements)
           .filter((x) => !x.deleted && x.kind === "drop" && x.targetId === d.id)
           .reduce((a, x) => a + x.quantity, 0) <=
         d.quantity,

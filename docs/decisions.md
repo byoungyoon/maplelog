@@ -1,15 +1,13 @@
-# 구현 결정
+# Implementation Decisions
 
-- 사용자의 우선 지시대로 Next App Router, Tailwind CSS, Zustand와 `batch/re-qu-test`의 area/action/state/lib/component 구성을 사용합니다. 서버 데이터는 TanStack Query, UI 선택 상태는 Zustand입니다.
-- 사용자가 데모 삭제를 요청했으므로 공개 화면·API·운영 DB에서 데모를 제거했습니다. 테스트 fixture만 격리해서 유지합니다.
-- SQLite WAL aggregate 장부에 revision 및 requestId 기반 저장 충돌·중복 방지를 적용합니다. 금액은 정수 문자열/BigInt로 처리합니다.
-- 실제 Nexon 응답으로 캐릭터 목록·이미지·스케줄러를 연결했습니다. 추정한 처치 시각이나 드랍 자동 생성을 하지 않습니다.
-- 보스·드랍 후보 이미지와 결정석 가격은 사용자가 지정한 메이플스카우터의 공개 자료 스냅샷입니다. 미지원 항목은 수동 추가할 수 있습니다.
-- 메이플스카우터 공개 아이템 참고가를 연결합니다. 정확히 같은 이름만 매칭하고 가격은 억 단위 문자열을 BigInt 메소로 변환합니다. 서버·옵션별 실거래가는 아니며 수동 기준가 및 기존 드랍 스냅샷을 보존합니다.
-- 디자인은 사용자가 제공한 세이지 유리 UI 및 상단 캡슐 nav 참조를 반영합니다. 별도 제목 헤더·사이드바를 제거하고 홈을 전체 캐릭터 정산 메뉴로 바꾸고 수익/보스 카드 중심으로 단순화했습니다.
-- 전체 문서 대신 유리 영역만 내부 스크롤합니다. Pretendard Variable 웹폰트를 로컬 패키지로 제공합니다.
-- 사용자 요청에 따라 새 화면 스크린샷은 촬영하지 않습니다. 브라우저 DOM·행동·영상 재생 검증은 수행합니다.
-- 자연 배경은 정지 이미지를 왜곡하는 방식을 폐기하고 실제 촬영 영상으로 전환했습니다. 움직임 중지·reduced motion·탭 비활성 시 정지를 지원합니다.
-
-- 결정석·드랍을 1인 정산으로 고정합니다. 기존 미정산 분배만 변경하고 이미 정산한 금액은 유지합니다. 공통 캐릭터 선택과 설정 탐색 메뉴를 제거하고, 정산은 실제 정산액·완료 보스의 미정산액·남은 보스 예상액을 전체 캐릭터 기준으로 합산합니다. 키 연결 후 전체 캐릭터를 자동 조회하며 보스 메뉴의 검색은 상세 확인에만 사용합니다.
-- 정산의 완료 기록은 보스별 카드로 묶어 완료 캐릭터 수와 해당 보스 수익을 표시합니다. 카드 안에서 캐릭터별 정산과 드랍 선택을 펼쳐 처리합니다.
+- Use Next App Router, Tailwind CSS, Zustand, and the user's requested feature folder pattern. Use TanStack Query for server data.
+- Require a verified personal Nexon API key before ledger access. Remove demo routes and production demo data; retain isolated test fixtures.
+- Store the ledger in SQLite WAL mode. Use revisions and request IDs to reject conflicting or duplicate mutations. Represent money as integer strings and calculate with BigInt.
+- Integrate the real character list, character image, and boss scheduler endpoints. Do not invent kill timestamps, acquired drops, or sales.
+- Use public MapleScouter snapshots for boss images, reward candidates, and crystal prices. Match item reference prices by exact name, preserve manual overrides, and retain existing drop price snapshots.
+- Follow the supplied sage glass references: floating navigation, transparent outer workspace, internal scrolling, Pretendard, and a distant nature video background.
+- Respect reduced motion, inactive tabs, and the background motion toggle. Do not capture new screenshots.
+- Aggregate all account characters on the dashboard. The Bosses page searches characters and shows their boss states without changing dashboard scope.
+- Group completed records into boss cards. Keep the boss identity, completed character count, and completed income in a single compact header row.
+- As requested on 2026-09-30, use only completion and acquired drops for income. Remove paid/unpaid UI, cash-date reporting, and payment commands from the HTTP API. Keep old payment records solely for backup compatibility.
+- Write project Markdown files in English and maintain significant work history under `kb`.

@@ -1,13 +1,17 @@
-# 화면 구조
+# Architecture
 
-참조: `/Users/byoungyoonlee/Desktop/batch/re-qu-test/src/Pages/clinic`의 page.tsx, `_area/Table.area.tsx`, `_action/SelectRegion.action.tsx`, `_state/useClinicList.ts`, `_lib/getClinicWrongPaper.ts`.
+The frontend follows the `area/action/state/lib/component` pattern from the user's `batch/re-qu-test` project, particularly its clinic page implementation.
 
-App Router의 page.tsx는 영역 조합만 담당한다. 기능별 디렉터리는 `src/features/<feature>` 아래에 둔다.
+App Router `page.tsx` files compose feature areas. Features live under `src/features/<feature>`:
 
-- `_area`: 화면의 의미 있는 영역, action과 component 조합
-- `_action`: 사용자 이벤트와 mutation을 연결하는 컴포넌트·훅. Next 서버 액션과는 별개 명칭
-- `_state`: TanStack Query 조회 훅과 Zustand UI store
-- `_lib`: HTTP 접근과 순수 변환
-- `_component`: props를 받아 그리는 표시 컴포넌트
+- `_area`: meaningful page regions that compose actions and presentation components.
+- `_action`: components and hooks that connect user events to mutations. This name does not imply a Next.js Server Action.
+- `_state`: TanStack Query hooks and Zustand UI state.
+- `_lib`: HTTP helpers and pure transformations.
+- `_component`: presentation components driven by props.
 
-공통 영역은 `src/shared`에 같은 패턴을 사용한다. 서버 데이터·계산 합계는 Zustand에 복제하지 않는다. 서버 도메인은 `src/domain`, 영속 저장·인증은 `src/server`로 분리한다.
+`src/shared` uses the same organization for shared functionality. TanStack Query owns server data; Zustand owns UI selections. Server records and derived totals are not duplicated in Zustand.
+
+`src/domain` contains validation and calculations. `src/server` contains persistence, authentication, external API adapters, and reporting. SQLite stores an aggregate ledger with revision checks and request IDs for conflict detection and idempotency.
+
+Current reports use `completionEntries` to calculate income without historical payment records. The legacy payment model remains readable for backup compatibility, while HTTP payment commands are rejected.

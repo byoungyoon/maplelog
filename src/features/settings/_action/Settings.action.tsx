@@ -241,7 +241,7 @@ export default function SettingsAction() {
                       ))}
                   </select>
                 </label>
-                <span className="solo-caption">1인 정산</span>
+                <span className="solo-caption">1인 기준</span>
               </div>
             );
           })}
@@ -336,7 +336,7 @@ export default function SettingsAction() {
               <strong>복원 미리보기</strong>
               <p>
                 캐릭터 {preview.characters}개 · 완료 {preview.completions}건 ·
-                드랍 {preview.drops}건 · 정산 {preview.settlements}건
+                드랍 {preview.drops}건
               </p>
               <p>현재 장부를 백업 내용으로 교체해요.</p>
               <button
@@ -377,7 +377,7 @@ export default function SettingsAction() {
           onClick={async () => {
             if (
               window.prompt(
-                `$ 장부의 완료 ${book.completions.length}건, 드랍 ${book.drops.length}건, 정산 ${book.settlements.length}건을 삭제합니다. 계속하려면 ‘장부 삭제’를 입력하세요.`,
+                `$ 장부의 완료 ${book.completions.length}건, 드랍 ${book.drops.length}건을 삭제합니다. 계속하려면 ‘장부 삭제’를 입력하세요.`,
               ) !== "장부 삭제"
             )
               return;

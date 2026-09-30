@@ -66,7 +66,7 @@ export function ReportHeader({
           {offset === 0 && <span className="subtle-badge">이번 기간</span>}
         </div>
         {compact && (
-          <span className="settlement-scope">전체 캐릭터 · 1인 정산</span>
+          <span className="settlement-scope">전체 캐릭터 · 1인 기준</span>
         )}
         <div className="sync-controls">
           {!compact && (
@@ -76,9 +76,7 @@ export function ReportHeader({
           )}
           <button
             className="text-button"
-            disabled={
-              cmd.isPending || !data?.book.characters.length
-            }
+            disabled={cmd.isPending || !data?.book.characters.length}
             onClick={() =>
               cmd.mutate(
                 { type: "sync", scenario: "refresh" },

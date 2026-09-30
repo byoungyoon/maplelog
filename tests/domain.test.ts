@@ -240,7 +240,7 @@ describe("완료 관측과 드랍", () => {
   });
 });
 describe("백업·기간 보고서", () => {
-  it("T17 다음 달 정산이 원래 기록을 수정하고 cash는 정산일로 분리된다", () => {
+  it("과거 정산 이력은 보스 완료 보고서에 별도 정산 상태로 노출하지 않는다", () => {
     const s = setup();
     applyCommand(s, {
       type: "settle",
@@ -252,7 +252,8 @@ describe("백업·기간 보고서", () => {
     });
     expect(row(s, "d3").total).toBe("90000000");
     const r = report(s, new URL("http://local/?cycle=weekly"));
-    expect(r.cash.some((x) => x.id === "d3")).toBe(false);
+    expect(r).not.toHaveProperty("cash");
+    expect(r).not.toHaveProperty("cashSummary");
   });
   it("T22 운영 seed에는 데모 캐릭터와 수익이 없다", () => {
     const s = seed("live", NOW);
@@ -335,10 +336,12 @@ it("정산 보고서는 캐릭터 쿼리와 관계없이 전체를 합산한다"
   );
 });
 
-it("보스 카드에는 완료 캐릭터 수와 실제·예상 수익을 합산한다", () => {
+it("보스 카드는 완료 캐릭터 수와 획득 기준 수익만 합산한다", () => {
   const s = setup();
   const second = observe(s, "c2-b1", NOW)!;
-  let group = bossEarnings(s, s.completions).find((item) => item.group === "g1")!;
+  let group = bossEarnings(s, s.completions).find(
+    (item) => item.group === "g1",
+  )!;
   expect(group.characterCount).toBe(2);
   expect(group.total).toBe("56000000");
   applyCommand(s, {
@@ -350,9 +353,7 @@ it("보스 카드에는 완료 캐릭터 수와 실제·예상 수익을 합산�
     settledAt: NOW,
   });
   group = bossEarnings(s, s.completions).find((item) => item.group === "g1")!;
-  expect(group.actual).toBe("25000000");
-  expect(group.expected).toBe("28000000");
-  expect(group.total).toBe("53000000");
+  expect(group.total).toBe("56000000");
   second.excluded = true;
   group = bossEarnings(s, s.completions).find((item) => item.group === "g1")!;
   expect(group.characterCount).toBe(1);
@@ -366,7 +367,11 @@ it("완료 기록이 제외되어도 다른 캐릭터의 남은 보스 예상액
   s.drops = [];
   s.settlements = [];
   observe(s, "c1-b1", NOW)!.excluded = true;
-  const result = report(s, new URL("http://local/?cycle=weekly"), new Date(NOW));
+  const result = report(
+    s,
+    new URL("http://local/?cycle=weekly"),
+    new Date(NOW),
+  );
   expect(result.summary.total).toBe("0");
   expect(result.remaining).toBe(11);
   expect(result.remainingKnownAmount).toBe("236000000");

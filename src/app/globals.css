@@ -4161,8 +4161,14 @@ select option {
 .settlement-card-heading {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ffffff24;
+}
+.settlement-boss-name {
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
 }
 .settlement-card-heading h3 {
   margin: 0 0 5px;
@@ -4174,16 +4180,15 @@ select option {
   font-size: 12px;
 }
 .settlement-boss-summary {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
-  gap: 12px;
-  padding: 15px 0;
-  border-top: 1px solid #ffffff24;
-  border-bottom: 1px solid #ffffff24;
+  display: flex;
+  align-items: start;
+  gap: 16px;
+  margin-left: auto;
+  text-align: right;
 }
 .settlement-boss-summary > div {
   display: grid;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
 }
 .settlement-boss-summary span,
@@ -4193,7 +4198,7 @@ select option {
   font-size: 11px;
 }
 .settlement-boss-summary strong {
-  font-size: 19px;
+  font-size: 16px;
   font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
 }
@@ -4201,6 +4206,9 @@ select option {
   color: var(--text-secondary);
   font-size: 11px;
   font-weight: 400;
+}
+.settlement-boss-summary span small {
+  font-size: inherit;
 }
 .settlement-boss-note {
   margin: 9px 0 0;
@@ -4496,6 +4504,35 @@ select option {
   }
   .settlement-card {
     padding: 17px;
+  }
+  .settlement-card-heading {
+    gap: 8px;
+  }
+  .settlement-card-heading > .item-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+  .settlement-card-heading h3 {
+    font-size: 14px;
+  }
+  .settlement-card-heading p {
+    font-size: 10px;
+  }
+  .settlement-boss-summary {
+    gap: 10px;
+    max-width: 65%;
+  }
+  .settlement-boss-summary span {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .settlement-boss-summary span small {
+    display: block;
+    font-size: 9px;
+  }
+  .settlement-boss-summary strong {
+    font-size: 13px;
   }
   .settlement-scope {
     order: 3;

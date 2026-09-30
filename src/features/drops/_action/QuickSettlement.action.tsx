@@ -20,9 +20,6 @@ export function QuickSettlement({
   const openSheet = useAppState((s) => s.openSheet);
   const boss = book.bosses.find((b) => b.id === completion.bossId)!;
   const items = quickDrops(book, boss);
-  const paid = book.settlements.some(
-    (s) => !s.deleted && s.kind === "crystal" && s.targetId === completion.id,
-  );
   const selectedCount = book.drops.filter(
     (d) => d.completionId === completion.id && d.quantity > 0,
   ).length;
@@ -35,28 +32,12 @@ export function QuickSettlement({
             {formatMeso(completion.crystal)} <em>메소</em>
           </strong>
         </span>
-        <button
-          className={`button ${paid ? "soft" : "primary"}`}
-          disabled={
-            busy ||
-            paid ||
-            completion.crystal === null ||
-            completion.status === "conflict" ||
-            completion.excluded
-          }
-          onClick={() =>
-            cmd.mutate({ type: "crystal-settle", id: completion.id })
-          }
-        >
-          {paid ? (
-            <>
-              <Check size={14} />
-              정산 완료
-            </>
-          ) : (
-            "결정석 정산"
-          )}
-        </button>
+        <span className="status-done">
+          <Check size={14} />
+          {completion.status === "conflict"
+            ? "완료 정보 확인 필요"
+            : "보스 완료"}
+        </span>
       </div>
       <div className="quick-drop-heading">
         <span>
@@ -81,13 +62,7 @@ export function QuickSettlement({
             (d) => d.completionId === completion.id && d.itemId === item.id,
           );
           const selected = !!drop?.quantity;
-          const locked =
-            selected &&
-            (!!drop.used ||
-              book.settlements.some(
-                (s) =>
-                  !s.deleted && s.kind === "drop" && s.targetId === drop.id,
-              ));
+          const locked = selected && !!drop.used;
           return (
             <button
               key={item.id}
@@ -95,9 +70,7 @@ export function QuickSettlement({
               aria-pressed={selected}
               aria-label={`${item.name} 획득`}
               title={
-                locked
-                  ? "정산·사용 기록은 상세에서 먼저 취소해 주세요."
-                  : item.name
+                locked ? "사용 수량은 상세에서 먼저 수정해 주세요." : item.name
               }
               disabled={busy || locked || completion.excluded}
               onClick={() =>

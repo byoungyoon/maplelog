@@ -1,43 +1,50 @@
-# 메소로그
+# Maplelog
 
-본인 Nexon API 키로 보스 스케줄러를 조회하고, 드랍과 메소 정산을 관리하는 개인용 장부입니다. 데모는 제공하지 않습니다. 키를 확인해야 장부에 진입할 수 있습니다.
+A personal MapleStory ledger that reads your boss scheduler through the Nexon Open API. Track boss completion and acquired drops with your own verified API key. There is no demo mode.
 
-## 실행
+## Run locally
 
-Node 22.13 이상에서:
+Requires Node.js 22.13 or later.
 
 ```sh
 npm install
 npm run dev
 ```
 
-http://127.0.0.1:3000 에서 본인 API 키를 입력하면 전체 캐릭터 보스 조회가 시작됩니다. 보스 화면에서는 캐릭터 이름을 검색해 상세를 확인하세요. 정기 자동 추적은 별도 터미널에서 실행합니다.
+Open http://127.0.0.1:3000 and enter your API key. The app starts loading boss states for all account characters. Search for a character on the Bosses page to inspect its details.
+
+Run the background worker in a separate terminal:
 
 ```sh
 npm run worker
 ```
 
-기본 조회는 60분마다, 집중 추적은 선택한 캐릭터를 2분마다 최대 2시간 조회합니다. 워커는 브라우저를 닫아도 동작합니다. 수동 새로고침과 워커는 SQLite lease 및 키별 예산을 공유합니다. 현재 기본 예산은 24시간 최대 800회, 초당 최대 5회입니다.
+The normal polling interval is 60 minutes. Focus tracking polls the selected character every two minutes for up to two hours. The worker continues independently of browser activity. Manual requests and the worker share SQLite leases and a per-key request budget: up to 800 calls per rolling 24 hours and five per second.
 
-## 데이터와 가격
+## Completion and income
 
-- 실제 연결: 본인 캐릭터 목록, 캐릭터 기본 이미지, 보스 스케줄러.
-- 보스 완료는 관측 결과입니다. 실제 처치 시각, 드랍, 판매, 파티 인원은 API로 추정하지 않습니다.
-- 보스 이미지, 주요 보상 후보와 결정석 기준가는 메이플스카우터 공개 자료를 참조합니다. 출처·확인일은 `src/data/scouter-catalog.json`에 있습니다.
-- 결정석과 드랍은 **1인 정산**으로 고정합니다. 정산 메뉴는 캐릭터 선택 없이 전체 캐릭터의 실제 정산액, 완료 보스의 미정산 예상액, 남은 보스의 예상액을 구분해 합산합니다. 보스별 카드에는 완료 캐릭터 수와 완료 수익 합계를 표시하며, 캐릭터별 줄을 펼쳐 결정석 정산과 주요 드랍 최대 5개 선택을 처리합니다. 보스 메뉴에서는 캐릭터를 검색해 상세를 확인합니다.
-- 메이플스카우터의 공개 아이템 참고가를 연결했습니다. 이름이 정확히 일치하는 항목에만 적용하며 서버·옵션별 실거래 시세는 아닙니다. 워커가 하루마다 갱신하며 시세 메뉴에서도 새로고침할 수 있습니다. 직접 입력한 시세가 우선합니다.
-- 아이템 후보를 선택해도 API가 획득을 확인했다는 뜻이 아닙니다. 실제 획득한 아이템만 선택하세요.
-- 시세 수정은 새 기록에 적용됩니다. 기존 드랍 단가는 명시적인 재평가로만 변경합니다. 1인 정책 전환 시 미정산 결정석의 분배 기준만 변경하며 실제 정산액은 보존합니다.
+- The dashboard aggregates all characters. Character searches do not change its scope.
+- Boss income uses completed boss crystals and selected drops at a fixed one-person share. Remaining boss estimates are shown separately.
+- There is no paid/unpaid distinction, payment entry form, or settlement action. Existing payment records are retained for backup compatibility and do not affect current income.
+- Boss cards group completed characters by boss. The compact header places the boss name, completed character count, and income side by side.
+- Select up to five prominent drop candidates directly from a character's expanded row. Select only items actually acquired; Nexon does not report acquired drops or sales.
+- The Records page lists crystals and drops. CSV exports use completion-based income.
 
-## 배포·비밀정보
+## Prices and sources
 
-단일 Node 서버와 지속되는 SQLite 볼륨이 필요합니다. 서버리스의 임시 파일 시스템에 배포하지 마세요. 빌드 후 `npm run start`, 별도 프로세스로 `npm run worker`를 실행합니다.
+Boss images, reward candidates, and crystal values come from public MapleScouter data. Source URLs and verification dates are recorded in `src/data/scouter-catalog.json`.
 
-로컬에서는 DB가 `data/mesolog.sqlite`, 암호화 키가 `.local-secrets/credential.key`에 생성됩니다. 공개 배포에서는 `.env.example`의 `APP_ORIGIN`, `OWNER_PASSWORD_HASH`, `SESSION_SECRET`, `CREDENTIAL_ENCRYPTION_KEY`, `DATA_DIR`를 설정합니다. 비밀번호 해시는 `npm run owner:hash`로 생성합니다. 키·비밀번호를 NEXT_PUBLIC 변수에 넣지 마세요.
+The item price provider matches exact item names against MapleScouter's reference prices. These are not live, world-specific auction prices. The worker refreshes them daily; the Prices page also offers a manual refresh. Manually entered prices take precedence. Existing drop price snapshots change only through explicit repricing in the drop details.
 
-SQLite 폴더와 암호화 키를 따로 안전하게 백업하세요. 앱의 JSON 내보내기에는 Nexon 키가 없습니다. 복원은 미리보기와 명시적 확인을 거칩니다. 사용자 장부를 지우거나 연결을 해제하기 전에 필요한 내보내기를 수행하세요.
+## Deployment and secrets
 
-## 검증
+Use one persistent Node server with a durable SQLite volume. Build with `npm run build`, run `npm run start`, and run `npm run worker` separately. Ephemeral serverless file systems are not supported.
+
+Locally, the database is stored in `data/mesolog.sqlite`; the encryption key is stored separately in `.local-secrets/credential.key`. Both are excluded from Git. For public deployments, configure `APP_ORIGIN`, `OWNER_PASSWORD_HASH`, `SESSION_SECRET`, `CREDENTIAL_ENCRYPTION_KEY`, and `DATA_DIR` as described in `.env.example`. Generate an owner password hash with `npm run owner:hash`. Never expose credentials through `NEXT_PUBLIC` variables.
+
+Back up the database and encryption key separately. JSON exports contain no Nexon API key. Restores require a preview and explicit confirmation. Disconnecting removes the credential and preserves the ledger.
+
+## Verification
 
 ```sh
 npm run typecheck
@@ -47,4 +54,6 @@ npm run e2e
 npm run build
 ```
 
-E2E는 3100 포트와 별도 임시 DB를 사용하여 운영 데이터와 분리합니다. 사용자 요청에 따라 스크린샷·트레이스 촬영을 하지 않습니다. 상세 범위는 `docs/verification.md`, API 계약은 `docs/api-contract.md`를 참고하세요.
+E2E tests use port 3100 and an isolated temporary database. Screenshots and traces are disabled at the user's request.
+
+See the [work log](kb/work-log.md), [verification report](docs/verification.md), and [API contract](docs/api-contract.md). Project Markdown documentation is written in English; the application UI is Korean.

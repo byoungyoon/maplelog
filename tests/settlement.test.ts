@@ -1,4 +1,6 @@
 import { it, expect } from "vitest";
+import { completionEntries, summarize } from "@/domain/revenue";
+import { validateLedger } from "@/domain/model";
 import { emptyLedger } from "@/domain/empty-ledger";
 import { applyCommand } from "@/domain/commands";
 import { applySoloPolicy } from "@/domain/solo";
@@ -129,4 +131,35 @@ it("빠른 드랍은 가격 내림차순 최대 5개이며 보스에 없는 후�
   expect(
     prices.every((price, index) => index === 0 || prices[index - 1] >= price),
   ).toBe(true);
+});
+
+it("과거 판매 기록이 있어도 드랍 토글과 완료 기준 수익에 영향을 주지 않는다", () => {
+  const s = book(),
+    c = s.completions[0],
+    item = s.items.find((i) => i.name === "몽환의 벨트")!;
+  applyCommand(s, {
+    type: "drop",
+    completionId: c.id,
+    itemId: item.id,
+    quantity: 1,
+  });
+  const drop = s.drops[0];
+  applyCommand(s, {
+    type: "settle",
+    kind: "drop",
+    targetId: drop.id,
+    quantity: 1,
+    net: "1",
+    settledAt: "2026-09-29T00:00:00.000Z",
+  });
+  expect(summarize(completionEntries(s)).total).toBe("3859700000");
+  applyCommand(s, {
+    type: "drop",
+    completionId: c.id,
+    itemId: item.id,
+    quantity: 0,
+  });
+  expect(() => validateLedger(s)).not.toThrow();
+  expect(summarize(completionEntries(s)).total).toBe("59700000");
+  expect(s.settlements[0].net).toBe("1");
 });

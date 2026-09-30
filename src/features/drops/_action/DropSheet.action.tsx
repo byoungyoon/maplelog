@@ -60,7 +60,7 @@ export default function DropSheet() {
             </small>
           </span>
         </div>
-        <p className="solo-caption">결정석 · 드랍 모두 1인 정산</p>
+        <p className="solo-caption">결정석 · 드랍 모두 1인 기준</p>
         <h2>어떤 아이템을 얻었나요?</h2>
         <ManualItem bossId={b.id} />
         <p className="sheet-description">
@@ -179,7 +179,7 @@ export default function DropSheet() {
               />
             </label>
             <label>
-              미정산 수량 전체에 적용할 비용 (메소)
+              드랍 전체에 적용할 비용 (메소)
               <input
                 inputMode="numeric"
                 pattern="[0-9]+"
@@ -212,6 +212,24 @@ export default function DropSheet() {
                 }
               />
             </label>
+            <button
+              type="button"
+              className="button"
+              disabled={cmd.isPending}
+              onClick={() =>
+                cmd.mutate(
+                  { type: "revalue", id: editing.id },
+                  {
+                    onSuccess: () => {
+                      setEditing(null);
+                      notify("현재 기준가를 적용했어요.");
+                    },
+                  },
+                )
+              }
+            >
+              현재 기준가 적용
+            </button>
             <button className="button primary" disabled={cmd.isPending}>
               상세 저장
             </button>
