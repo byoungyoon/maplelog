@@ -41,7 +41,7 @@ The response shape is `success: true` with `item_price: { itemName: numericStrin
 
 The source does not provide world, item-option, or supplier-update metadata. Displayed timestamps indicate when this app fetched the response. Only exact item names are matched; abbreviations are not expanded speculatively. Personal-bound rewards are not automatically made tradable. Other priced shared rewards use the assumption of tradability immediately after acquisition, which can be edited in drop details.
 
-The provider receives no Nexon key or character information. The worker refreshes daily, while manual refreshes are coalesced with a 60-second cooldown. Failures preserve the last prices and show an error. Manual values and existing drop price snapshots are preserved.
+The item-price endpoint receives no Nexon key or character information. The worker refreshes daily, while manual refreshes are coalesced with a 60-second cooldown. Failures preserve the last prices and show an error. Manual values and existing drop price snapshots are preserved.
 
 ## Internal API
 
@@ -54,3 +54,7 @@ Commands use a validated discriminated union, ledger revision, and request ID. R
 Since 2026-09-30, reports and CSV exports use completed boss crystals and acquired drops, at a one-person share. Remaining boss estimates are separate. Character searches do not change account-wide reporting scope.
 
 Paid/unpaid filters and cash-date reporting have been removed. The HTTP API rejects `settle`, `crystal-settle`, and `cancel-settlement`. Historical payment records and legacy domain helpers remain only for backup compatibility; they do not affect current income or prevent editing acquired drop quantities.
+
+## Boss Analysis and Strength
+
+`POST characters/strength` retrieves owned character combat power from Nexon `/maplestory/v1/character/stat` and caches it for 24 hours. `POST bosses/analyze` accepts `characterId`, validates account ownership, and returns locally computed boss comparisons from public character calculation inputs. The public provider receives the character name and default preset, never the Nexon key. Results use ten-minute derived caching, request budgets, leases, and credential-generation checks. See [Boss analysis](../kb/boss-analysis.md).

@@ -2679,10 +2679,13 @@ main {
     border-color 0.18s;
 }
 .character-portrait {
-  object-fit: cover;
-  object-position: center;
-  background: var(--accent-soft);
-  border-radius: 18px;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+  background: #d2e1c924;
+  border: 1px solid #eaffdd24;
+  border-radius: 16px;
 }
 .character-card:hover {
   transform: translateY(-3px);
@@ -4413,7 +4416,7 @@ select option {
 .boss-character-result + .boss-character-result {
   border-top: 1px solid #ffffff30;
 }
-.boss-character-result > span {
+.boss-character-result > span:not(.avatar) {
   flex: 1;
   min-width: 0;
 }
@@ -4547,5 +4550,421 @@ select option {
   }
   .quick-drop-heading small {
     display: none;
+  }
+}
+
+.character-portrait .character-sprite {
+  position: absolute;
+  width: 240%;
+  height: 240%;
+  max-width: none;
+  left: -70%;
+  top: -77%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.boss-detail-hero {
+  margin-top: 0;
+}
+.boss-detail-hero > div {
+  min-width: 0;
+}
+.boss-detail-hero h2 {
+  overflow-wrap: anywhere;
+}
+.boss-cut-panel {
+  padding: 22px;
+  margin: 18px 0;
+  background: linear-gradient(135deg, #d6e6be57, #b4c99226);
+  border: 1px solid #f3ffdc80;
+}
+.boss-cut-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.boss-cut-heading > div {
+  margin-right: auto;
+}
+.boss-cut-heading h2 {
+  font-size: 22px;
+  margin: 0;
+  color: #f5faee;
+}
+.boss-cut-heading p {
+  font-size: 12px;
+  color: #e6eedb;
+  margin: 6px 0 0;
+}
+.boss-cut-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  margin: 20px 0;
+  padding: 16px 18px;
+  background: #e7f3d533;
+  border-radius: 14px;
+}
+.boss-cut-summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.boss-cut-summary span {
+  font-size: 12px;
+  color: #e6eedb;
+}
+.boss-cut-summary strong {
+  font-size: 24px;
+  line-height: 1.25;
+  color: #f6faef;
+  font-variant-numeric: tabular-nums;
+}
+.boss-cut-summary small {
+  font-size: 13px;
+  font-weight: 500;
+  margin-left: 4px;
+}
+.boss-cut-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.boss-cut-filters button {
+  padding: 8px 13px;
+  background: #ffffff09;
+  border: 1px solid #dcebd32e;
+  border-radius: 10px;
+  color: #d4e3cd;
+  font-size: 13px;
+}
+.boss-cut-filters button[aria-pressed="true"] {
+  background: #d3edb7;
+  color: #183724;
+  border-color: #d3edb7;
+  font-weight: 700;
+}
+.boss-cut-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 12px;
+}
+.boss-cut-card {
+  padding: 16px;
+  border: 1px solid #f3ffdc80;
+  border-radius: 16px;
+  background: #f3f8e17a;
+  min-width: 0;
+}
+.boss-cut-card[data-tone="party"] {
+  background: #f3f8e17a;
+}
+.boss-cut-card[data-tone="short"] {
+  background: #f3f8e17a;
+}
+.boss-cut-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.boss-cut-card-title .item-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  background: #f9ffed40;
+}
+.boss-cut-card-title > div {
+  min-width: 0;
+  flex: 1;
+}
+.boss-cut-card-title strong {
+  display: block;
+  font-size: 16px;
+  color: #183825;
+  overflow-wrap: anywhere;
+}
+.boss-cut-card-title small {
+  font-size: 12px;
+  color: #354f3a;
+}
+.boss-cut-verdict {
+  flex-shrink: 0;
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: #cfecb6;
+  color: #153e23;
+  font-size: 12px;
+  font-weight: 750;
+}
+[data-tone="party"] .boss-cut-verdict {
+  background: #cae4eb;
+  color: #183e48;
+}
+[data-tone="short"] .boss-cut-verdict {
+  background: #d6cbbb;
+  color: #473d2e;
+}
+.boss-cut-card dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 16px 0 12px;
+  padding-top: 14px;
+  border-top: 1px solid #42684226;
+}
+.boss-cut-card dt {
+  font-size: 12px;
+  color: #354f3a;
+  margin-bottom: 4px;
+}
+.boss-cut-card dd {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #183825;
+  font-variant-numeric: tabular-nums;
+}
+.boss-cut-card dl > div:first-child dd {
+  color: #205a36;
+}
+.boss-cut-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 12px;
+  color: #354f3a;
+}
+.boss-cut-explanation {
+  margin-top: 18px;
+  color: #e6eedb;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.boss-cut-explanation summary {
+  cursor: pointer;
+}
+.boss-cut-explanation p {
+  margin: 8px 0 0;
+}
+@media (max-width: 600px) {
+  .boss-cut-panel {
+    padding: 14px;
+  }
+  .boss-cut-heading .button {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .boss-cut-card {
+    padding: 14px;
+  }
+  .boss-cut-card-title {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .boss-cut-card-title strong {
+    font-size: 15px;
+  }
+  .boss-cut-summary {
+    gap: 14px 22px;
+    padding: 14px;
+  }
+  .boss-cut-summary strong {
+    font-size: 21px;
+  }
+}
+
+.boss-completion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 12px;
+}
+.boss-completion-grid .boss-completion-card {
+  padding: 16px;
+  border: 1px solid #f3ffdc80;
+  border-radius: 16px;
+  background: #f3f8e17a;
+  color: #183825;
+}
+.boss-completion-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.boss-completion-title > div {
+  flex: 1;
+  min-width: 0;
+}
+.boss-completion-title strong {
+  display: block;
+  font-size: 15px;
+}
+.boss-completion-title small {
+  display: block;
+  color: #354f3a;
+  font-size: 12px;
+  margin-top: 3px;
+}
+.boss-completion-title > span {
+  flex-shrink: 0;
+}
+.boss-completion-bottom {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+.boss-completion-bottom > div > small {
+  display: block;
+  color: #354f3a;
+  font-size: 11px;
+  margin-bottom: 3px;
+}
+.boss-completion-bottom strong {
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+}
+.boss-completion-bottom strong small {
+  font-size: 11px;
+  font-weight: 400;
+}
+.boss-completion-bottom .button {
+  padding: 8px 10px;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.boss-completion-card .status-done {
+  color: #235d36;
+  background: #e6f4d3a6;
+}
+.boss-completion-card .status-muted {
+  color: #45533f;
+}
+.boss-completion-card .button {
+  color: #244c30;
+  background: #e6f4d399;
+  border-color: #496b3d38;
+}
+
+.boss-detail-hero {
+  padding: 6px 0 16px;
+  margin: 0 0 12px;
+  border: 0;
+  border-bottom: 1px solid #f3ffdc40;
+  border-radius: 0;
+  background: transparent;
+  backdrop-filter: none;
+  gap: 18px;
+}
+.boss-detail-hero .character-portrait {
+  border: 0;
+  background: none;
+  overflow: hidden;
+  border-radius: 0;
+}
+.boss-detail-hero h2 {
+  font-size: 26px;
+  margin-bottom: 5px;
+}
+.boss-detail-hero p {
+  margin: 3px 0;
+  font-size: 13px;
+}
+.boss-detail-hero .boss-character-power {
+  color: #f5faec;
+  font-weight: 650;
+  margin-top: 7px;
+}
+.boss-cut-cleared {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 8px;
+  color: #235d36;
+  font-weight: 650;
+}
+.boss-cut-gauge-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin: 18px 0 10px;
+}
+.boss-cut-gauge-heading strong {
+  font-size: 17px;
+  color: #244d30;
+}
+.boss-cut-gauge-heading > span {
+  color: #435b42;
+  font-size: 11px;
+}
+.boss-cut-gauge {
+  position: relative;
+  height: 10px;
+  border-radius: 6px;
+  background: #f7ffed80;
+  border: 1px solid #3d61361a;
+}
+.boss-cut-gauge-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #a8c998, #679462);
+}
+[data-tone="short"] .boss-cut-gauge-fill {
+  background: #bda977;
+}
+[data-tone="party"] .boss-cut-gauge-fill {
+  background: #88aaa5;
+}
+.boss-cut-gauge-target {
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: #3a573c;
+}
+.boss-cut-gauge-scale {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: 7px;
+  color: #435b42;
+  font-size: 10px;
+}
+.boss-cut-gauge-scale span:nth-child(2) {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 700;
+}
+.boss-cut-values {
+  margin-top: 12px;
+  font-size: 11px;
+  color: #435b42;
+  line-height: 1.7;
+}
+.boss-cut-values summary {
+  cursor: pointer;
+}
+.boss-cut-values > span {
+  display: block;
+  margin: 4px 0;
+}
+.boss-cut-notes:empty {
+  display: none;
+}
+@media (max-width: 600px) {
+  .boss-detail-hero {
+    gap: 12px;
+    padding: 0 0 14px;
+  }
+  .boss-detail-hero h2 {
+    font-size: 23px;
   }
 }

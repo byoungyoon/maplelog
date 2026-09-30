@@ -38,7 +38,7 @@ export async function syncReferencePrices({
       headers: { Accept: "application/json" },
     });
     if (!response.ok)
-      throw new Error("메이플스카우터 가격을 가져오지 못했어요.");
+      throw new Error("참고 가격을 가져오지 못했어요.");
     const payload = referencePriceSchema.parse(await response.json());
     const checkedAt = new Date().toISOString();
     sqlite

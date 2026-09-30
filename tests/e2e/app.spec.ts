@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { characterListFixture } from "../fixtures/nexon";
+import { calculateBossCuts } from "../../src/domain/boss-cut";
+import bossFixture from "../fixtures/boss-analysis.json" with { type: "json" };
 const origin = "http://127.0.0.1:3100";
 test.describe.configure({ mode: "serial" });
 test("키 없이 모든 장부 URL과 내부 API 접근을 차단한다", async ({
@@ -106,13 +108,47 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
       body: JSON.stringify({ ok: true, data: { success: 0 } }),
     }),
   );
+  await page.route("**/api/characters/strength", (route) =>
+    route.fulfill({
+      json: { ok: true, data: { success: 1, failed: 0, coalesced: false } },
+    }),
+  );
+  await page.route("**/api/bosses/analyze", (route) => {
+    const raw = structuredClone(bossFixture);
+    raw.userApiData.info.character_name =
+      route.request().postDataJSON().characterId === "test-ocid-two"
+        ? "두번째캐릭터"
+        : "테스트캐릭터";
+    return route.fulfill({
+      json: {
+        ok: true,
+        data: calculateBossCuts(
+          raw,
+          raw.userApiData.info.character_name,
+          "테스트월드",
+        ),
+      },
+    });
+  });
   await page.goto("/setup");
   await expect(page.getByText("캐릭터 선택", { exact: true })).toHaveCount(0);
   await page.getByRole("button", { name: "보스 화면 열기" }).click();
   await expect(page).toHaveURL(origin + "/bosses");
   await expect(page.getByRole("link", { name: "설정" })).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "테스트캐릭터" }),
+  ).toBeVisible();
+  await expect(
+    page.getByLabel("보스 최소컷 분석").getByRole("meter"),
+  ).toHaveCount(47);
+  await expect(page.getByLabel("조회 주기")).toHaveCount(0);
+  await expect(page.locator(".page-heading")).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: "기록", exact: true }),
+  ).toHaveCount(0);
+  await expect(page.locator('a[href*="maplescouter"]')).toHaveCount(0);
+  await page.getByRole("button", { name: "다른 캐릭터 검색" }).click();
   await page.getByLabel("캐릭터 검색").fill("테스트캐릭터");
-  await expect(page.getByText("테스트캐릭터")).toBeVisible();
   await page.getByRole("button", { name: "보스 조회", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "테스트캐릭터" }),
@@ -146,6 +182,8 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
     ...fixtureBook.characters[0],
     id: "test-ocid-two",
     name: "두번째캐릭터",
+    combatPower: "2000",
+    combatPowerCheckedAt: new Date().toISOString(),
     managed: true,
     order: 1,
   });
@@ -164,6 +202,8 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
     weekly_boss_clear_count: 1,
     weekly_boss_clear_limit_count: 12,
   });
+  fixtureBook.characters[0].combatPower = "1000";
+  fixtureBook.characters[0].combatPowerCheckedAt = new Date().toISOString();
   fixtureBook.revision++;
   writeBook(fixtureBook);
   await page.reload();
@@ -203,7 +243,17 @@ test("서버 검증 완료 fixture → 보스 캐릭터 검색 → 장부 → �
   expect(updated.drops[0].unitPrice).toBe("3800000000");
   await page.getByRole("link", { name: "보스", exact: true }).click();
   await expect(page.getByLabel("캐릭터 선택", { exact: true })).toHaveCount(0);
-  await expect(page.locator(".boss-record")).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "두번째캐릭터" }),
+  ).toBeVisible();
+  await expect(page.locator(".boss-record")).toHaveCount(1);
+  await expect(
+    page
+      .getByRole("article", { name: "루시드 하드 최소컷" })
+      .getByText("처치 완료"),
+  ).toBeVisible();
+  await expect(page.locator(".boss-record .row-menu")).toHaveCount(0);
+  await page.getByRole("button", { name: "다른 캐릭터 검색" }).click();
   await page.getByLabel("캐릭터 검색").fill("테스트캐릭터");
   await page.getByRole("button", { name: "상세보기" }).click();
   await expect(page.locator(".boss-record")).toHaveCount(1);

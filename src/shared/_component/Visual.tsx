@@ -62,14 +62,19 @@ export function Avatar({
 }) {
   if (image)
     return (
-      <Image
-        src={image}
-        alt="캐릭터"
-        width={size}
-        height={size}
-        unoptimized
+      <span
         className="avatar character-portrait"
-      />
+        style={{ width: size, height: size }}
+      >
+        <Image
+          src={image}
+          alt="캐릭터"
+          width={size}
+          height={size}
+          unoptimized
+          className="character-sprite"
+        />
+      </span>
     );
   return (
     <svg

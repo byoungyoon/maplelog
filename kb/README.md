@@ -3,6 +3,7 @@
 This directory records completed work, user decisions, verification, and relevant repository history.
 
 - [Work log](work-log.md)
+- [Boss analysis](boss-analysis.md)
 - [Web auction connection](auction-connection.md)
 - [Architecture](../docs/architecture.md)
 - [API contract](../docs/api-contract.md)

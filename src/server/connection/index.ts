@@ -67,6 +67,8 @@ export async function connectKey(key: string, fetcher: typeof fetch = fetch) {
               ...c,
               image: old.image,
               imageUpdatedAt: old.imageUpdatedAt,
+              combatPower: old.combatPower,
+              combatPowerCheckedAt: old.combatPowerCheckedAt,
               managed: old.managed,
               favorite: old.favorite,
               order: old.order,

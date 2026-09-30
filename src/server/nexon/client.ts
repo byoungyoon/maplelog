@@ -3,6 +3,7 @@ import { DomainError, ensure } from "@/domain/model";
 import { consumeBudget, usageCount, sqlite } from "@/server/db";
 export type NexonPath =
   | "/maplestory/v1/character/list"
+  | "/maplestory/v1/character/stat"
   | "/maplestory/v1/scheduler/character-state"
   | "/maplestory/v1/character/basic";
 export async function nexonRequest(

@@ -12,8 +12,10 @@ export interface BookResponse {
   priceProvider: { status: string; reason: string };
   usage: number;
 }
-export function useBook(enabled = true) {
-  const { mode, cycle, offset } = useAppState();
+export function useBook(enabled = true, currentWeek = false) {
+  const { mode, cycle: selectedCycle, offset: selectedOffset } = useAppState();
+  const cycle = currentWeek ? "weekly" : selectedCycle;
+  const offset = currentWeek ? 0 : selectedOffset;
   return useQuery({
     enabled,
     queryKey: ["book", mode, cycle, offset],

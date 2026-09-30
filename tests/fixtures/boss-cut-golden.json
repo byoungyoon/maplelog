@@ -1,0 +1,284 @@
+[
+  {
+    "key": "jupiter_hard",
+    "rate": 0.007484217030574371,
+    "effectiveStat": 10611,
+    "status": "입장 불가능"
+  },
+  {
+    "key": "kaling_extreme",
+    "rate": 0.46598105492395064,
+    "effectiveStat": 79226,
+    "status": "불가능"
+  },
+  {
+    "key": "adversary_extreme",
+    "rate": 0.1278045538286645,
+    "effectiveStat": 77282,
+    "status": "불가능"
+  },
+  {
+    "key": "kalos_extreme",
+    "rate": 0.18612281129416125,
+    "effectiveStat": 80162,
+    "status": "파티 최소컷"
+  },
+  {
+    "key": "bardrix_hard",
+    "rate": 0.09650002194144287,
+    "effectiveStat": 56288,
+    "status": "불가능"
+  },
+  {
+    "key": "bellona_hard",
+    "rate": 0.2573082136978633,
+    "effectiveStat": 79472,
+    "status": "불가능"
+  },
+  {
+    "key": "limbo_hard",
+    "rate": 0.30884179785006066,
+    "effectiveStat": 79472,
+    "status": "파티 최소컷"
+  },
+  {
+    "key": "maleficStar_hard",
+    "rate": 0.3374392203745516,
+    "effectiveStat": 80162,
+    "status": "파티 최소컷"
+  },
+  {
+    "key": "jupiter_normal",
+    "rate": 0.011445812618579684,
+    "effectiveStat": 10611,
+    "status": "입장 불가능"
+  },
+  {
+    "key": "adversary_hard",
+    "rate": 0.45904434243222336,
+    "effectiveStat": 80162,
+    "status": "파티격 가능"
+  },
+  {
+    "key": "bardrix_normal",
+    "rate": 0.2166081362460524,
+    "effectiveStat": 56288,
+    "status": "불가능"
+  },
+  {
+    "key": "kaling_hard",
+    "rate": 0.47652396123457386,
+    "effectiveStat": 79226,
+    "status": "파티격 가능"
+  },
+  {
+    "key": "seren_extreme",
+    "rate": 0.500701202224973,
+    "effectiveStat": 80162,
+    "status": "파티격 가능"
+  },
+  {
+    "key": "blackMage_extreme",
+    "rate": 0.5992010707435892,
+    "effectiveStat": 76433,
+    "status": "파티격 가능"
+  },
+  {
+    "key": "limbo_normal",
+    "rate": 0.6141208440580499,
+    "effectiveStat": 79472,
+    "status": "파티격 가능"
+  },
+  {
+    "key": "kalos_chaos",
+    "rate": 0.7653076122292815,
+    "effectiveStat": 80162,
+    "status": "파티격 가능"
+  },
+  {
+    "key": "bellona_normal",
+    "rate": 0.8716768306833972,
+    "effectiveStat": 79472,
+    "status": "파티격 가능"
+  },
+  {
+    "key": "kaling_normal",
+    "rate": 1.3983320632114882,
+    "effectiveStat": 79226,
+    "status": "솔플 가능"
+  },
+  {
+    "key": "maleficStar_normal",
+    "rate": 1.5263712231868363,
+    "effectiveStat": 80162,
+    "status": "솔플 가능"
+  },
+  {
+    "key": "lotus_extreme",
+    "rate": 1.6849807124677787,
+    "effectiveStat": 79472,
+    "status": "솔플 가능"
+  },
+  {
+    "key": "adversary_normal",
+    "rate": 2.9460973303754607,
+    "effectiveStat": 80162,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "kalos_normal",
+    "rate": 3.7379681921397863,
+    "effectiveStat": 80162,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "bellona_easy",
+    "rate": 4.716295327644393,
+    "effectiveStat": 79472,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "kaling_easy",
+    "rate": 5.54477134208892,
+    "effectiveStat": 79226,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "seren_hard",
+    "rate": 6.480265060217316,
+    "effectiveStat": 80162,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "adversary_easy",
+    "rate": 8.628764637573118,
+    "effectiveStat": 80162,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "kalos_easy",
+    "rate": 10.895975615489016,
+    "effectiveStat": 80162,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "blackMage_hard",
+    "rate": 11.981683443877822,
+    "effectiveStat": 76433,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "seren_normal",
+    "rate": 14.963118203976647,
+    "effectiveStat": 80162,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "verusHilla_hard",
+    "rate": 23.23663977691419,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "darknell_hard",
+    "rate": 26.568499691628812,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "gloom_chaos",
+    "rate": 27.995913366491006,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "slime_chaos",
+    "rate": 23.136721115666116,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "will_hard",
+    "rate": 33.258522864006544,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "lucid_hard",
+    "rate": 15.99509074590238,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "verusHilla_normal",
+    "rate": 46.47327955382838,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "damien_hard",
+    "rate": 63.93011505158874,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "lotus_hard",
+    "rate": 85.38184646413326,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "darknell_normal",
+    "rate": 167.38154805726154,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "gloom_normal",
+    "rate": 139.979566832455,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "lucid_normal",
+    "rate": 174.2965084720495,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "will_normal",
+    "rate": 166.29261432003273,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "will_easy",
+    "rate": 249.43892148004903,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "lucid_easy",
+    "rate": 300.5393066644218,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "slime_normal",
+    "rate": 416.46098008199,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "lotus_normal",
+    "rate": 1821.841946846155,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  },
+  {
+    "key": "damien_normal",
+    "rate": 1917.9034515476621,
+    "effectiveStat": 79594,
+    "status": "솔플 여유컷"
+  }
+]

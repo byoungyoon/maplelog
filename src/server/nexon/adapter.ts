@@ -8,5 +8,5 @@ export const nexonContract = {
 export const priceProvider = {
   status: "connected" as const,
   reason:
-    "메이플스카우터 참고가 연결 · 서버/옵션별 실거래 시세는 아니에요. 직접 입력한 가격은 유지해요.",
+    "참고가 · 서버/옵션별 실거래 시세는 아니에요. 직접 입력한 가격은 유지해요.",
 };

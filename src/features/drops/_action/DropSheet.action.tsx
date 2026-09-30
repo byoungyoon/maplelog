@@ -153,7 +153,8 @@ export default function DropSheet() {
               기록 당시 기준가 {formatMeso(editing.unitPrice)} ·{" "}
               {editing.priceSource}
               <br />
-              {editing.market} / {editing.variant}
+              {editing.market.replaceAll("메이플스카우터 ", "")} /{" "}
+              {editing.variant}
             </p>
             <label className="checkbox-label">
               <input

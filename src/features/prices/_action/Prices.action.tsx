@@ -29,7 +29,6 @@ export default function PricesAction() {
           <p>자주 기록하는 아이템의 가격을 관리하세요.</p>
         </div>
         <div className="price-source-status">
-          <span className="outlined-badge">메이플스카우터 참고가</span>
           <button
             className="button"
             disabled={cmd.isPending}
@@ -108,13 +107,13 @@ export default function PricesAction() {
                 <div className="row-body">
                   <strong>{i.name}</strong>
                   <p>
-                    {i.market} · {i.variant}
+                    {i.market.replaceAll("메이플스카우터 ", "")} · {i.variant}
                   </p>
                   <span className="price-meta">
                     {i.source === "scouter"
                       ? i.price === null
-                        ? "메이플스카우터 후보 · 가격 미정"
-                        : "메이플스카우터 참고가"
+                        ? "드랍 후보 · 가격 미정"
+                        : "참고가"
                       : "수동 기준가"}{" "}
                     ·{" "}
                     {new Date(i.observedAt).toLocaleString("ko-KR", {
@@ -142,7 +141,12 @@ export default function PricesAction() {
                 <button
                   className="icon-button"
                   aria-label={`${i.name} 기준가 수정`}
-                  onClick={() => setEdit({ ...i })}
+                  onClick={() =>
+                    setEdit({
+                      ...i,
+                      market: i.market.replaceAll("메이플스카우터 ", ""),
+                    })
+                  }
                 >
                   <PenLine size={18} />
                 </button>
@@ -159,19 +163,11 @@ export default function PricesAction() {
       <details className="audit-details">
         <summary>결정석 기준가 관리</summary>
         <p className="muted-note">
-          <a
-            href="https://maplescouter.com/ko/boss-income"
-            target="_blank"
-            rel="noreferrer"
-          >
-            출처: 메이플스카우터
-          </a>{" "}
-          · 확인 2026.09.29 · 검은 마법사 변경가는 10.01 적용
+          확인 2026.09.29 · 검은 마법사 변경가는 10.01 적용
         </p>
         <p className="muted-note">
-          메이플스카우터의 9월 17일 가격표를 적용했어요. 직접 수정한 기준가는 새
-          완료 기록부터 적용되며, 기존 기록은 드랍 기록의 조건 확인에서 반영할
-          수 있어요.
+          9월 17일 가격표를 적용했어요. 직접 수정한 기준가는 새 완료 기록부터
+          적용되며, 기존 기록은 드랍 기록의 조건 확인에서 반영할 수 있어요.
         </p>
         {book.bosses.map((b) => (
           <form

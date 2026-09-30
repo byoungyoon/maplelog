@@ -1,37 +1,49 @@
 "use client";
 import { useState } from "react";
-import { Check, MoreHorizontal, Search } from "lucide-react";
+import { Check, Search } from "lucide-react";
 import { useBook } from "@/shared/_state/useBook";
 import { useAppState } from "@/shared/_state/useAppState";
 import { useCommand } from "@/shared/_action/useCommand";
-import { ReportHeader } from "@/shared/_area/ReportHeader.area";
 import { Avatar, ItemIcon } from "@/shared/_component/Visual";
 import { Loading, ErrorState, Empty } from "@/shared/_component/Status";
 import { formatMeso } from "@/domain/money";
 import type { Character } from "@/domain/model";
 import { api } from "@/shared/_lib/api";
+import { strongestCharacter } from "../_lib/strongestCharacter";
+import { useCharacterStrength } from "../_state/useCharacterStrength";
+import { completedBossKeys } from "../_lib/completedBossKeys";
+import { BossCutPanel } from "../_component/BossCutPanel";
 export default function BossesAction() {
-  const q = useBook();
+  const q = useBook(true, true);
+  const strength = useCharacterStrength(q.data?.book.characters, q.data?.asOf);
   const { notify } = useAppState();
-  const cmd = useCommand();
+  const cmd = useCommand(true, true);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("전체");
   const [searchingId, setSearchingId] = useState<string | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  // undefined selects the strongest automatically; null opens the search view.
+  const [selectedId, setSelectedId] = useState<string | null | undefined>(
+    undefined,
+  );
   if (q.isPending) return <Loading />;
   if (q.error) return <ErrorState error={q.error} retry={() => q.refetch()} />;
   const { book, report } = q.data;
-  const selected = book.characters.find((c) => c.id === selectedId);
+  const selected =
+    selectedId === undefined
+      ? strongestCharacter(book.characters)
+      : book.characters.find((c) => c.id === selectedId);
   const term = search.trim().toLocaleLowerCase();
   const characters =
     !selected && term
       ? book.characters.filter((c) => c.name.toLocaleLowerCase().includes(term))
       : [];
   const lookupCharacter = async (character: Character) => {
-    if (book.sync.characters?.some(
-      (state) =>
-        state.characterId === character.id && state.status !== "error",
-    )) {
+    if (
+      book.sync.characters?.some(
+        (state) =>
+          state.characterId === character.id && state.status !== "error",
+      )
+    ) {
       setSelectedId(character.id);
       setSearch("");
       return;
@@ -60,9 +72,8 @@ export default function BossesAction() {
       setSearchingId(null);
     }
   };
-  const allPlans = report.plans.filter((p) => p.characterId === selectedId);
   const plans = report.plans.filter((p) => {
-    if (p.characterId !== selectedId) return false;
+    if (p.characterId !== selected?.id) return false;
     const c = report.selected.find(
       (c) =>
         c.characterId === p.characterId &&
@@ -79,10 +90,16 @@ export default function BossesAction() {
   });
   return (
     <>
-      <ReportHeader
-        title="보스 상세"
-        subtitle="캐릭터를 검색해 보스별 상태를 확인하세요."
-      />
+      {strength.isFetching && (
+        <p role="status" className="muted-note">
+          캐릭터 전투력을 비교하고 있어요…
+        </p>
+      )}
+      {(strength.isError || !!strength.data?.failed) && (
+        <p role="status" className="muted-note">
+          일부 전투력을 조회하지 못했어요. 확인된 전투력 기준으로 표시해요.
+        </p>
+      )}
       {!selected ? (
         <>
           <label className="search-input boss-search">
@@ -144,14 +161,19 @@ export default function BossesAction() {
             <Avatar
               image={selected.image}
               variant={selected.avatar}
-              size={58}
+              size={76}
             />
             <div>
-              <span>캐릭터 보스 상세</span>
               <h2>{selected.name}</h2>
               <p>
-                {selected.world} · {selected.job} · Lv. {selected.level} · 보스{" "}
-                {allPlans.length}개
+                {selected.world} · {selected.job} · Lv. {selected.level}
+              </p>
+              <p className="boss-character-power">
+                {selected.combatPower == null
+                  ? selectedId === undefined
+                    ? "전투력 미확인 · 레벨 기준 임시 선택"
+                    : "전투력 미확인"
+                  : `전투력 ${formatMeso(selected.combatPower)}`}
               </p>
             </div>
             <button
@@ -164,6 +186,13 @@ export default function BossesAction() {
               다른 캐릭터 검색
             </button>
           </div>
+          {!(selectedId === undefined && strength.isFetching) && (
+            <BossCutPanel
+              key={selected.id}
+              character={selected}
+              completed={completedBossKeys(book, selected.id, q.data.asOf)}
+            />
+          )}
           <div className="filter-row">
             {["전체", "남음", "완료", "확인 필요"].map((x) => (
               <button
@@ -175,100 +204,68 @@ export default function BossesAction() {
               </button>
             ))}
           </div>
-          <section className="panel boss-list">
+          <section
+            className="boss-completion-grid"
+            aria-label="이번 주 보스 기록"
+          >
             {plans.map((p) => {
               const b = book.bosses.find((b) => b.id === p.bossId)!;
-              const char = book.characters.find((c) => c.id === p.characterId)!;
               const c = report.selected.find(
                 (c) =>
                   c.characterId === p.characterId &&
                   c.group === book.bosses.find((b) => b.id === p.bossId)?.group,
               );
               return (
-                <article className="boss-record" key={p.id}>
-                  <div className="boss-row">
+                <article
+                  className="boss-record boss-completion-card"
+                  key={p.id}
+                >
+                  <div className="boss-completion-title">
                     <ItemIcon image={b.image} kind={b.icon} />
-                    <div className="row-body">
-                      <strong>
-                        {b.name}
-                        <span className="difficulty">
-                          {c?.difficulty || p.difficulty || "난이도 확인 필요"}
-                        </span>
-                      </strong>
-                      <p>
-                        {char.name} ·{" "}
-                        {c?.provenance === "manual"
-                          ? "수동 기록"
-                          : "스케줄러 기준"}
-                        · 1인 기준
-                      </p>
-                    </div>
-                    <div className="boss-status">
-                      <span className={c ? "status-done" : "status-muted"}>
-                        {c?.excluded ? (
-                          "제외"
-                        ) : c?.status === "conflict" ? (
-                          "정보 확인 필요"
-                        ) : c ? (
-                          <>
-                            <Check size={13} />
-                            완료
-                          </>
-                        ) : (
-                          "미완료"
-                        )}
-                      </span>
+                    <div>
+                      <strong>{b.name}</strong>
                       <small>
-                        {c
-                          ? c.review === "pending"
-                            ? "드랍 미입력"
-                            : c.review === "none"
-                              ? "없음으로 확인"
-                              : "드랍 기록함"
-                          : "완료 후 기록"}
+                        {c?.difficulty || p.difficulty || "난이도 확인 필요"}
                       </small>
                     </div>
-                    <div className="boss-amount">
-                      {formatMeso(
-                        c
-                          ? c.crystal
-                          : p.party && p.difficulty && b.crystal
-                            ? (BigInt(b.crystal) / BigInt(p.party)).toString()
-                            : null,
+                    <span
+                      className={
+                        c && !c.excluded ? "status-done" : "status-muted"
+                      }
+                    >
+                      {c?.excluded ? (
+                        "제외"
+                      ) : c?.status === "conflict" ? (
+                        "확인 필요"
+                      ) : c ? (
+                        <>
+                          <Check size={13} />
+                          완료
+                        </>
+                      ) : (
+                        "미완료"
                       )}
-                      {(c ? c.crystal : b.crystal) && <small> 메소</small>}
+                    </span>
+                  </div>
+                  <div className="boss-completion-bottom">
+                    <div>
+                      <small>결정석 · 1인</small>
+                      <strong>
+                        {formatMeso(c ? c.crystal : b.crystal)}
+                        <small> 메소</small>
+                      </strong>
                     </div>
-                    {!c && <span className="waiting-label">완료 대기</span>}
-                    <details className="row-menu">
-                      <summary aria-label={`${b.name} 상세 메뉴`}>
-                        <MoreHorizontal size={20} />
-                      </summary>
-                      <div>
-                        {c ? (
-                          <button
-                            disabled={cmd.isPending}
-                            onClick={() =>
-                              cmd.mutate({
-                                type: "exclude",
-                                id: c.id,
-                                value: !c.excluded,
-                              })
-                            }
-                          >
-                            {c.excluded ? "제외 복원" : "수동 제외"}
-                          </button>
-                        ) : (
-                          <button
-                            disabled={cmd.isPending}
-                            onClick={() =>
-                              cmd.mutate({ type: "complete", planId: p.id })
-                            }
-                          >
-                            수동 완료 기록
-                          </button>
-                        )}
-                      </div>
-                    </details>
+                    {!c && (
+                      <button
+                        className="button soft"
+                        disabled={cmd.isPending}
+                        onClick={() =>
+                          cmd.mutate({ type: "complete", planId: p.id })
+                        }
+                      >
+                        완료 표시
+                      </button>
+                    )}
                   </div>
                 </article>
               );
@@ -276,7 +273,7 @@ export default function BossesAction() {
             {!plans.length && (
               <Empty
                 title="이 조건에 맞는 보스가 없어요"
-                detail="이 주기의 보스 기록이 없어요. 다른 주기를 확인하거나 새로고침해 주세요."
+                detail="이 주기의 보스 기록이 없어요. 보스 조회 후 다시 확인해 주세요."
               />
             )}
           </section>

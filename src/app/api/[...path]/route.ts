@@ -11,6 +11,8 @@ import { completionEntries } from "@/domain/revenue";
 import { csvCell } from "@/domain/money";
 import { connectionStatus, connectKey, disconnect } from "@/server/connection";
 import { syncAccount } from "@/server/nexon/sync";
+import { syncCharacterStrength } from "@/server/nexon/strength";
+import { analyzeCharacter } from "@/server/catalog/boss-analysis";
 import { credentialForRequest } from "@/server/connection";
 import { nexonContract, priceProvider } from "@/server/nexon/adapter";
 export const runtime = "nodejs";
@@ -64,6 +66,14 @@ async function handle(req: NextRequest) {
       return ok({ connected: false });
     }
     ensure(connectionStatus().connected, "API 키를 먼저 연결해 주세요.", 428);
+    if (req.method === "POST" && route === "characters/strength")
+      return ok(await syncCharacterStrength());
+    if (req.method === "POST" && route === "bosses/analyze") {
+      const body = z
+        .object({ characterId: z.string().min(1).max(200) })
+        .parse(await req.json());
+      return ok(await analyzeCharacter(body.characterId));
+    }
     if (req.method === "GET" && route === "book") {
       const book = readBook(mode);
       return ok({

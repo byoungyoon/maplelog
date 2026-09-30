@@ -36,7 +36,7 @@ export function applyReferencePrices(
     item.price = price;
     item.source = "scouter";
     item.observedAt = checkedAt;
-    item.market = "메이플스카우터 참고가 · 서버 미구분";
+    item.market = "참고가 · 서버 미구분";
     // Unbound shared boss rewards are the basis of this personal drop estimate.
     if (
       item.tradeConfirmed === false &&

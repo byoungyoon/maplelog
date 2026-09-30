@@ -3,19 +3,12 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import {
-  Wallet,
-  Swords,
-  ReceiptText,
-  ChartNoAxesCombined,
-  X,
-} from "lucide-react";
+import { Wallet, Swords, ChartNoAxesCombined, X } from "lucide-react";
 import { NatureBackground } from "../_component/NatureBackground";
 import { useAppState } from "../_state/useAppState";
 const nav = [
   { href: "/", name: "정산", icon: Wallet },
   { href: "/bosses", name: "보스", icon: Swords },
-  { href: "/ledger", name: "기록", icon: ReceiptText },
   { href: "/prices", name: "시세", icon: ChartNoAxesCombined },
 ];
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -97,16 +90,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             >
               {ambientMotion ? "배경 움직임 끄기" : "배경 움직임 켜기"}
             </button>
-            <span>
-              Data based on NEXON Open API ·{" "}
-              <a
-                href="https://maplescouter.com/ko/boss-data"
-                target="_blank"
-                rel="noreferrer"
-              >
-                보스·보상 자료: 메이플스카우터
-              </a>
-            </span>
+            <span>Data based on NEXON Open API</span>
           </footer>
         </div>
       </div>

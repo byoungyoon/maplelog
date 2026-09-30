@@ -1,5 +1,15 @@
 # Work Log
 
+## 2026-09-30 — Boss Analysis and Simplified Boss UI
+
+- Inspected the public Chrome client and implemented the local boss comparison formulas using live character calculation inputs. All 47 results matched independently executed source math.
+- Added cached, ownership-checked boss analysis and daily Nexon combat-power retrieval; initial character selection uses verified combat power.
+- Added pale glass boss cards, minimum-cut gauges with actual damage multiples, and current-character completion checks. Enlarged character sprites and removed the heavy hero background.
+- Removed the Bosses heading/date controls, Records navigation entry, provider branding/links, and boss-card overflow menus. Kept completion cards compact with direct completion actions.
+- Bosses uses the current week independently of report dates on other screens. Existing ledger data and routes remain intact.
+- Validation: 82 unit tests and eight browser tests, TypeScript, ESLint, and a Webpack production build passed. Browser checks did not take screenshots.
+- See [Boss analysis](boss-analysis.md) for calculation provenance, cache behavior, and upstream dependencies.
+
 ## 2026-09-30 — Web Auction Connection Probe
 
 - Confirmed that the official web auction opens in headed Chrome and completed an authorized Nexon sign-in.

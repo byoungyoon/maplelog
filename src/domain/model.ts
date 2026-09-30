@@ -10,6 +10,8 @@ export const characterSchema = z.object({
   world: z.string().max(60),
   job: z.string().max(60),
   level: z.number().int().min(1).max(400),
+  combatPower: money.nullable().optional(),
+  combatPowerCheckedAt: stamp.optional(),
   managed: z.boolean(),
   favorite: z.boolean(),
   order: z.number().int().min(0),

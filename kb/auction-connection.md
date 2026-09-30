@@ -45,3 +45,7 @@ Dots supports a browser and recurring responsibilities according to its
 [official getting-started guide](https://learn.chatgpt.com/docs/dots/getting-started).
 Those capabilities do not establish that this auction's authenticated workflow
 works unattended; that remains unverified.
+
+## Post-enrollment retry
+
+After the owner enabled OTP, a subsequent headed Chrome attempt passed the enrollment gate. The character-selection page then displayed a temporary-unavailability message. No item searches or prices were collected, and no recurring schedule was created. This supersedes the initial enrollment blocker above.

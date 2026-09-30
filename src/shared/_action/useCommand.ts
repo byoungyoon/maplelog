@@ -5,10 +5,10 @@ import { useAppState } from "../_state/useAppState";
 import { useBook } from "../_state/useBook";
 import { api, ApiError } from "../_lib/api";
 import type { Command } from "@/domain/commands";
-export function useCommand(enabled = true) {
+export function useCommand(enabled = true, currentWeek = false) {
   const q = useQueryClient();
   const { mode, notify } = useAppState();
-  const book = useBook(enabled);
+  const book = useBook(enabled, currentWeek);
   const ticket = useRef<{
     fingerprint: string;
     revision: number;
