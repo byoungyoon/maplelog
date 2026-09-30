@@ -1,5 +1,15 @@
 # Work Log
 
+## 2026-09-30 — Auction Search Verified and Settlement Layout Aligned
+
+- Successfully retried official auction sign-in, character selection, and one item search in headed Chrome. The observed flow did not require an OTP challenge.
+- Confirmed ascending unit-price results for Dreamy Belt. No transactions, ledger price writes, or recurring jobs were performed; see [Web auction connection](auction-connection.md).
+- Removed the revenue summary's Records shortcut icon.
+- Removed the narrower settlement-page width cap and matched the Bosses grid's responsive 300-pixel minimum columns, 12-pixel gaps, 16-pixel card padding, and pale glass surfaces.
+- Updated text, dividers, and expanded drop controls for the lighter cards while retaining the existing completion and drop workflows.
+- Verification: eight browser tests passed at desktop and mobile widths, plus TypeScript, ESLint, and the Webpack production build. Screenshots were not taken.
+
+
 ## 2026-09-30 — Collapsed Easy Clears and Routed Character Search
 
 - Grouped comfortable solo clears into a native disclosure, collapsed by default, while retaining gauges and completion checks when expanded.

@@ -1,5 +1,3 @@
-import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
 import { formatMeso } from "@/domain/money";
 import type { Report } from "@/server/report";
 export function RevenueCard({ report }: { report: Report }) {
@@ -38,13 +36,6 @@ export function RevenueCard({ report }: { report: Report }) {
           제외
         </p>
       )}
-      <Link
-        href="/ledger"
-        className="card-corner-link"
-        aria-label="수익 기록 보기"
-      >
-        <ArrowUpRight size={21} />
-      </Link>
     </section>
   );
 }

@@ -5102,3 +5102,120 @@ select option {
     font-size: 12px;
   }
 }
+/* Settlement follows the same card rhythm as the boss view. */
+.home-essential {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+.home-complete {
+  margin-right: 0;
+  white-space: nowrap;
+}
+.home-revenue {
+  padding: 24px;
+  border-radius: 20px;
+}
+.settlement-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 12px;
+  align-items: start;
+}
+.settlement-card {
+  padding: 16px;
+  border: 1px solid #f3ffdc80;
+  border-radius: 16px;
+  background: #f3f8e17a;
+  color: #183825;
+}
+.settlement-card-heading {
+  gap: 10px;
+  border-color: #42684226;
+}
+.settlement-card-heading > .item-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: #f9ffed40;
+}
+.settlement-card-heading h3 {
+  font-size: 15px;
+}
+.settlement-card-heading p {
+  font-size: 11px;
+  color: #354f3a;
+}
+.settlement-boss-summary {
+  gap: 8px;
+  max-width: 58%;
+}
+.settlement-boss-summary span,
+.settlement-boss-summary strong small,
+.settlement-boss-note,
+.settlement-character summary small,
+.settlement-card .quick-crystal small,
+.settlement-card .quick-drop-heading small,
+.settlement-card .quick-drop-toggle small,
+.settlement-card .quick-none,
+.settlement-card .muted-note {
+  color: #354f3a;
+}
+.settlement-boss-summary span {
+  font-size: 10px;
+  white-space: normal;
+}
+.settlement-boss-summary span small {
+  display: none;
+}
+.settlement-boss-summary strong {
+  font-size: 14px;
+  line-height: 1.35;
+}
+.settlement-character + .settlement-character,
+.settlement-card .quick-crystal {
+  border-color: #42684226;
+}
+.settlement-character summary {
+  padding: 12px 0;
+  gap: 6px;
+}
+.settlement-card .quick-crystal .status-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #235d36;
+  background: #e6f4d3a6;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+.settlement-card .quick-drop-heading .text-button {
+  color: #315437;
+}
+.settlement-card .quick-drop-toggle {
+  background: #f6faee40;
+  border-color: #829a7140;
+  color: #203e2b;
+}
+.settlement-card .quick-drop-toggle.selected {
+  background: #d9ebc880;
+  border-color: #70946199;
+}
+.settlement-card .quick-check {
+  border-color: #70946180;
+}
+@media (max-width: 600px) {
+  .home-revenue {
+    padding: 18px;
+  }
+  .home-revenue .revenue-heading {
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+  .home-revenue .revenue-breakdown {
+    gap: 18px 28px;
+  }
+  .settlement-boss-summary strong {
+    font-size: 13px;
+  }
+}
